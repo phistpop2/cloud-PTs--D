@@ -1,0 +1,47 @@
+
+.objectWrap{
+    padding: 8px;
+    display: inline-block;
+}
+
+
+.slide{
+    margin: 0;
+    opacity: 0.03;
+
+    -webkit-transition: opacity 1s;
+}
+
+.slide.active{
+    opacity: 1
+}
+
+
+.textEditBox{
+    display :inline-block;
+    font-size : 80px;
+}
+
+[contenteditable="true"].textEditBox {
+    display :inline-block;
+
+}
+
+.lcWord{
+    font-size : 80px;
+    display : lnline-block;
+}
+
+
+.clSentence{
+    display : lnline-block;
+}
+
+.containIdentify{
+    border : 2px dotted  #fff;
+}
+
+.frame{
+    display : lnline-block;
+    border : 1px solid #fff;
+}

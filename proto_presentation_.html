@@ -1,0 +1,330 @@
+<html>
+<head>
+<title></title>
+
+<!-- 
+	��ǥ �̵� (translate : -50% -50%)-> ȸ��(rotateX,rotateY,rotateZ) -> ��ǥ�̵� (translate : px)
+	�� �ٲ�� �ȵȴ�.
+	
+	��ǥ�̵��� ȸ���ϰ� ��ǥ�̵��� �ϴ� �Ͱ� 
+	��ǥ�̵��� �ٽ� ��ǥ�̵� ȸ���� ��� ���� �ٸ���
+ -->
+<script  src="lib/jqueryPlugin/jquery-1.9.1.min.js"></script>
+<style>
+	body{
+	    margin: 0;
+	    padding: 0;
+	    border: 0;
+	    font-size: 100%;
+	    font: inherit;
+	    vertical-align: baseline;
+	}
+	
+	#root{
+		position : absolute;
+		-webkit-transform-origin : top left;
+		-webket-transition : all 0x ease-in-out;
+		-webkit-transform-style: preserve-3d;
+
+		top : 50%;
+		left : 50%;
+		-webkit-perspective : 400px;
+	}
+	
+	#world{
+		position : absolute;
+		-webkit-transform-style: preserve-3d;
+		-webkit-transform :  rotateX(0deg) rotateY(0deg) rotateZ(0deg) translate3d(0px,0px,0px);
+	}
+	
+	#world div{
+		position : absolute;
+		display : block;
+		width : 1024px;
+		height : 768px;
+		border : 1px solid #000;
+		position : absolute;		
+		-webkit-transform-style: preserve-3d;
+	}
+	
+	
+</style>
+
+<script type="text/javascript">
+	(function(window,document){
+
+		var slides =
+				[
+					{
+						id : "slide_1",
+						slide_style : {
+							background : 'rgb(255,0,0)'	,
+							
+							translate_x : 0,
+							translate_y : 200,
+							translate_z : 1000,
+							
+							rotate_x : 0,
+							rotate_y : 0,
+							rotate_z : 80
+						},
+						contents:[
+						          {
+						        	tag : 'img',
+						        	src : 'img/test.png'
+						          }
+						         ]
+					},
+					{
+						id : "slide_2",
+						slide_style : {
+                            background : 'rgb(0,255,0)'	,
+							
+							translate_x : 0,
+                            translate_y : 200,
+                            translate_z : 400,
+							
+							rotate_x : 0,
+							rotate_y : 0,
+							rotate_z : 80
+						}			
+					},
+					{
+						id : "slide_3",
+						slide_style : {
+							background : 'hsla(240,100%,60%,0.7)'	,
+
+							translate_x : 0,
+							translate_y : 0,
+							translate_z : -1000,
+							
+							rotate_x : 0,
+							rotate_y : 0,
+							rotate_z : 125
+						}
+					},
+					{
+						id : "slide_4",
+						slide_style : {
+							background : 'hsla(340,100%,60%,0.7)',
+
+							translate_x : 1500,
+							translate_y : 300,
+							translate_z : -100,
+							
+							rotate_x : 30,
+							rotate_y : 80,
+							rotate_z : 0
+						}			
+					},
+					{
+						id : "slide_5",
+						slide_style : {
+							background : 'hsla(40,100%,60%,0.7)',
+
+							translate_x : 2500,
+							translate_y : 300,
+							translate_z : 0,
+							
+							rotate_x : 30,
+							rotate_y : 80,
+							rotate_z : 0
+						}			
+					},
+					{
+						id : "slide_6",
+						slide_style : {
+							background : 'hsla(80,100%,60%,0.7)',
+
+							translate_x : 3500,
+							translate_y : 300,
+							translate_z : 0,
+							
+							rotate_x : 30,
+							rotate_y : 80,
+							rotate_z : 0
+						}			
+					},
+					{
+						id : "slide_7",
+						slide_style : {
+							background : 'hsla(160,100%,60%,0.7)',
+
+							translate_x : 4500,
+							translate_y : 300,
+							translate_z : 0,
+							
+							rotate_x : 30,
+							rotate_y : 80,
+							rotate_z : 0
+						}			
+					},
+					{
+						id : "slide_8",
+						slide_style : {
+							background : 'hsla(200,100%,60%,0.7)',
+
+							translate_x : 4500,
+							translate_y : 300,
+							translate_z : -20,
+							
+							rotate_x : -130,
+							rotate_y : 120,
+							rotate_z : 100
+						}			
+					}
+					
+				];
+		
+		slideIdx = 0,
+		
+		init = function()
+		{
+			var world = document.getElementById('world');
+			
+			for(i in slides)
+			{
+				var slideEl = document.createElement('div');
+				
+				slideEl.setAttribute('id',slides[i].id);
+				slideEl.style['background'] = slides[i].slide_style.background;
+				
+				var translate_x = slides[i].slide_style.translate_x;
+				var translate_y = slides[i].slide_style.translate_y;
+				var translate_z = slides[i].slide_style.translate_z;
+				
+				var rotate_x = slides[i].slide_style.rotate_x;
+				var rotate_y = slides[i].slide_style.rotate_y;
+				var rotate_z = slides[i].slide_style.rotate_z;
+								
+				slideEl.style['WebkitTransform'] = "translate(-50%, -50%) "+
+													"translate3d("+translate_x+"px,"+translate_y+"px,"+translate_z+"px) "+
+													"rotateZ("+rotate_z+"deg) "+
+													"rotateY("+rotate_y+"deg) "+
+													"rotateX("+rotate_x+"deg) ";
+				
+				var contents = slides[i].contents;
+
+				if(contents && contents.length > 0)
+				{
+					for(j in contents)
+					{
+						var tag = contents[j].tag
+						if(tag === 'img')
+						{
+							var imgTag = document.createElement('img');		
+							var src = contents[j].src;
+							imgTag.src = src;
+							slideEl.appendChild(imgTag);
+						}
+					}
+				}
+
+				world.appendChild(slideEl);
+			}
+			
+			slideIdx = 0;
+			
+		};
+
+		action = function()
+		{
+			var translate_x = -1*slides[slideIdx].slide_style.translate_x;
+			var translate_y = -1*slides[slideIdx].slide_style.translate_y;
+			var translate_z = -1*slides[slideIdx].slide_style.translate_z;
+			
+			var rotate_x = -1*slides[slideIdx].slide_style.rotate_x;
+			var rotate_y = -1*slides[slideIdx].slide_style.rotate_y;
+			var rotate_z = -1*slides[slideIdx].slide_style.rotate_z;
+			
+			console.log(slides[slideIdx].slide_style);
+			
+			world.style['WebkitTransform'] =
+				"rotateX("+rotate_x+"deg) "+
+				"rotateY("+rotate_y+"deg) "+
+				"rotateZ("+rotate_z+"deg) "+
+				"translate3d("+translate_x+"px,"+translate_y+"px,"+translate_z+"px) ";				
+
+			
+			world.style['WebkitTransitionDuration'] = '1s';
+		};
+		
+		next = function()
+		{
+			slideIdx = (slideIdx+1)>(slides.length-1) ? 0 : slideIdx+1;
+			action();	
+		};
+		
+		prev = function()
+		{
+			slideIdx = (slideIdx-1)<0 ? (slides.length-1) : slideIdx-1;
+			action();
+		};
+
+
+        var computeWindowScale = function ( config ) {
+            var hScale = window.innerHeight / config.height,
+                    wScale = window.innerWidth / config.width,
+                    scale = hScale > wScale ? wScale : hScale;
+
+            return scale;
+        };
+
+        window.addEventListener('resize',function(event){
+
+             var config = {
+                height : 768,
+                width : 1024
+             }
+
+             var scale = computeWindowScale(config);
+
+            console.log(scale);
+             $('#root').css({
+                 webkitTransform : 'scale('+scale+')'
+             }) ;
+        },false);
+
+		window.addEventListener('keydown',function(event){
+			if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) ) {
+                event.preventDefault();
+            }	
+		},false);
+		
+		window.addEventListener('keyup',function(event){
+			if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) ) {
+                switch( event.keyCode ) {
+                    case 33: // pg up
+                    case 37: // left
+                    case 38: // up
+                    		 prev();
+                             break;
+                    case 34: // pg down
+                    case 39: // right
+                    case 40: // down
+                             next();
+                             break;
+                }
+                
+                event.preventDefault();
+            }
+		},false);
+		
+		window.addEventListener('DOMContentLoaded',init,false);
+	
+	})(window,document);
+</script>
+
+</head>
+
+<body>
+	
+	<div id="root">
+		<div id="world">
+
+		</div>
+	</div>
+</body>
+</html>
+
+

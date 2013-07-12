@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script  src="lib/jqueryPlugin/jquery-1.9.1.min.js"></script>
+    <style>
+        *{
+            box-sizing:  border-box;
+            margin : 0;
+            padding : 0;
+        }
+        body{
+            overflow: hidden;
+
+            background: #fff;
+        }
+        #viewport{
+            margin : 0px auto;
+            width : 80%;
+            height: 100%;
+            border : 1px solid #000;
+        }
+    </style>
+
+    <script>
+        (function($){
+            var w = {};
+
+            w.isFocus = false;
+            w.focusObj = null;
+            w.prevX;
+            w.prevY;
+            w.slides = [];
+            w.mode = 'R';
+
+            w.viewport = function(){
+                this.o = null;
+                this.el = null;
+                this.world = null;
+                this.cong = {};
+                this.mode = 'R';
+
+                this.setupViewport = function()
+                {
+                    var option = this.o;
+
+                    if(!option)
+                    {
+                        option = {};
+                    }
+
+                    this.el.css({
+                        'position' : (option.position) ? option.position : 'absolute',
+                        'bottom' :  (option.bottom) ? option.bottom : 0,
+                        'left' : (option.left) ? option.left : 0,
+                        'right' :  (option.right) ? option.right : 0,
+                        'top' : (option.top) ? option.top : 0,
+                        'overflow' : 'overflow',
+                        '-webkit-perspective':  (option.perspective) ? option.perspective : '400'
+                    });
+
+                    var world_ = $("<div/>");
+
+                    this.cong = {
+                        'position': 'absolute',
+                        'width' : '100%',
+                        'height' : '100%',
+                        'top' : 0,
+                        'left' : 0,
+                        'bottom' : 0,
+                        'right' : 0,
+                        '-webkit-transform-style' : 'preserve-3d',
+                        'background': 'transparent'
+                    };
+
+                    $(world_).css(this.cong);
+
+
+                    this.el.append(world_);
+                    this.world = world_;
+
+                    this.draw = function()
+                    {
+                        (this.cong.width) = (this.cong.width!=undefined) ? (this.cong.width) : 50;
+                        (this.cong.height) = (this.cong.height!=undefined) ? (this.cong.height) : 50;
+
+
+                        (this.cong.rotateX) = (this.cong.rotateX) ? (this.cong.rotateX) : 0;
+                        (this.cong.rotateY) = (this.cong.rotateY) ? (this.cong.rotateY) : 0;
+                        (this.cong.rotateZ) = (this.cong.rotateZ) ? (this.cong.rotateZ) : 0;
+
+                        (this.cong.translateX) = (this.cong.translateX) ? (this.cong.translateX) : 0;
+                        (this.cong.translateY) = (this.cong.translateY) ? (this.cong.translateY) : 0;
+                        (this.cong.translateZ) = (this.cong.translateZ) ? (this.cong.translateZ) : 0;
+
+                        (this.cong.scaleX) = (this.cong.scaleX) ? (this.cong.scaleX) : 1;
+                        (this.cong.scaleY) = (this.cong.scaleY) ? (this.cong.scaleY) : 1;
+                        (this.cong.scaleZ) = (this.cong.scaleZ) ? (this.cong.scaleZ) : 1;
+
+                        var translateXYZ = 'translateX('+(this.cong.translateX)+'px) ' +
+                                'translateY('+(this.cong.translateY)+'px) ' +
+                                'translateZ('+(this.cong.translateZ)+'px) '
+
+                        var rotateXYZ = 'rotateX('+(this.cong.rotateX)+'deg) ' +
+                                'rotateY('+(this.cong.rotateY)+'deg) ' +
+                                'rotateZ('+(this.cong.rotateZ)+'deg) '
+
+                        var scaleXYZ = 'scaleX('+(this.cong.scaleX)+') ' +
+                                'scaleY('+(this.cong.scaleY)+') ' +
+                                'scaleZ('+(this.cong.scaleZ)+') ';
+
+                        (this.cong.background) = (this.cong.background) ? (this.cong.background) : 'hsla(0,100%,60%,0.7)';
+
+                        this.world.css({
+                            position: 'absolute',
+                            width : (this.cong.width) ? this.cong.width+"px" : "0px",
+                            height : (this.cong.height) ? this.cong.height+"px" : "0px",
+                            webkitTransformStyle : 'preserve-3d',
+                            webkitTransform : translateXYZ + rotateXYZ + scaleXYZ,
+                            background: this.cong.background
+                        });
+
+                    }
+
+
+                    this.el.bind('mousedown',function(e){
+                        w.isFocus = true;
+                        w.focusObj = w;
+                        w.focusObj.mode = w.mode;
+
+                        w.isFocus = true;
+
+                        w.prevX = e.clientX;
+                        w.prevY = e.clientY;
+
+                        e.stopPropagation();
+                    })
+
+                    this.el.bind('mousemove',function(e){
+                       if(w.isFocus)
+                       {
+                           if(w.focusObj.mode=='R')
+                           {
+                               w.focusObj.cong.rotateY =  parseFloat(w.focusObj.cong.rotateY)+((((e.clientX-w.prevX)/2) / w.focusObj.cong.width )) * 360;
+                               w.focusObj.cong.rotateX =  parseFloat(w.focusObj.cong.rotateX)+( (((w.prevY-e.clientY)/2) / w.focusObj.cong.height )) * 360;
+                           }
+                           else if(w.focusObj.mode=='T')
+                           {
+                               w.focusObj.cong.translateX = (parseFloat(w.focusObj.cong.translateX) + parseFloat(e.clientX - w.prevX)*Math.abs(w.focusObj.cong.translateZ)/100);
+                               w.focusObj.cong.translateY = (parseFloat(w.focusObj.cong.translateY) + parseFloat(e.clientY - w.prevY)*Math.abs(w.focusObj.cong.translateZ)/100);
+
+                               console.log(w.focusObj.cong.translateX + " "+w.focusObj.cong.translateY );
+                           }
+                           else if(w.focusObj.mode=='S')
+                           {
+                               w.focusObj.cong.width = parseFloat(e.pageX) - parseFloat(w.focusObj.cong.translateX) ;
+                               w.focusObj.cong.height = parseFloat(e.pageY) - parseFloat(w.focusObj.cong.translateY);
+                           }
+
+                           w.prevX = e.clientX;
+                           w.prevY = e.clientY;
+                           w.focusObj.draw();
+                       }
+                    });
+
+                    this.el.bind('mousewheel', function( event ) {
+                        if(w.focusObj)
+                        {
+                            event = event ? event : window.event;
+                            event = event.originalEvent;
+
+                            if(w.focusObj.mode=='R')
+                            {
+                                w.focusObj.cong.translateZ = parseFloat(w.focusObj.cong.translateZ) - ( event.detail ? event.detail * -5 : event.wheelDelta / 8 );
+                            }
+                            else if(w.focusObj.mode='T')
+                            {
+                                var interval  = (event.wheelDelta/2400);
+                                w.focusObj.cong.scaleX = parseFloat(w.focusObj.cong.scaleX) + interval;
+                                w.focusObj.cong.scaleY = parseFloat(w.focusObj.cong.scaleY) + interval;
+                                w.focusObj.cong.scaleZ = parseFloat(w.focusObj.cong.scaleZ) + interval;
+                                console.log(w.focusObj.cong.scaleX);
+                            }
+                            w.focusObj.draw();
+                        }
+
+
+                    });
+
+                    this.el.bind('mouseup',function(e){
+                        w.isFocus = false;
+
+                    })
+                }
+
+                this.addObject = function(cong){
+                    obj1 = $("<div>" +
+                                "<div style='position:absolute;top:0px;width:4px;height:4px;background:#000000;'></div>" +
+                                "<div style='position:absolute;top:0px;width:4px;right:0px;height:4px;background:#000000;'></div>" +
+                                "<div style='position:absolute;bottom:0px;width:4px;height:4px;background:#000000;'></div>" +
+                                "<div style='position:absolute;bottom:0px; right:0px;width:4px;height:4px;background:#000000;'></div>" +
+                            "</div>");
+                    this.world.append(obj1);
+                    obj1.setupObject(cong);
+
+
+
+                    return obj1;
+                }
+
+                return this;
+            };
+
+
+            /*view port setup*/
+            $.fn.setupViewport = function(option)
+            {
+                var t = w.viewport();
+                t.o = option;
+                t.el = $(this);
+                t.setupViewport();
+
+                return t; //kickout viewport
+            };
+
+
+            /* object setup */
+            w.slideObj = function(){
+               this.obj = this;
+               this.el = null;
+               this.cong = null;
+               this.mode = null;
+
+               this.listen = function()
+               {
+                   (function(el,obj){
+
+                        el.bind('mousedown',function(e){
+                           w.isFocus = true;
+                           w.focusObj = obj;
+                           w.focusObj.mode = w.mode;
+
+                           w.prevX = e.clientX;
+                           w.prevY = e.clientY;
+
+                            e.stopPropagation();
+
+                       });
+
+                       el.find('div').bind('mousedown',function(e){
+                           w.isFocus = true;
+                           w.focusObj = obj;
+                           w.focusObj.mode = 'S';
+
+                           w.prevX = e.clientX;
+                           w.prevY = e.clientY;
+
+                           e.stopPropagation();
+                       });
+
+                   })(this.el,this);
+
+
+               }
+
+
+               this.draw = function()
+               {
+                   (this.cong.width) = (this.cong.width!=undefined) ? (this.cong.width) : 50;
+                   (this.cong.height) = (this.cong.height!=undefined) ? (this.cong.height) : 50;
+
+
+                   (this.cong.rotateX) = (this.cong.rotateX) ? (this.cong.rotateX) : 0;
+                   (this.cong.rotateY) = (this.cong.rotateY) ? (this.cong.rotateY) : 0;
+                   (this.cong.rotateZ) = (this.cong.rotateZ) ? (this.cong.rotateZ) : 0;
+
+                   (this.cong.translateX) = (this.cong.translateX) ? (this.cong.translateX) : 0;
+                   (this.cong.translateY) = (this.cong.translateY) ? (this.cong.translateY) : 0;
+                   (this.cong.translateZ) = (this.cong.translateZ) ? (this.cong.translateZ) : 0;
+
+                   (this.cong.scaleX) = (this.cong.scaleX) ? (this.cong.scaleX) : 1;
+                   (this.cong.scaleY) = (this.cong.scaleY) ? (this.cong.scaleY) : 1;
+                   (this.cong.scaleZ) = (this.cong.scaleZ) ? (this.cong.scaleZ) : 1;
+
+                   var translateXYZ = 'translateX('+(this.cong.translateX)+'px) ' +
+                           'translateY('+(this.cong.translateY)+'px) ' +
+                           'translateZ('+(this.cong.translateZ)+'px) '
+
+                   var rotateXYZ = 'rotateX('+(this.cong.rotateX)+'deg) ' +
+                           'rotateY('+(this.cong.rotateY)+'deg) ' +
+                           'rotateZ('+(this.cong.rotateZ)+'deg) '
+
+                   var scaleXYZ = 'scaleX('+(this.cong.scaleX)+') ' +
+                           'scaleY('+(this.cong.scaleY)+') ' +
+                           'scaleZ('+(this.cong.scaleZ)+') ';
+
+                   (this.cong.background) = (this.cong.background) ? (this.cong.background) : 'hsla(0,100%,60%,0.7)';
+
+                   this.el.css({
+                       position: 'absolute',
+                       width : (this.cong.width) ? this.cong.width+"px" : "0px",
+                       height : (this.cong.height) ? this.cong.height+"px" : "0px",
+                       webkitTransformStyle : 'preserve-3d',
+                       webkitTransform : translateXYZ + rotateXYZ + scaleXYZ,
+                       background: this.cong.background
+                   });
+
+               }
+
+                this.run = function(){
+
+                    if(this.el)
+                    {
+                        this.draw();
+                        this.listen();
+                    }
+                }
+
+                return this;
+            }
+
+            w.exportSlideToShowJsonData = function(){
+                var resultJson =  [];
+
+                for(i in this.slides)
+                {
+                    var slide = this.slides[i].cong;
+                    var slideJson = {};
+                    slideJson.id = 'slide_'+i;
+                    slideJson.slideStyle = {};
+
+
+                    $.each(slide,function(key,value){
+                        slideJson.slideStyle[key] = value;
+                    });
+
+                   resultJson.push(slideJson);
+                }
+
+
+                console.log(resultJson);
+                return resultJson;
+            }
+
+            /* object */
+            $.fn.setupObject = function(cong){
+                var newObj = new w.slideObj();
+                newObj.el = $(this);
+                newObj.cong = cong;
+                newObj.run();
+
+                w.slides.push(newObj);
+            }
+
+
+        })(jQuery);
+
+        window.onload = function()
+        {
+            var v = $('#viewport').setupViewport();
+
+            v.addObject({
+                width : 550,
+                height : 410,
+                rotateX : 0,
+                translateZ : -600,
+                translateX :  100,
+                translateY :   20,
+                background : 'rgb(199,124,12)'
+            });
+
+            v.addObject({
+                width : 550,
+                height : 410,
+                rotateX : 0,
+                translateZ : 100,
+                translateX :  400,
+                translateY :   230,
+                background : 'rgb(12,124,199)'
+            });
+
+            v.addObject({
+                width : 550,
+                height : 410,
+                rotateX : 0,
+                translateZ : 200,
+                translateX :  200,
+                translateY :   330
+            });
+
+            $('#startShow').bind('click',function(){
+
+                var presentationData = v.exportSlideToShowJsonData();
+                localStorage.setItem('presentationData',JSON.stringify(presentationData));
+                window.open('proto_presentation.html');
+
+            });
+
+            $('#rMode').bind('click',function(){
+               v.mode = 'R';
+               console.log('R');
+            });
+
+            $('#tMode').bind('click',function(){
+                v.mode = 'T';
+                console.log('T');
+
+            });
+
+            $('#append').bind('click',function(){
+                v.addObject({
+                    width : 550,
+                    height : 410,
+                    rotateX : 0,
+                    translateZ : -600,
+                    translateX :  100,
+                    translateY :   20,
+                    background : 'rgb(199,124,12)'
+                });
+
+
+
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+<div id="startShow">presentation</div>
+
+<div id="rMode">R</div>
+
+<div id="tMode">T</div>
+
+<div id="append">append</div>
+
+<div id="viewport">
+
+</div>
+
+</body>
+</html>

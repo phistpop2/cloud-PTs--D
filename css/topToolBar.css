@@ -1,0 +1,529 @@
+#TopToolBarWrap{
+    position: absolute;
+    width: 100%;
+    top: 10px;
+    left: 0;
+    z-index: 102;
+    text-align: center;
+}
+
+#TopToolBar{
+    display: inline-block;
+    vertical-align: top;
+    position : relative;
+    list-style: none;
+    padding: 4px;
+    background: #222;
+    font-size: 13px;
+    border-radius: 4px;
+    box-shadow: 0px 1px 0px #111;
+    box-sizing: border-box;
+    right : 100px;
+
+}
+
+#TopToolBar li{
+    float : left;
+    margin-left : 3px;
+    margin-right : 3px;
+}
+
+#TopToolBar li.topIcon div.icon{
+    width : 100%;
+    height : 100%;
+    background-size : 18px 18px;
+}
+
+
+
+
+#boldButton div.icon{
+    background:  url(/img/topToolBar/bold_icon.png) no-repeat center;
+}
+#italicButton div.icon{
+    background:  url(/img/topToolBar/italic_icon.png) no-repeat center;
+}
+#underlineButton div.icon{
+    background:  url(/img/topToolBar/underline_icon.png) no-repeat center;
+}
+
+#colorButton div.icon{
+    background:  url(/img/topToolBar/color_icon.png) no-repeat center;
+    background-size : 30px 30px;
+}
+
+
+#objectBackgroundColorButton div.icon{
+    background:  url(/img/topToolBar/color_back_icon.png) no-repeat center;
+}
+
+#styleButton div.icon{
+    background:  url(/img/topToolBar/style_icon.png) no-repeat center;
+}
+
+
+#layoutButton div.icon{
+    background:  url(/img/topToolBar/positioin_icon.png) no-repeat center;
+}
+
+
+#backgroundButton div{
+    background:  url(/img/topToolBar/background_icon.png) no-repeat center;
+}
+
+
+#fontSizeButton{
+    margin-top : 2px;
+    background: #222;
+}
+
+.fontSizeSelectOptions .topVerticalList:before{
+    left: 22px;
+}
+
+#fontFamilyButton{
+    margin-top : 4px;
+    background: #222;
+}
+
+
+div.selectBox
+{
+    position:relative;
+    display:inline-block;
+    cursor:default;
+    text-align:left;
+    line-height:20px;
+    clear:both;
+    color:#fff;
+}
+
+
+span.selected,input.selected
+{
+    width:80px;
+    border:1px solid #222;
+    background:#222;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    max-width : 80px;
+    color : #fff;
+    font-weight: bolder;
+    text-align: center;
+    line-height: 24px;
+    margin-left : 0px;
+
+}
+
+span.selected{
+    overflow: hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+}
+
+span.selectArrow,input.selected,span.selected
+{
+    position:relative;
+    float:left;
+    height:24px;
+    z-index:1;
+}
+
+
+span.selectArrow{
+    cursor:pointer ;
+}
+
+
+div.selectOptions
+{
+    position:absolute;
+    top:28px;
+    width:80px;
+    border:1px solid #222;
+    border-bottom-right-radius:5px;
+    border-bottom-left-radius:5px;
+    overflow:hidden;
+    background:#f6f6f6;
+    padding-top:2px;
+    display:none;
+}
+
+span.selectOption
+{
+    display:block;
+    line-height:20px;
+    padding:5px 10%;
+}
+
+span.selectOption:hover
+{
+    color:#f6f6f6;
+    background:#222;
+    cursor : pointer;
+}
+
+input.selected{
+    width : 60px;
+    max-width: 60px;
+}
+
+li#fontSizeButton{
+    width : 60px;
+}
+
+
+li#fontSizeButton div.selectOptions{
+   width : 60px;
+}
+
+.fontSizeIcon{
+    width : 30px;
+    height : 30px;
+
+    margin-left : 3px;
+    margin-right : 3px;
+    display: inline-block;
+}
+
+
+#textInsertButton div{
+    background:  url(/img/topToolBar/text_icon.png) no-repeat center;
+}
+
+#imageInsertButton div{
+    background:  url(/img/topToolBar/image_icon.png) no-repeat center;
+}
+
+#frameInsertButton div{
+    background:  url(/img/topToolBar/frame_icon.png) no-repeat center;
+}
+
+.topIcon{
+    display : inline-block;
+    width : 30px;
+    height : 30px;
+    margin-top : 1px;
+    margin-bottom : 1px;
+    color : #f6f6f6;
+}
+
+.topIcon:hover{
+    background : #555;
+}
+
+.divider{
+    display: inline-block;
+    width: 1px;
+    height: 34px;
+    background: rgba(255,255,255,0.05);
+}
+
+
+
+.sentenceSortToolTip{
+    width : 144px;
+    position: absolute;
+    margin-top : 0px;
+    margin-left : -60px;
+    display: none;
+}
+
+.topHorizonList
+{
+    float: left;
+    list-style: none;
+    margin : 0px;
+    padding : 0px;
+    margin-top : 22px;
+    background : #222;
+    border-radius: 4px;
+}
+
+.topHorizonList:before{
+    content: '';
+    position: absolute;
+    border-width: 8px;
+    border-style: solid;
+    border-color:  transparent transparent #222 transparent;
+    top: 6px;
+}
+
+.sentenceSortToolTip .topHorizonList:before{
+    left : 67px;
+}
+
+.colorButtonToolTip, .objectBackgroundColorButtonToolTip{
+    margin : 0px;
+    padding : 0px;
+    background : #222;
+    border-radius: 4px;
+}
+
+.colorButtonToolTip:before, .objectBackgroundColorButtonToolTip:before{
+    content: '';
+    position: absolute;
+    border-width: 8px;
+    border-style: solid;
+    border-color:  transparent transparent  #222 transparent;
+    top: -16px;
+    left: 147px;
+}
+
+
+.topHorizonList li{
+    margin : 0px;
+    padding : 0px;
+}
+
+
+
+
+.fontSizeSelectOptions
+{
+    width : 60px;
+    position: absolute;
+    margin-top : 0px;
+    display : none;
+}
+
+.fontFamilySelectOptions{
+    width : 82px;
+    position: absolute;
+    margin-top : 0px;
+    display : none;
+}
+
+
+.topVerticalList{
+    list-style: none;
+    margin : 0px;
+    padding : 0px;
+    background : #222;
+    border-radius: 4px;
+    color : #fff;
+    font-size : 16px;
+    margin-top : 50px;
+    display: inline-block;
+    padding-top : 4px;
+    padding-bottom : 4px;
+ }
+
+
+.topVerticalList:before{
+    content: '';
+    position: absolute;
+    border-width: 8px;
+    border-style: solid;
+    border-color:  transparent transparent #222 transparent;
+    top: 34px;
+}
+
+.fontFamilySelectOptions .topVerticalList:before{
+    left: 32px;
+}
+
+.topVerticalList li{
+    margin : 0px;
+    padding : 0px;
+    width : 100%;
+    text-align: center;
+    cursor : pointer;
+}
+
+.topVerticalList li:hover
+{
+    margin : 0px;
+    padding : 0px;
+    width : 90%;
+    color:#f6f6f6;
+    text-align: center;
+    background:#555;
+    cursor : pointer;
+}
+
+
+.icon{
+    margin : 0px;
+    padding : 0px;
+}
+
+.colorButtonToolTip,
+.objectBackgroundColorButtonToolTip,
+.layoutButtonToolTip{
+    display: none;
+    position: absolute;
+    top : 60px;
+    margin-left : -140px;
+}
+
+
+#sentenceSortButton{
+    display : inline-block;
+    width : 30px;
+    height : 30px;
+    margin-top : 1px;
+    margin-bottom : 1px;
+    color : #f6f6f6;
+}
+
+
+#sentenceSortButton .plainSentence{
+    background:  url(/img/topToolBar/plain_text_sort_icon.png) no-repeat center;
+}
+#sentenceSortButton .leftSentence{
+    background:  url(/img/topToolBar/left_text_sort_icon.png) no-repeat center;
+}
+#sentenceSortButton .centerSentence{
+     background:  url(/img/topToolBar/center_text_sort_icon.png) no-repeat center;
+}
+#sentenceSortButton .rightSentence{
+    background:  url(/img/topToolBar/right_text_sort_icon.png) no-repeat center;
+}
+
+
+
+
+.layoutButtonToolTip{
+    width : 200px;
+    position: absolute;
+    margin-top : 0px;
+    margin-left : -80px;
+    display: none;
+}
+
+.layoutButtonToolTipWrap{
+    margin : 0px;
+    padding : 0px;
+    background : #222;
+    border-radius: 4px;
+}
+
+.layoutButtonToolTipWrap:before{
+    content: '';
+    position: absolute;
+    border-width: 8px;
+    border-style: solid;
+    border-color:  transparent transparent  #222 transparent;
+    top: -16px;
+    left: 87px;
+}
+
+.sizeValueSet
+{
+    padding-top : 10px;
+    display : inline-block;
+}
+.transitionValueSet{
+
+    display : inline-block;
+}
+
+.cf{
+    margin-top : 2px;
+    display : inline-block;
+
+}
+
+.cf input{
+    width: 110px;
+    height: 10px;
+    padding: 10px 5px;
+    float: left;
+    font: bold 15px 'lucida sans', 'trebuchet MS', 'Tahoma';
+    border: 0;
+    background: #eee;
+    border-radius: 3px 0 0 3px;
+}
+
+.cf div{
+    overflow: visible;
+    position: relative;
+    float: left;
+    border: 0;
+    padding: 0;
+    height: 30px;
+    width: 60px;
+    font: bold 10px/30px 'lucida sans', 'trebuchet MS', 'Tahoma';
+    color: #fff;
+    text-transform: uppercase;
+    background: #0da861;
+    border-radius: 0 3px 3px 0;
+    text-shadow: 0 -1px 0 rgba(0, 0 ,0, .3);
+
+}
+
+.cf div:before {
+    content: '';
+    position: absolute;
+    border-width: 8px 8px 8px 0;
+    border-style: solid solid solid none;
+    border-color: transparent #0da861 transparent;
+    top: 6px;
+    left: -6px;
+}
+.box_under_point{
+    display : inline-block;
+}
+
+.box_under_point div{
+    overflow: visible;
+    position: relative;
+    float: left;
+    border: 0;
+    padding: 0;
+    height: 20px;
+    width: 40px;
+    font: bold 10px/30px 'lucida sans', 'trebuchet MS', 'Tahoma';
+    color: #fff;
+    text-transform: uppercase;
+    background: #0da861;
+    border-radius: 3px 3px 3px 3px;
+    text-shadow: 0 -1px 0 rgba(0, 0 ,0, .3);
+    line-height: 24px;
+    margin-bottom : 10px;
+}
+
+
+.box_under_point div:before {
+    content: '';
+    position: absolute;
+    border-width: 8px;
+    border-style: solid;
+    border-color: #0da861 transparent transparent  transparent;
+    top: 20px;
+    left: 12px;
+}
+
+
+.rotationValueSet{
+    height : 90px;
+    padding-top:4px;
+    display : inline-block;
+}
+
+
+
+.rotationValueItemWrap{
+    height : 50px;
+    width : 50px;
+    float : left;
+    margin-left : 10px;
+}
+
+.rotationValueSet div:first-child{
+    margin-left : 0px;
+}
+
+.rotationValueItemWrap input{
+    margin-left : -10px;
+}
+
+.hori_divider{
+    margin-top : 5px;
+    margin-bottom : 5px;
+    display: inline-block;
+    width: 90%;
+    height: 1px;
+    background: rgba(255,255,255,0.5);
+}

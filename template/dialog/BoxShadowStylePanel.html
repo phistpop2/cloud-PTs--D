@@ -1,0 +1,82 @@
+<div class='box_shadow_style_control'>
+    <div class='style_group'>
+        <div class="setting-block">
+            <div class="row">
+                <label for="horizontalLength">Horizontal Length</label>
+                <label class="align-right" for="horizontalLength">px</label>
+                <div class="text-1">
+                    <input id="horizontalLength" type="text" value="0">
+                </div>
+            </div>
+            <div class='style_slider' data-min='-100' data-max='100'>
+            </div>
+
+
+
+            <div class="row margin_top">
+                <label for="verticalLength">Vertical Length</label>
+                <label class="align-right" for="verticalLength">px</label>
+                <div class="text-1">
+                    <input id="verticalLength" type="text" value="0">
+                </div>
+            </div>
+            <div class='style_slider'    data-min='-100' data-max='100'>
+            </div>
+        </div>
+
+        <div class='divider_line'></div>
+
+         <div class="setting-block">
+            <div class="row">
+                <label for="blurRadius">Blur Radius</label>
+                <label class="align-right" for="blurRadius">px</label>
+                <div class="text-1">
+                    <input id="blurRadius" type="text" value="0">
+                </div>
+            </div>
+            <div class='style_slider'   data-min='0' data-max='100'></div>
+
+            <div class="row margin_top">
+                <label for="spreadField">Spread Radius</label>
+                <label class="align-right" for="spreadField">px</label>
+                <div class="text-1">
+                    <input id="spreadField" type="text" value="0">
+                </div>
+            </div>
+             <div class='style_slider'   data-min='0' data-max='100'></div>
+        </div>
+
+        <div class='divider_line'></div>
+
+        <div class="setting-block">
+            <div class="row color-row">
+                <label for="shadowColor">Shadow Color</label>
+                <div class="text-2">
+                    <input id="shadowColor" class='color_picker' value="#000000">
+                </div>
+                <span class='color_thumb'></span>
+            </div>
+        </div>
+
+        <div class='divider_line'></div>
+
+        <div class="setting-block">
+            <div class="row">
+                <div class='add_style_btn' id='addBoxShadowButton'>Add to List</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class='style_group margin_top'>
+        <div class="setting-block">
+            <div class="row">
+                <label>Shadow List</label>
+            </div>
+
+            <ul class='style_list' id='boxShadowList'>
+
+            </ul>
+        </div>
+    </div>
+</div>

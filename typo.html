@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        #editor {
+            width:560px;
+            height:450px;
+            border:1px dotted #afa;
+        }
+    </style>
+    <script>
+        function autocorrectTest()
+        {
+            var node = document.getElementById("editor");
+            var caretID = '_caret';
+            var cc = document.createElement('span');
+            cc.id = caretID;
+
+            // Save Current Caret position
+            window.getSelection().getRangeAt(0).insertNode(cc);
+
+            node.blur();
+
+            /* Text manipulate test block { */
+            node.innerHTML = node.innerHTML.replace("mytest","*myTEST*"); // Longest match first
+            node.innerHTML = node.innerHTML.replace("test","*TEST*");
+            /* } */
+
+            // Restore Caret Position
+            node.focus();
+
+            var range = document.createRange();
+            cc = document.getElementById(caretID);
+            range.selectNode(cc);
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            range.deleteContents();
+        }
+    </script>
+</head>
+<body>
+<h1>ContentEditable Autocorrection Test</h1>
+<div id="editor" contenteditable="true" onkeydown="autocorrectTest()">
+    <p>Enter text Here</p>
+</div>
+</body>
+</html>

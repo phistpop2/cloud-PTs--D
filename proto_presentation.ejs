@@ -1,0 +1,171 @@
+<html>
+<head>
+<title></title>
+
+<script  src="/lib/jqueryPlugin/jquery-1.9.1.min.js"></script>
+<script  src="/lib/jqueryPlugin/jquery-ui.min.js"></script>
+<script  src="/lib/jqueryPlugin/jquery.lightbox_me.js"></script>
+<script  src="/lib/google_client.js"></script>
+<script  src="/lib/session.js"></script>
+<script  src="/lib/recorder.js"></script>
+<script  src="/lib/record.js"></script>
+<script  src="/lib/show.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="/css/dialogs.css" />
+<link rel="stylesheet" type="text/css" href="/css/show.css" />
+<link rel="stylesheet" type="text/css" href="/css/presentation.css" />
+<link rel="stylesheet" type="text/css" href="/css/content.css" />
+
+<script type="text/javascript">
+    var session = null;
+    var records = null;
+    var recordDataSet = {};
+
+    popupRecordConfirmDialog = function(record_)
+    {
+        console.log(record_);
+        $('#recordConfirmDialog').lightbox_me({
+            centered: true,
+            closeClick : false
+        });
+
+        records = record_.recordDatas;
+    },
+
+    recordUploadFinish = function()
+    {
+        session.uploadRecordHistory(recordDataSet,function(data){
+            console.log("uploadRecordHistory complete",data);
+        });
+    },
+
+    uploadRecordData = function()
+    {
+        console.log("uploadRecordData");
+
+        recordDataSet.title = $('#recordedPresentationSubject').val();
+        recordDataSet.downloadUrls = [];
+        session.uploadBlobTpMerge(records,recordDataSet,'audio/x-wav');
+        $('#recordConfirmDialog').trigger('close');
+/*
+        session.uploadFile(base64data,'audio/x-wav',function(data){
+
+            var title = $('#recordedPresentationSubject').val();
+            var recordUrl = data.file.downloadUrl;
+            var account = session.getUserInfo().id;
+
+
+
+        });
+
+        */
+    }
+
+    setUserInformation = function()
+    {
+        session.setUserInformation();
+    }
+
+
+    sessionInit = function ()
+    {
+        session.checkWorkFolder();
+        recordDataSet.account = session.getUserInfo().email;
+    }
+
+    window.onload = function()
+    {
+        $('#onAirButton').click(function(e){
+            if($(this).hasClass('toggleOn')){
+                $(this).removeClass('toggleOn');
+                $(this).addClass('toggleOff');
+            }
+            else{
+                $(this).removeClass('toggleOff');
+                $(this).addClass('toggleOn');
+            }
+        });
+
+        $('#recordButton').click(function(e){
+            if($(this).hasClass('toggleOn')){
+                $(this).removeClass('toggleOn');
+                $(this).addClass('toggleOff')
+
+                recordControl.stopRecording();
+            }
+            else{
+                $(this).removeClass('toggleOff');
+                $(this).addClass('toggleOn');
+
+                recordControl.startRecording();
+            }
+        });
+
+
+        $('#doUploadRecordBtn').click(uploadRecordData);
+        $('#cancelUploadRecordBtn').click(function()
+        {
+            $('#recordConfirmDialog').trigger('close');
+        });
+
+        var presentationData = '<%=presentationData%>';
+        var presentationKey = '<%=presentationKey%>';
+
+        presentationData = presentationData.replace(/&shin;/gi,'\\').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&quot;/gi,'"');
+        presentationKey = presentationKey.replace(/&shin;/gi,'\\').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&quot;/gi,'"');
+
+        recordDataSet.presentationData = presentationData;
+        recordDataSet.presentationKey = presentationKey;
+
+        var slides = JSON.parse(presentationData);
+        show.start(slides);
+
+        var recordControl = new RecordControl();
+        session = new PSession();
+        session.authorization();
+
+        $(document).bind("accountSuccess", setUserInformation);
+        $(document).bind("completeUserInfo", sessionInit);
+        $(document).bind("recordComplete", popupRecordConfirmDialog);
+        $(document).bind("completeUploadBlobs",recordUploadFinish);
+    }
+
+</script>
+
+</head>
+
+<body>
+
+    <div id='onAirButton' class='toggleOff'>
+        <div></div>
+    </div>
+
+    <div id='recordButton' class='toggleOff'>
+        <div></div>
+    </div>
+
+	<div id="root">
+		<div id="world">
+
+		</div>
+	</div>
+
+    <audio></audio>
+
+
+    <div class='defaultDialog' id='recordConfirmDialog'>
+        <span class='default-dialog-title'>Upload Recorded Presentation</span>
+        <ol class='dialog-list'>
+        </ol>
+        <div class='buttonSet'>
+            <input class='fieldInput' id='recordedPresentationSubject'>
+            <a class='defaultDialogBtn' id="doUploadRecordBtn" href="#">Upload</a>
+            <a class='defaultDialogBtn' id="cancelUploadRecordBtn" href="#">Cancel</a>
+        </div>
+    </div>
+
+</body>
+</html>
+
+

@@ -1,0 +1,196 @@
+
+.accordionWrap{
+    list-style: none;
+    margin : 0px;
+    padding : 0px;
+    background: #666;
+}
+
+.level1, .level2, .level3{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    display: block;
+    position: relative;
+    padding: 0 10px 0 0;
+    text-align: center;
+    height: 32px;
+    font: bold 12px/32px Arial, sans-serif;
+}
+
+.level1{
+    background: #343435;
+}
+
+.level2{
+    background: #454545;
+}
+
+.level3{
+    background: #565656;
+}
+
+.level1 a,.level2 a,.level3 a{
+    color : #F6F6F6;
+    text-decoration: none;
+    text-align:    left;
+}
+
+.level1 a{
+    font-size : 14px;
+    padding-left : 10px;
+}
+
+.level2 a{
+    font-size : 13px;
+    padding-left : 20px;
+}
+
+.level3 a{
+    font-size : 12px;
+    padding-left : 30px;
+}
+
+
+.content_wrap{
+    padding-top : 10px;
+    padding-bottom : 10px;
+}
+
+#common_border_color_wrap{
+    margin : 10px;
+
+}
+#common_border_color_controller,
+#common_background_color_controller,
+#common_shadow_color_controller
+{
+
+    margin-left: 50px;
+}
+
+#common_border_color_preview,
+#common_background_color_preview,
+#common_shadow_color_preview{
+    width : 40px;
+    height : 40px;
+    background : #ffffff;
+    border : 1px solid #333333;
+    -webkit-border-radius: 2px;
+    float : left;
+    margin-top : 22px;
+}
+
+.control_label{
+    float : left;
+    color : #F6F6F6;
+    font-weight: bold;
+    font-size : 12px;
+
+    margin-left : 4px;
+}
+
+.control_label input{
+    width : 30px;
+    background: transparent;
+    border : 0px solid;
+    color : #F6F6F6;
+    text-align: center;
+    font-weight: bold;
+
+}
+
+#common_border_width_slider{
+    margin-left : 70px;
+}
+
+.control_slider{
+
+    font-size : 10px;  margin : 10px;
+
+}
+
+.li_row .control_label{
+    margin-top:-9px;
+}
+
+.content_wrap ul{
+    margin : 0px;
+    margin-left : 10px;
+    padding : 0px;
+    list-style: none;
+}
+
+.content_wrap ul li{
+    margin-top : 10px;
+    margin-bottom : 10px;
+}
+
+.iCheckLabel{
+    margin-left : 30px;
+    color : #F6F6F6;
+    font-weight: bold;
+    font-size : 12px;
+}
+
+
+#common_border_radius_top_left,
+#common_border_radius_top_right,
+#common_border_radius_bottom_left,
+#common_border_radius_bottom_right,
+#common_border_opacity{
+    margin-left : 70px;
+}
+
+
+#common_shadow_h,
+#common_shadow_v,
+#common_shadow_blur,
+#common_shadow_spreed{
+    margin-left : 70px;
+}
+
+#common_background_h,
+#common_shadow_v,
+#common_shadow_blur,
+#common_shadow_spreed{
+    margin-left : 70px;
+}
+
+
+
+#text_spacing_line,
+#text_spacing_word,
+#text_spacing_letter{
+    margin-left : 70px;
+}
+
+#text_font_opacity,
+#text_font_bold,
+#text_font_size{
+    margin-left : 70px;
+}
+
+.color_picker_form input{
+    border : 0px solid transparent;
+    width : 60px;
+    text-align: center;
+}
+
+.color_picker_form{
+    margin-left : 14px;
+}
+
+#font_selectbox{
+    margin-left : 10px;
+}
+
+
+#text_shadow_h,
+#text_shadow_v,
+#text_shadow_distance,
+#text_shadow_blur,
+#text_shadow_opacity{
+    margin-left : 70px;
+}

@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="lib/jqueryPlugin/jquery-1.9.1.min.js"></script>
+    <script src="lib/jqueryPlugin/jquery-ui.min.js"></script>
+
+
+
+    <script src="lib/jqueryPlugin/jquery.nestedAccordion.js"></script>
+    <script src="lib/jqueryPlugin/jquery.icheck.min.js"></script>
+    <script src="lib/jqueryPlugin/jquery.farbtastic.js"></script>
+    <script src="lib/jqueryPlugin/jquery.selectbox-0.2.min.js"></script>
+
+    <title></title>
+
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="css/farbtastic.css" />
+    <link rel="stylesheet" type="text/css" href="css/icheck-all.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.selectbox.css" />
+    <style>
+
+        .accordionWrap{
+            list-style: none;
+            margin : 0px;
+            padding : 0px;
+            background: #666;
+        }
+
+        .level1, .level2, .level3{
+            margin: 0;
+            padding: 0;
+            border: 0;
+            outline: none;
+            display: block;
+            position: relative;
+            padding: 0 10px 0 0;
+            text-align: center;
+            height: 32px;
+            font: bold 12px/32px Arial, sans-serif;
+        }
+
+        .level1{
+            background: #343435;
+        }
+
+        .level2{
+            background: #454545;
+        }
+
+        .level3{
+            background: #565656;
+        }
+
+        .level1 a,.level2 a,.level3 a{
+            color : #F6F6F6;
+            text-decoration: none;
+            text-align:    left;
+        }
+
+        .level1 a{
+            font-size : 14px;
+            padding-left : 10px;
+        }
+
+        .level2 a{
+            font-size : 13px;
+            padding-left : 20px;
+        }
+
+        .level3 a{
+            font-size : 12px;
+            padding-left : 30px;
+        }
+
+
+        .content_wrap{
+            padding-top : 10px;
+            padding-bottom : 10px;
+        }
+
+        #common_border_color_wrap{
+            margin : 10px;
+
+        }
+        #common_border_color_controller,#common_background_color_controller,#common_shadow_color_controller
+        {
+
+            margin-left: 50px;
+        }
+
+        #common_border_color_preview,#common_background_color_preview,#common_shadow_color_preview{
+            width : 40px;
+            height : 40px;
+            background : #ffffff;
+            border : 1px solid #333333;
+            -webkit-border-radius: 2px;
+            float : left;
+            margin-top : 22px;
+        }
+
+        .control_label{
+            float : left;
+            color : #F6F6F6;
+            font-weight: bold;
+            font-size : 12px;
+
+            margin-left : 4px;
+        }
+
+        .control_label input{
+            width : 30px;
+            background: transparent;
+            border : 0px solid;
+            color : #F6F6F6;
+            text-align: center;
+            font-weight: bold;
+
+        }
+
+        #common_border_width_slider{
+            margin-left : 70px;
+        }
+
+        .control_slider{
+
+            font-size : 10px;  margin : 10px;
+
+        }
+
+        .li_row .control_label{
+            margin-top:-9px;
+        }
+
+        .content_wrap ul{
+            margin : 0px;
+            margin-left : 10px;
+            padding : 0px;
+            list-style: none;
+        }
+
+        .content_wrap ul li{
+            margin-top : 10px;
+            margin-bottom : 10px;
+        }
+
+        .iCheckLabel{
+            margin-left : 30px;
+            color : #F6F6F6;
+            font-weight: bold;
+            font-size : 12px;
+        }
+
+
+        #common_border_radius_top_left,
+        #common_border_radius_top_right,
+        #common_border_radius_bottom_left,
+        #common_border_radius_bottom_right{
+            margin-left : 70px;
+        }
+
+
+        #common_shadow_h,
+        #common_shadow_v,
+        #common_shadow_spreed{
+            margin-left : 70px;
+        }
+
+        #text_spacing_line,
+        #text_spacing_word,
+        #text_spacing_letter{
+            margin-left : 70px;
+        }
+
+        #text_font_opacity,
+        #text_font_bold,
+        #text_font_size{
+            margin-left : 70px;
+        }
+
+        .color_picker_form input{
+            border : 0px solid transparent;
+            width : 60px;
+            text-align: center;
+        }
+
+        .color_picker_form{
+            margin-left : 14px;
+        }
+
+        #font_selectbox{
+            margin-left : 10px;
+        }
+
+
+        #text_shadow_angle,
+        #text_shadow_distance,
+        #text_shadow_blur,
+        #text_shadow_opacity{
+            margin-left : 70px;
+        }
+
+
+    </style>
+    <script>
+
+        $(function() {
+            $("#acc1").accordion({
+                el: ".h",
+                head: ".level1, .level2, .level3",
+                next: "div",
+                container : false,
+                showSpeed : 200,
+                hideSpeed : 250,
+                scrollSpeed : 100,
+                standardExpansible : true
+            });
+
+            $( "#common_border_color_r_slider,"+
+               "#common_border_color_g_slider,"+
+               "#common_border_color_b_slider" ).slider({
+                orientation: "horizontal",
+                max: 255,
+                value: 0,
+                slide : refreshSlideValue,
+                change : refreshSlideValue
+            });
+
+            $('#common_border_opacity').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+
+            $('#common_border_width_slider').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+
+            $('#common_border_radius_top_left, ' +
+              '#common_border_radius_top_right, ' +
+              '#common_border_radius_bottom_left, ' +
+              '#common_border_radius_bottom_right').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+
+
+            $('.iCheckTarget').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_flat-green',
+                increaseArea: '20%' // optional
+            });
+
+
+            $( "#common_background_color_r_slider,"+
+               "#common_background_color_g_slider,"+
+               "#common_background_color_b_slider" ).slider({
+                        orientation: "horizontal",
+                        max: 255,
+                        value: 0,
+                        slide : refreshSlideValue,
+                        change : refreshSlideValue
+                    });
+
+
+            $('#common_shadow_h, ' +
+                    '#common_shadow_v, ' +
+                    '#common_shadow_spreed, ').slider({
+                        orientation: "horizontal",
+                        max: 100,
+                        value: 0
+                    });
+
+
+            $( "#common_shadow_color_r_slider,"+
+                    "#common_shadow_color_g_slider,"+
+                    "#common_shadow_color_b_slider" ).slider({
+                        orientation: "horizontal",
+                        max: 255,
+                        value: 0,
+                        slide : refreshSlideValue,
+                        change : refreshSlideValue
+                    });
+
+
+            $('#text_spacing_line').slider({
+                        orientation: "horizontal",
+                        max: 100,
+                        value: 0
+                    });
+            $('#text_spacing_word').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+            $('#text_spacing_letter').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+
+            $('#text_font_color_picker').farbtastic('#text_font_color_value');
+
+            $('#text_font_opacity').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+
+            $('#text_font_bold').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+            $('#text_font_size').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+
+
+
+            $( '#font_selectbox' ).selectbox();
+
+
+
+            $('#text_shadow_angle').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+            $('#text_shadow_blur').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+            $('#text_shadow_distance').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+
+            $('#text_shadow_color_picker').farbtastic('#text_shadow_color_value');
+
+
+            $('#text_shadow_opacity').slider({
+                orientation: "horizontal",
+                max: 100,
+                value: 0
+            });
+
+            function refreshSlideValue(){
+
+                //             $('#sliderValue').val($( "#slider" ).slider( "value" ));
+            }
+
+        });
+
+
+
+    </script>
+</head>
+<body>
+<ul id="acc1" class='accordionWrap'>
+    <li>
+        <h4 class='level1'>Common</h4>
+        <div>
+            <ul class='accordionWrap'>
+                <li>
+                    <h4 class='level2'>Border</h4>
+                    <div>
+                        <ul class='accordionWrap'>
+                            <li>
+                                <h4 class='level3'>style</h4>
+                                <div class='content_wrap' id='common_border_style_wrap'>
+                                    <ul>
+                                        <li>
+                                            <input class='iCheckTarget' type="radio" id="common_border_style_solid" name="common_border_style">
+                                            <label class='iCheckLabel' for="common_border_style_solid">Solid</label>
+                                        </li>
+                                        <li>
+                                            <input class='iCheckTarget' type="radio" id="common_border_style_dotted" name="common_border_style">
+                                            <label class='iCheckLabel' for="common_border_style_dotted">Dotted</label>
+                                        </li>
+                                        <li>
+                                            <input class='iCheckTarget' type="radio" id="common_border_style_dash" name="common_border_style">
+                                            <label class='iCheckLabel' for="common_border_style_dash">Dash</label>
+                                        </li>
+                                        <li>
+                                            <input class='iCheckTarget' type="radio" id="common_border_style_double" name="common_border_style">
+                                            <label class='iCheckLabel' for="common_border_style_double">Double</label>
+                                        </li>
+                                        <li>
+                                            <input class='iCheckTarget' type="radio" id="common_border_style_none" name="common_border_style">
+                                            <label class='iCheckLabel' for="common_border_style_none">None</label>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <h4 class='level3'>color</h4>
+                                <div id='common_border_color_wrap'>
+                                    <div id='common_border_color_preview'>
+
+                                    </div>
+                                    <div class='content_wrap' id='common_border_color_controller'>
+                                        <div class='control_slider'  id="common_border_color_r_slider"></div>
+                                        <div class='control_slider'  id="common_border_color_g_slider"></div>
+                                        <div class='control_slider'  id="common_border_color_b_slider"></div>
+                                    </div>
+
+                                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>opacity</span>
+                                    </div>
+
+                                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                        <div class='control_slider'  id="common_border_opacity" style='margin-top:20px;'></div>
+                                    </div>
+                                </div>
+
+
+                            </li>
+                            <li>
+                                <h4 class='level3'>width</h4>
+                                <div class='content_wrap' id='common_border_width_wrap'>
+                                    <div class='control_label'><input value='10'>px</div>
+                                    <div class='control_slider' id="common_border_width_slider" ></div>
+                                </div>
+                            </li>
+                            <li>
+                                <h4 class='level3'>radius</h4>
+                                <div class='content_wrap' id='common_border_radius_wrap'>
+
+                                    <div style='border-top : 1px solid #fff; padding-top : 4px;'>
+                                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>top-left</span>
+                                        <span style='float : right; margin-right : 10px;'>
+                                            <input class='iCheckTarget' type="checkbox" id="common_border_style_radius_lock" >
+                                            <label class='iCheckLabel' for="common_border_style_radius_lock">all-lock</label>
+                                        </span>
+                                    </div>
+
+                                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                        <div class='control_slider'  id="common_border_radius_top_left" style='margin-top:20px;'></div>
+                                    </div>
+
+
+
+
+                                    <div style='padding-top : 4px;'>
+                                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>top-right</span>
+                                    </div>
+
+                                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                        <div class='control_slider'  id="common_border_radius_top_right" style='margin-top:20px;'></div>
+                                    </div>
+
+
+
+
+                                    <div style='padding-top : 4px;'>
+                                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>bottom-left</span>
+                                    </div>
+
+                                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                        <div class='control_slider'  id="common_border_radius_bottom_left" style='margin-top:20px;'></div>
+                                    </div>
+
+                                    <div style='padding-top : 4px;'>
+                                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>bottom-right</span>
+                                    </div>
+
+                                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                        <div class='control_slider'  id="common_border_radius_bottom_right" style='margin-top:20px;'></div>
+                                    </div>
+
+                                </div>
+                            </li>
+                        </ul>
+
+                    </div>
+                </li>
+                <li>
+                    <h5 class='level2'>Box-Shadow</h5>
+                    <div  class='content_wrap' style='margin-left: 10px;'>
+                        <div style='float :left; margin-left : 10px;'>
+                            <input class='iCheckTarget' type="checkbox" id="common_background_inset_check">
+                            <label class='iCheckLabel' for="common_background_inset_check">Inset</label>
+                        </div>
+
+
+                        <div style='margin-top : 30px;'>
+                            <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>h-shadow</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                <div class='control_slider'  id="common_shadow_h" style='margin-top:20px;'></div>
+                            </div>
+
+
+                            <div style='padding-top : 4px;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>v-shadow</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                <div class='control_slider'  id="common_shadow_v" style='margin-top:20px;'></div>
+                            </div>
+
+
+                            <div style='padding-top : 4px;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>spreed</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                <div class='control_slider'  id="common_shadow_spreed" style='margin-top:20px;'></div>
+                            </div>
+
+
+                            <div style='padding-top : 4px;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>color</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <div id='common_shadow_color_wrap'>
+                                    <div id='common_shadow_color_preview'>
+
+                                    </div>
+                                    <div class='content_wrap' id='common_shadow_color_controller'>
+                                        <div class='control_slider'  id="common_shadow_color_r_slider"></div>
+                                        <div class='control_slider'  id="common_shadow_color_g_slider"></div>
+                                        <div class='control_slider'  id="common_shadow_color_b_slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </li>
+    <li>
+        <h4 class='level1'>Text</h4>
+        <div>
+            <ul class='accordionWrap'>
+                <li>
+                    <h5 class='level2'>Spacing</h5>
+                    <div  class='content_wrap'>
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>line-height</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_spacing_line" style='margin-top:20px;'></div>
+                        </div>
+
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>word-spacing</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_spacing_word" style='margin-top:20px;'></div>
+                        </div>
+
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>letter-spacing</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_spacing_letter" style='margin-top:20px;'></div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <h5 class='level2'>Decoration</h5>
+                    <div class='content_wrap'>
+                        <ul>
+                            <li>
+                                <input class='iCheckTarget' type="radio" id="text_decoration_none" name="text_decoration_style">
+                                <label class='iCheckLabel' for="text_decoration_none">none</label>
+                            </li>
+                            <li>
+                                <input class='iCheckTarget' type="checkbox" id="text_decoration_italic">
+                                <label class='iCheckLabel' for="text_decoration_italic">italic</label>
+                            </li>
+
+                            <li>
+                                <input class='iCheckTarget' type="radio" id="text_decoration_overline" name="text_decoration_style">
+                                <label class='iCheckLabel' for="text_decoration_overline">overline</label>
+                            </li>
+                            <li>
+                                <input class='iCheckTarget' type="radio" id="text_decoration_linethrough" name="text_decoration_style">
+                                <label class='iCheckLabel' for="text_decoration_linethrough">line-through</label>
+                            </li>
+                            <li>
+                                <input class='iCheckTarget' type="radio" id="text_decoration_underline" name="text_decoration_style">
+                                <label class='iCheckLabel' for="text_decoration_underline">underline</label>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <h5 class='level2'>Font</h5>
+                    <div  class='content_wrap'>
+                        <div style='padding-top : 6px; margin-bottom : 6px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>font</span>
+                        </div>
+
+                        <div style='padding-bottom:10px; margin-left : 10px;'>
+                            <select id="font_selectbox" class="cd-select">
+                                <option value="Arail" class="icon-tux">Arail</option>
+                                <option value="Arial Black" class="icon-finder">Arial Black</option>
+                                <option value="Impact" class="icon-windows">Impact</option>
+                                <option value="Palatino Linotype" class="icon-android">Palatino Linotype</option>
+                            </select>
+                        </div>
+
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>color</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <form   class="color_picker_form" action="" style="width: 400px;">
+                                <div><input type="text" id="text_font_color_value" name="color" value="#000000" /></div><div id="text_font_color_picker"></div>
+                            </form>
+                        </div>
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>opacity</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_font_opacity" style='margin-top:20px;'></div>
+                        </div>
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>size</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_font_size" style='margin-top:20px;'></div>
+                        </div>
+
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>bold</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_font_bold" style='margin-top:20px;'></div>
+                        </div>
+
+
+
+
+                    </div>
+                </li>
+                <li>
+                    <h5 class='level2'>Shadow</h5>
+                    <div  class='content_wrap'>
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>angle</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_shadow_angle" style='margin-top:20px;'></div>
+                        </div>
+
+
+
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>distance</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_shadow_distance" style='margin-top:20px;'></div>
+                        </div>
+
+
+
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>blur</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_shadow_blur" style='margin-top:20px;'></div>
+                        </div>
+
+
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>color</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <form   class="color_picker_form" action="" style="width: 400px;">
+                                <div><input type="text" id="text_shadow_color_value" name="color" value="#000000" /></div><div id="text_shadow_color_picker"></div>
+                            </form>
+                        </div>
+
+
+
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>opacity</span>
+                        </div>
+
+                        <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                            <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                            <div class='control_slider'  id="text_shadow_opacity" style='margin-top:20px;'></div>
+                        </div>
+
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </li>
+
+    <li id=''>
+        <h4 class='level1'>Contain</h4>
+        <div>
+            <ul class='accordionWrap'>
+                <li>
+                    <div class='content_wrap' id='contain_wrap'>
+                        <ul>
+                            <li>
+                                <input class='iCheckTarget' type="checkbox" id="contain_mode_toggle" name="contain_mode_toggle">
+                                <label class='iCheckLabel' for="contain_mode_toggle">contain mode</label>
+                            </li>
+                            <div style='padding-top : 4px; border-top : 1px solid #fff;' >
+                                <ul id='contain_list'>
+
+                                </ul>
+                            </div>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </li>
+</ul>
+</body>
+</html>

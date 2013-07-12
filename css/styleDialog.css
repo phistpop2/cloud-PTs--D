@@ -1,0 +1,245 @@
+#styleDialog{
+    position: absolute;
+    top : 80px;
+    left : 50%;
+    display: none;
+    width : 0px;
+}
+
+#styleDialog .dialog_content{
+    position: relative;
+    left: -50%;
+    width : 300px;
+    height : 440px;
+    padding : 4px;
+    background : #222;
+    border-radius: 4px;
+}
+
+.dialog_content .left_panel{
+
+    width : 300px;
+
+}
+.style_control_panel{
+    margin-top : 10px;
+}
+
+.left_panel .style_control_panel{
+    height : 400px;
+    overflow-y: auto;
+}
+
+
+
+.style_selector #style_selector{
+    width : 200px;
+}
+
+.style_selector .style_header_btn_set{
+    float : right;
+    list-style: none;
+    padding : 0px;
+    margin : 0px;
+}
+
+.style_selector .style_header_btn_set li
+{
+    border-radius: 4px;
+    background:  #18afcd;
+    border : 0px solid #fff;
+    float : left;
+    padding : 1px;
+    padding-right : 2px;
+    padding-left : 2px;
+    margin-top : 3px;
+    cursor : pointer;
+    margin-left : 6px;
+    font-size : 16px;
+    font-weight: bold;
+
+}
+
+.style_selector .style_header_btn_set li:hover{
+    background: #39afcd;
+}
+
+.right_panel{
+    margin-left : 200px;
+    height : 100%;
+
+}
+
+
+.right_panel .code_layer_panel{
+    overflow-y: auto;
+    height: 86%;
+    margin-left : 10px;
+}
+
+.button_set{
+    margin-top : 6px;
+    margin-bottom : 10px;
+}
+
+.right_panel .button_set{
+    width : 98%;
+    margin-top : 10px;
+    display: inline-block;
+}
+
+
+.style_item_wrap{
+    display: inline-block;
+
+    margin-top : 4px;
+    margin-bottom : 4px;
+    color : #fff;
+    font-style : normal;
+    width : 100%;
+}
+
+.float_right{
+    float : right;
+}
+
+.float_left{
+    float : left;
+}
+
+.style_item_wrap .input-small{
+    height : 22px;
+}
+
+.border_style_control #borderStyleSelector
+{
+    width : 100px;
+    height : 31px;
+}
+
+#borderWidth{
+    width : 60px;
+}
+
+.border_radius_group .style_item_wrap .px_input{
+    width : 50px;
+}
+
+.style_item_wrap .label{
+    vertical-align:middle;
+}
+
+#borderColor{
+    width : 60px;
+}
+
+/* box shadow */
+.border_style_control,
+.box_shadow_style_control,
+.text_shadow_style_control
+{
+    padding-top : 10px;
+    padding-bottom : 10px;
+    padding-right : 10px;
+}
+
+.style_group{
+    background: #fff;
+    border-radius:  4px;
+    color : #626262;
+    font : 14px/19px Helvetica, Arial, sans-serif;
+}
+
+.setting-block{
+    padding : 14px;
+
+}
+
+.setting-block .row{
+    margin-bottom : 10px;
+}
+
+.text-1, .text-2{
+    float : right;
+}
+.text-1 input{
+    float: left;
+    width: 27px;
+    height: 15px;
+    padding: 3px 2px 4px;
+    margin: 0;
+    border: 0;
+    background: none;
+    text-align: center;
+}
+
+.color_picker{
+    width : 60px;
+}
+
+.color_thumb{
+    float : right;
+    width : 30px;
+    height : 20px;
+    border : 1px solid #000;
+    border-radius: 3px;
+    margin-right : 4px;
+}
+
+.align-right{
+    float : right;
+}
+
+.margin_top{
+    margin-top : 20px;
+}
+
+.divider_line{
+    margin-right : 4%;
+    margin-left : 4%;
+    margin-top : 10px;
+    margin-bottom : 8px;
+    border-top : 1px dotted #989898;
+    height: 1px;
+}
+
+.style_list{
+    list-style: none;
+}
+
+.style_list li{
+    display: block;
+    height : 20px;
+    cursor: pointer;
+}
+
+.add_style_btn{
+    border-radius: 4px;
+    background: #49afcd;
+    float : right;
+    margin-top : -12px;
+    margin-bottom : 4px;
+    border : 0px;
+    padding : 6px;
+    cursor : pointer;
+}
+
+.add_style_btn:hover{
+    background: #30afcd;
+}
+
+.style_list li:hover{
+    background: #f2f2f2;
+}
+
+.style_list li .item_name{
+    display: block;
+    float : left;
+}
+
+.style_list li .delete_btn{
+    display: block;
+    float : right;
+    font-style: normal;
+}
+

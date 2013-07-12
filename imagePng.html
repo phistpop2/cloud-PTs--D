@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+
+    <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
+    <script src="lib/jqueryPlugin/jquery-1.9.1.min.js"></script>
+
+    <script>
+
+        var saveToFile = function (path) {
+            var canvas = document.getElementById('canvas');
+
+            var newCanvas = document.createElement('canvas');
+            newCanvas.width = 492;
+            newCanvas.height = 354;
+            var ctx = newCanvas.getContext("2d");
+
+            ctx.drawImage( canvas, 100, 100, newCanvas.width, newCanvas.height, 0, 0, newCanvas.width, newCanvas.height);
+
+            console.log(newCanvas.toDataURL())
+
+        };
+
+        var loadFromImage = function (path) {
+            var localFolder = Windows.Storage.ApplicationData.current.localFolder;
+
+            localFolder.getFileAsync(path).done(function (file) {
+                var elTest = document.getElementById('test'),
+                        img = new Image();
+
+                img.src = URL.createObjectURL(file);
+                elTest.appendChild(img);
+            });
+        };
+
+        function saveImageAs (imgOrURL) {
+            if (typeof imgOrURL == 'object')
+                imgOrURL = imgOrURL.src;
+
+            window.win = open (imgOrURL);
+            setTimeout('win.document.execCommand("SaveAs")', 500);
+            setTimeout('win.close()',1000);
+
+        }
+
+        window.onload = function()
+        {
+            var canvas = document.getElementById('canvas');
+            var cx = canvas.getContext('2d');
+            var imageObj = new Image();
+            imageObj.onload = function () {
+                cx.drawImage.apply(cx, [imageObj,0, 0, 492, 354, 0, 0, 492, 354]
+                );
+
+            }
+            imageObj.src = 'http://cfile239.uf.daum.net/image/1755963B4D6E76872EA955';
+
+            document.getElementById('save').onclick = function () {
+                saveToFile('test.png');
+            }
+
+            document.getElementById('load').onclick = function () {
+                loadFromFile("test.png");
+            }
+
+
+
+        };
+    </script>
+
+    <style>
+
+        .ani{
+            display : inline-block;
+            -webkit-animation-fill-mode: forwards;
+        }
+
+        .testBox{
+            width : 200px;
+            height : 60px;
+            border : 1px solid #000;
+            position: absolute;
+            left : 400px;
+        }
+
+        #test1 {
+            top : 200px;
+        }
+
+        #test2{
+            top :300px;
+        }
+
+        #test3 {
+            top : 400px;
+        }
+
+
+
+
+
+
+
+
+
+
+        body.dragging, body.dragging * {
+            cursor: move !important;
+        }
+
+        .dragged {
+            position: absolute;
+            opacity: 0.5;
+            z-index: 2000;
+        }
+
+        ol.example li.placeholder {
+            position: relative;
+            /** More li styles **/
+        }
+
+
+
+    </style>
+
+</head>
+<body>
+       <canvas id='canvas'></canvas>
+        <div id='save'>save</div>
+       <div id='load'>load</div>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style>
+
+        body{
+            background : #363636;
+        }
+        .effect1{
+            font-family: Arial;
+            font-size: larger;
+            color: #222;
+            text-shadow: 0px 2px 3px #555;
+
+
+        }
+
+        .effect2{
+            text-shadow: 0 1px 0 #bbb,
+            0 2px 0 #bbb,
+            0 3px 0 #aaa,
+            0 4px 0 #aaa,
+            0 5px 0 #999,
+            0 6px 1px #000,
+            0 0px 3px #000,
+            0 1px 3px #000,
+            0 3px 5px #000,
+            0 5px 10px #000,
+            0 5px 20px #000;
+
+            color : #fff;
+            font-size : 50px;
+        }
+
+
+        .effect3{
+            text-shadow: 0 0 10px #fff,
+            0 0 20px #fff,
+            0 0 30px #fff,
+            0 0 40px #ff00de,
+            0 0 70px #ff00de,
+            0 0 80px #ff00de,
+            0 0 100px #ff00de,
+            0 0 150px #ff00de;
+
+            color : #fff;
+            font-size: larger;
+        }
+
+    </style>
+
+    <script  src="lib/jqueryPlugin/jquery-1.9.1.min.js"></script>
+
+    <script>
+        var resultStr ='';
+        var prevLen = 0;
+
+        window.onload = function(){
+            prevLen = resultStr.length;
+
+
+
+            $('#inputText').bind('input changeproperty',function(e){
+
+                var inputVal = $(this).val();
+
+                if(prevLen < inputVal.length)
+                {
+
+                    prevLen = inputVal.length;
+                    var resultText = $('#result').html();
+                    var insertChar = inputVal[inputVal.length-1]
+
+                    if(e.keyCode == 32)
+                    {
+                        insertChar = '&nbsp;';
+                    }
+
+                    if(inputVal.length > 1)
+                    {
+                        $('#result').find(':last-child').remove();
+                        resultText = $('#result').html();
+                        var beforeChar = inputVal[inputVal.length-2];
+                        if(beforeChar==' ')
+                        {
+                            beforeChar = '&nbsp;';
+                        }
+                        resultText += ("<span class='effect2'>"+beforeChar+"</span>");
+                    }
+
+                    resultText += ("<span class='effect2'>"+insertChar+"</span>");
+                    $('#result').html(resultText);
+                }
+                else if(prevLen == inputVal.length){
+                    $('#result').find(':last-child').remove();
+
+                    var insertChar = inputVal[inputVal.length-1];
+                    if(e.keyCode == 32)
+                    {
+                        insertChar = '&nbsp;';
+                    }
+
+                    var resultText = $('#result').html();
+
+
+                    if(inputVal.length > 1)
+                    {
+                        $('#result').find(':last-child').remove();
+                        resultText = $('#result').html();
+                        var beforeChar = inputVal[inputVal.length-2];
+                        if(beforeChar==' ')
+                        {
+                            beforeChar = '&nbsp;';
+                        }
+                        resultText += ("<span class='effect2'>"+beforeChar+"</span>");
+                    }
+
+                    resultText += ("<span class='effect2'>"+insertChar+"</span>");
+                    $('#result').html(resultText);
+                }
+                else
+                {
+                    var textComponent = document.getElementById('inputText');
+                    var startPos = textComponent.selectionStart;
+                    var endPos = textComponent.selectionEnd;
+
+                    $('#result').find(':last-child').remove();
+
+                    prevLen = inputVal.length;
+
+                }
+
+
+
+
+
+            });
+
+            $('#delete').bind('click',function()
+            {
+
+            })
+
+            $('#effectApply').bind('click',function(){
+                var textComponent = document.getElementById('inputText');
+                var selectedText;
+
+                if (textComponent.selectionStart != undefined)
+                {
+                    var startPos = textComponent.selectionStart;
+                    var endPos = textComponent.selectionEnd;
+
+                    console.log("startPos : " + startPos + "endPos : "+endPos   );
+                    var allChar = $('#result').children();
+
+                    for(var i = startPos ; i < endPos ; i++)
+                    {
+                        $(allChar[i]).removeClass();
+                        $(allChar[i]).addClass('effect1');
+                    }
+                }
+            });
+
+
+        };
+
+    </script>
+</head>
+<body>
+            <section>
+                <div class='fancyInput'>
+                    <div  id="result" >
+
+                    </div>
+                </div>
+
+
+            </section>
+            <div id='effectApply' style='color:#fff'>effect apply</div>
+            <div id='delete' style='color:#fff'></div>
+            <textarea id="inputText"></textarea>
+
+
+
+
+</body>
+</html>

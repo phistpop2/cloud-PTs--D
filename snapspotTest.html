@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+
+    <link rel="stylesheet" type="text/css" href="css/animate.min.css" />
+    <script src="lib/jqueryPlugin/jquery-1.9.1.min.js"></script>
+    <script src="lib/jqueryPlugin/jquery-sortable.js"></script>
+    <script src="lib/snapshot.js"></script>
+    <script>
+
+        var AniModel = function(el,styleClass,option){
+            this.el = el;
+            this.styleClass = styleClass;
+            this.nextGroup = null;
+
+            this.option = {
+                duration : 1,
+                delay : 0,
+                count : 1
+            }
+
+            if(option)
+            {
+                this.option.duration = option.duration || 1;
+                this.option.delay = option.delay || 0;
+                this.option.count = option.count || 1;
+            }
+
+            this.setNextGroup = function(nextGroup)
+            {
+                this.nextGroup = nextGroup;
+            }
+        }
+
+        var AniGroup = function(targets){
+            this.targets = targets || [];
+
+            this.action =  function()
+            {
+                for(var i = 0 ; i < this.targets.length ; i++)
+                {
+                    var target = this.targets[i];
+
+                    var classStr = target.el.attr('class');
+                    var refreshAnimatePoint =classStr.indexOf('ani');
+                    if(refreshAnimatePoint!=-1)
+                    {
+                        var removeStr = classStr.substr(refreshAnimatePoint)
+                        classStr = classStr.replace(removeStr,'');
+                        target.el.attr('class',classStr);
+                    }
+
+
+                    (target.el).addClass(target.styleClass);
+
+                    (target.el)[0].style['WebkitAnimationDuration'] = target.option.duration+"s";
+                    (target.el)[0].style['WebkitAnimationDelay'] = target.option.delay+"s";
+                    (target.el)[0].style['WebkitAnimationIterationCount'] = target.option.count;
+
+                    (target.el).bind('webkitAnimationEnd.animate',{obj : target },this.next);
+                }
+            },
+
+
+            this.next = function(e)
+            {
+                e.data.obj.el.unbind('webkitAnimationEnd.animate');
+
+                var nextGroup = e.data.obj.nextGroup;
+
+                if(nextGroup)
+                {
+                    nextGroup.action();
+                }
+            }
+
+            this.addAniModel = function(target)
+            {
+
+                this.targets.push(target);
+            }
+        }
+
+        function Animator()
+        {
+            this.animateIdx = 0;
+            this.animateObjs = [];
+            this.currentAnimationPoint = 0;
+        }
+
+        Animator.prototype.add = function(aniObj)
+        {
+            this.animateObjs.push(aniObj);
+        }
+
+        Animator.prototype.next = function(aniObj)
+        {
+            this.start(this.currentAnimationPoint++);
+        }
+
+        Animator.prototype.start = function(idx)
+        {
+            var idx = idx || 0;
+            var obj = this.animateObjs[idx];
+
+            if(obj)
+            {
+                obj.action();
+            }
+
+        }
+
+        Animator.prototype.getJson = function()
+        {
+            var result = [];
+
+            for(var i = 0 ; i < this.animateObjs.length ; i++)
+            {
+                var targets = this.animateObjs[i].targets;
+                var animationObjs = [];
+
+                for(var j = 0 ; j < targets.length ; j++)
+                {
+                    var target = targets[j];
+                    var id = 'id';
+                    animationObjs.push({'id' : id,'target':target});
+                }
+
+                var groupId = 'group_'+(i+1);
+                var group = {
+                     groupId : animationObjs
+                };
+
+                result.push(group);
+            }
+
+            return result;
+        }
+
+        Animator.prototype.init = function()
+        {
+
+            for(var j = 0 ; j < this.animateObjs.length ; j++)
+            {
+                var targetGroup = this.animateObjs[j];
+                var targets = targetGroup.targets;
+
+                for(var i = 0 ; i < targets.length ; i++)
+                {
+                    var target = targets[i];
+
+                    var classStr = target.el.attr('class');
+                    console.log(classStr);
+                    var refreshAnimatePoint =classStr.indexOf('ani');
+                    if(refreshAnimatePoint!=-1)
+                    {
+                        var removeStr = classStr.substr(refreshAnimatePoint)
+
+                        classStr = classStr.replace(removeStr,'');
+                        target.el.attr('class',classStr);
+                    }
+                }
+            }
+
+            this.currentAnimationPoint = 0;
+        }
+
+        window.onload = function()
+        {
+            var animator = new Animator();
+
+            var ani1_action1 = new AniModel($('#test1'),'ani tada',{duration : 0.3});
+            var ani2_action1 = new AniModel($('#test2'),'ani tada',{duration : 0.4});
+            var ani3_action1 = new AniModel($('#test3'),'ani tada',{duration : 0.5});
+            var ani4_action1 = new AniModel($('#test4'),'ani tada',{duration : 0.5});
+
+            var ani1_action2 = new AniModel($('#test1'),'ani bounceOutLeft',{duration : 0.3});
+            var ani2_action2 = new AniModel($('#test2'),'ani bounceOutLeft',{duration : 0.4});
+            var ani3_action2 = new AniModel($('#test3'),'ani bounceOutLeft',{duration : 0.5});
+            var ani4_action2 = new AniModel($('#test4'),'ani bounce',{ duration : 0.7})
+            var ani4_action3 = new AniModel($('#test4'),'ani bounceOutDown',{ duration : 0.2})
+
+            var aniGroup1 = new AniGroup([ani1_action1]);
+            var aniGroup2 = new AniGroup([ani2_action1]);
+            var aniGroup3 = new AniGroup([ani3_action1,ani4_action1]);
+
+            var aniGroup4 = new AniGroup([ani1_action2]);
+            var aniGroup5 = new AniGroup([ani2_action2]);
+            var aniGroup6 = new AniGroup([ani3_action2]);
+
+            animator.add(aniGroup1);
+            animator.add(aniGroup2);
+            animator.add(aniGroup3);
+            animator.add(aniGroup6);
+            animator.add(aniGroup5);
+            animator.add(aniGroup4);
+
+
+            console.log(animator.getJson());
+
+            $(window).bind('keyup',function(e){
+                if(e.keyCode == 37)
+                {
+                    animator.init();
+                }
+                else if(e.keyCode == 39)
+                {
+                    animator.next();
+                }
+            });
+
+
+
+
+            var oldContainer
+            $("ol.nested_with_switch").sortable({
+                group: 'nested',
+
+                afterMove: function (placeholder, container) {
+                    if(oldContainer != container){
+                        if(oldContainer)
+                            oldContainer.el.removeClass("active")
+                        container.el.addClass("active")
+
+                        console.log('aaaaa');
+                        oldContainer = container
+                    }
+                },
+                onDrop: function (item, container, _super) {
+                    console.log('aaa');
+                    container.el.removeClass("active");
+                    _super(item)
+
+                    html2canvas(
+                            document.getElementById('lista'), {
+                                onrendered: function(canvas) {
+
+                                    var ctx = canvas.getContext('2d');
+                                    console.log(ctx);
+                                    var img = new Image();
+                                    var dataUrl = canvas.toDataURL();
+
+                                    img.onload = function() {
+                                        ctx.drawImage(img, 0, 0, img.width, img.height);
+                                    }
+
+                                    img.src = dataUrl;
+                                    $(canvas).css('width','200px');
+                                    $(canvas).css('height','160px');
+                                    document.body.appendChild(canvas);
+                                }
+
+                            });
+                }
+            })
+
+
+
+        };
+    </script>
+
+    <style>
+
+        .ani{
+            display : inline-block;
+            -webkit-animation-fill-mode: forwards;
+        }
+
+        .testBox{
+            width : 200px;
+            height : 60px;
+            border : 1px solid #000;
+            position: absolute;
+            left : 400px;
+        }
+
+        #test1 {
+            top : 200px;
+        }
+
+        #test2{
+            top :300px;
+        }
+
+        #test3 {
+            top : 400px;
+        }
+
+
+
+
+
+
+
+
+
+
+        body.dragging, body.dragging * {
+            cursor: move !important;
+        }
+
+        .dragged {
+            position: absolute;
+            opacity: 0.5;
+            z-index: 2000;
+        }
+
+        ol.example li.placeholder {
+            position: relative;
+            /** More li styles **/
+        }
+
+
+
+    </style>
+
+</head>
+<body>
+    <div id='test1' class='testBox'>testBox1</div>
+    <div id='test2' class='testBox'>testBox2</div>
+    <div id='test3' class='testBox'>testBox3</div>
+    <div id='test4' class='testBox'><span>aaaaa</span>testBox4</div>
+
+
+    <ol id='lista' class="nested_with_switch vertical">
+        <li>
+            Item 1
+        </li>
+        <li>
+            Item 2
+        </li>
+        <li>
+            Item 3
+        </li>
+        <li>
+            Item 4
+            <ol class="">
+                <li>Item 2.1
+                    <ol class="">
+                        <li>Item 2.1</li>
+
+                        <li>Item 2.3</li>
+                        <li>Item 2.4
+                            <ol class="">
+                                <li>Item 2.1</li>
+
+                                <li>Item 2.3</li>
+                                <li>Item 2.4</li>
+
+                                <li>Item 2.5
+                                    <ol class="">
+                                        <li>Item 2.1</li>
+
+                                        <li>Item 2.3</li>
+                                        <li>Item 2.4
+                                            <ol class=''>
+                                                <li>shindoh
+                                                    <ol class=''>
+                                                        <li></li>
+                                                    </ol>
+                                                </li>
+                                            </ol>
+                                        </li>
+
+                                        <li>Item 2.5</li>
+                                        <li>Item 2.6</li>
+                                    </ol>
+                                </li>
+                                <li>Item 2.6</li>
+                            </ol>
+                        </li>
+
+                        <li>Item 2.5</li>
+                        <li>Item 2.6</li>
+                    </ol>
+                </li>
+
+                <li>Item 2.3</li>
+                <li>Item 2.4</li>
+
+                <li>Item 2.5</li>
+                <li>Item 2.6</li>
+            </ol>
+        </li>
+        <li>
+            aaa
+            <ol class="">
+                <li>Item 2.1</li>
+
+                <li>Item 2.3</li>
+                <li>Item 2.4</li>
+
+                <li>Item 2.5</li>
+                <li>Item 2.6</li>
+            </ol>
+
+        </li>
+        <li>
+            Item 6
+        </li>
+    </ol>
+
+</body>
+</html>

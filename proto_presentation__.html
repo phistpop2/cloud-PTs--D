@@ -1,0 +1,219 @@
+<html>
+<head>
+<title></title>
+
+<!-- 
+	��ǥ �̵� (translate : -50% -50%)-> ȸ��(rotateX,rotateY,rotateZ) -> ��ǥ�̵� (translate : px)
+	�� �ٲ�� �ȵȴ�.
+	
+	��ǥ�̵��� ȸ���ϰ� ��ǥ�̵��� �ϴ� �Ͱ� 
+	��ǥ�̵��� �ٽ� ��ǥ�̵� ȸ���� ��� ���� �ٸ���
+ -->
+<script  src="lib/jqueryPlugin/jquery-1.9.1.min.js"></script>
+<style>
+	body{
+	    margin: 0;
+	    padding: 0;
+	    border: 0;
+	    font-size: 100%;
+	    font: inherit;
+	    vertical-align: baseline;
+        /*background : -webkit-gradient(radial, 50% 50%, 0, 50% 50%,800, from(rgba(0, 0, 0, 0.73)), to(rgba(0, 0, 0, 0.83)));*/
+        background : url('http://www.vaio.or.kr/files/attach/images/9979/986/764/6ca6c64d64e4d5fac89983506956f5c6.jpg') ;
+        background-size: cover;
+	}
+	
+	#root{
+		position : absolute;
+		-webkit-transform-origin : top left;
+		-webket-transition : all 0x ease-in-out;
+		-webkit-transform-style: preserve-3d;
+
+		top : 50%;
+		left : 50%;
+		-webkit-perspective : 400px;
+	}
+	
+	#world{
+		position : absolute;
+		-webkit-transform-style: preserve-3d;
+		-webkit-transform :  rotateX(0deg) rotateY(0deg) rotateZ(0deg) translate3d(0px,0px,0px);
+	}
+
+
+</style>
+
+<script type="text/javascript">
+    var show = (function($){
+        var s={};
+
+        s.slideIdx = 0;
+        s.slides = [];
+
+        s.start = function(slides)
+        {
+            this.slides =  slides;
+            var world = document.getElementById('world');
+
+            for(i in this.slides)
+            {
+                var slideEl = document.createElement('div');
+
+                slideEl.setAttribute('id',this.slides[i].id);
+                slideEl.style['background'] = this.slides[i].slideStyle.background;
+                                  console.log(this.slides[i].slideStyle.translateX);
+                var translateX = this.slides[i].slideStyle.translateX;
+                var translateY = this.slides[i].slideStyle.translateY;
+                var translateZ = this.slides[i].slideStyle.translateZ;
+
+
+                var rotateX = this.slides[i].slideStyle.rotateX;
+                var rotateY = this.slides[i].slideStyle.rotateY;
+                var rotateZ = this.slides[i].slideStyle.rotateZ;
+
+                var width = this.slides[i].slideStyle.width;
+                var height = this.slides[i].slideStyle.height;
+
+                slideEl.style['width'] = width;
+                slideEl.style['height'] = height;
+                slideEl.style['position'] = 'absolute';
+
+                slideEl.style['WebkitTransform'] =
+                        "translate(-50%, -50%) "+
+                        "translate3d("+translateX+"px,"+translateY+"px,"+translateZ+"px) "+
+                        "rotateZ("+rotateZ+"deg) "+
+                        "rotateY("+rotateY+"deg) "+
+                        "rotateX("+rotateX+"deg) ";
+
+                var contents = this.slides[i].contents;
+                      console.log(contents);
+                if(contents)
+                {
+                    $(slideEl).append($(contents));
+                }
+
+
+                world.appendChild(slideEl);
+            }
+
+            this.slideIdx = 0;
+            this.action();
+
+            $(window).bind('keydown',function(e){
+                if ( e.keyCode === 9 || ( e.keyCode >= 32 && e.keyCode <= 34 ) || (e.keyCode >= 37 && e.keyCode <= 40) ) {
+                    e.preventDefault();
+                }
+            });
+
+            $(window).bind('keyup',function(e){
+
+                if ( e.keyCode === 9 || ( e.keyCode >= 32 && e.keyCode <= 34 ) || (e.keyCode >= 37 && e.keyCode <= 40) ) {
+                    switch( e.keyCode ) {
+                        case 33: // pg up
+                        case 37: // left
+                        case 38: // up
+                            s.prev();
+                            break;
+                        case 34: // pg down
+                        case 39: // right
+                        case 40: // down
+                            s.next();
+                            break;
+                    }
+
+                    e.preventDefault();
+                }
+            });
+
+            $(window).bind('resize',function(e){
+                var config = s.slides[s.slideIdx].slideStyle;
+                    s.resizeFocusScale(config);
+            });
+        }
+
+
+        var computeWindowScale = function ( config ) {
+            var hScale = window.innerHeight / config.height,
+                    wScale = window.innerWidth / config.width,
+                    scale = hScale > wScale ? wScale : hScale;
+
+            if (config.maxScale && scale > config.maxScale) {
+                scale = config.maxScale;
+            }
+
+            if (config.minScale && scale < config.minScale) {
+                scale = config.minScale;
+            }
+
+            return scale;
+        };
+
+        s.resizeFocusScale = function(config){
+
+            config.maxScale = 1.5;
+
+            $('#root').css({
+                WebkitTransitionDuration : '0.5s',
+                webkitTransform : 'scale('+computeWindowScale(config)+')'
+            }) ;
+        }
+
+        s.action = function()
+        {
+            var translateX = -1*this.slides[this.slideIdx].slideStyle.translateX;
+            var translateY = -1*this.slides[this.slideIdx].slideStyle.translateY;
+            var translateZ = -1*this.slides[this.slideIdx].slideStyle.translateZ;
+
+            var rotateX = -1*this.slides[this.slideIdx].slideStyle.rotateX;
+            var rotateY = -1*this.slides[this.slideIdx].slideStyle.rotateY;
+            var rotateZ = -1*this.slides[this.slideIdx].slideStyle.rotateZ;
+
+            world.style['WebkitTransform'] =
+                    "rotateX("+rotateX+"deg) "+
+                            "rotateY("+rotateY+"deg) "+
+                            "rotateZ("+rotateZ+"deg) "+
+                            "translate3d("+translateX+"px,"+translateY+"px,"+translateZ+"px) ";
+
+
+            world.style['WebkitTransitionDuration'] = '1s';
+
+            s.resizeFocusScale(this.slides[this.slideIdx].slideStyle);
+        };
+
+        s.next = function()
+        {
+            this.slideIdx = (this.slideIdx+1)>(this.slides.length-1) ? 0 : this.slideIdx+1;
+            this.action();
+        };
+
+        s.prev = function()
+        {
+            this.slideIdx = (this.slideIdx-1)<0 ? (this.slides.length-1) : this.slideIdx-1;
+            this.action();
+        };
+
+        return s;
+    }(jQuery));
+
+
+    window.onload = function()
+    {
+        var slides = eval(localStorage.getItem('presentationData'));
+        console.log(slides);
+        show.start(slides);
+    }
+</script>
+
+</head>
+
+<body>
+	
+	<div id="root">
+		<div id="world">
+
+		</div>
+	</div>
+</body>
+</html>
+
+

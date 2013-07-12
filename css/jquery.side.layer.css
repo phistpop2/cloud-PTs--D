@@ -1,0 +1,147 @@
+
+#textShadowList button {
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0,0,0,.15);
+
+    border: 1px solid rgba(0,0,0,.1);
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px #fff;
+
+    padding: 1px 4px 2px 4px;
+
+    font-family: Tahoma, sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+
+    cursor: pointer;
+}
+
+#textShadowList {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+#textShadowList h1 {
+    margin: 0;
+    padding: 10px 15px;
+    background-color: #565656;
+    border-bottom: 1px solid #676767;
+    color: #fff;
+
+    font-size: 16px;
+}
+
+#textShadowList .hidden_layer {
+    display: none;
+}
+#textShadowList #notice {
+    padding: 10px;
+    margin: 15px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+}
+
+#textShadowList ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    counter-reset:li;
+}
+
+#textShadowList li {
+    padding: 10px 15px 10px 40px;
+    border-bottom: 1px solid #ddd;
+
+    position: relative;
+}
+
+#textShadowList li:before {
+    content:counter(li); /* Use the counter as content */
+    counter-increment:li; /* Increment the counter by 1 */
+
+    position:absolute;
+    top: 0;
+    left: 0;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+
+    background: #f2f2f2;
+    border-right: 1px solid #ddd;
+
+    margin: 0;
+    padding:10px;
+
+    font-size: 11px;
+    height: 100%;
+    color:#999;
+    text-align: center;
+}
+
+#textShadowList .delete {
+    background-color: #454545;
+    margin: 0;
+
+    position: absolute;
+    right: 15px;
+    top:32%;
+
+    opacity: 0;
+    -webkit-transition: opacity linear .1s;
+    -moz-transition: opacity linear .1s;
+    transition: opacity linear .1s;
+}
+
+#textShadowList li:hover .delete {
+    opacity: 1;
+}
+
+#textShadowList textarea {
+    display: block;
+    overflow: auto;
+    vertical-align: top;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(0,0,0,.1);
+    margin: 15px 15px 10px 15px;
+    padding: 10px;
+    font-size: 13px;
+}
+#textShadowList textarea:focus {
+    outline: none;
+    border-color: #8e8f8d;
+    box-shadow: 0 1px 1px rgba(82, 168, 236, 0.3);
+}
+
+#textShadowList #add {
+    background: #8e8f8d;
+    margin: 0 15px 15px 15px;
+}
+
+#textShadowList p[role="contentinfo"] {
+    padding: 20px;
+    margin: 0;
+    text-align: center;
+    color: #bbb;
+}
+
+#textShadowList span {
+    font-family: Georgia, serif;
+    font-style: italic;
+}
+
+#textShadowList a {
+    color: #bbb;
+    text-decoration: none;
+}
+#textShadowList a:hover {
+    color: #555;
+}
+
+

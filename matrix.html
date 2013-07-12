@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <script>
+
+        (function(){
+            var rotateX = 30;
+            var rotateY = 60;
+            var rotateZ = 0;
+
+            rotateX = Math.PI/180*rotateX;
+            rotateY = Math.PI/180*rotateY;
+            rotateZ = Math.PI/180*rotateZ;
+
+            var sinX = Math.sin(rotateX);
+            var cosX = Math.cos(rotateX);
+            var sinY = Math.sin(rotateY);
+            var cosY = Math.cos(rotateY);
+            var sinZ = Math.sin(rotateZ);
+            var cosZ = Math.cos(rotateZ);
+
+            var rotationXMatrix = [[1,0,0],
+                                    [0,cosX,-sinX],
+                                    [0,sinX,cosX]];
+
+
+            var rotationYMatrix = [[cosY,0,sinY],
+                                    [0,1,0],
+                                    [-sinY,0,cosY]];
+
+            var rotationZMatrix = [[cosZ,-sinZ,0],
+                                    [sinZ,cosZ,0],
+                                    [0,0,1]];
+
+            var rotationMatrix = [[1,0,0],[0,1,0],[0,0,1]];
+
+
+            for(var i = 0 ; i < 3 ; i++)
+            {
+                for(var j = 0 ; j < 3; j++)
+                {
+
+                    rotationMatrix[i][j]=rotationXMatrix[i][0]*rotationYMatrix[0][j] + rotationXMatrix[i][1]*rotationYMatrix[1][j] + rotationXMatrix[i][2]*rotationYMatrix[2][j];
+                }
+            }
+
+            for(var i = 0 ; i < 3 ; i++)
+            {
+                for(var j = 0 ; j < 3; j++)
+                {
+                    rotationMatrix[i][j]=rotationMatrix[i][0]*rotationZMatrix[0][j] + rotationMatrix[i][1]*rotationZMatrix[1][j] + rotationMatrix[i][2]*rotationZMatrix[2][j];
+                }
+            }
+
+            console.log(rotationMatrix);
+
+        })();
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>

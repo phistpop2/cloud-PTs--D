@@ -1,0 +1,459 @@
+<ul id="style_panel_wrap" class='accordionWrap'>
+
+<li id='defaultStyleSelection'>
+<h4 class='level1'>Common</h4>
+<div>
+<ul class='accordionWrap'>
+<li>
+    <h4 class='level2'>Border</h4>
+    <div>
+        <ul class='accordionWrap'>
+            <li>
+                <h4 class='level3'>style</h4>
+                <div class='content_wrap' id='common_border_style_wrap'>
+                    <ul>
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="common_border_style_none" name="common_border_style">
+                            <label class='iCheckLabel' for="common_border_style_none" data-key='border-style'>none</label>
+                        </li>
+
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="common_border_style_solid" name="common_border_style">
+                            <label class='iCheckLabel' for="common_border_style_solid" data-key='border-style'>solid</label>
+                        </li>
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="common_border_style_dotted" name="common_border_style">
+                            <label class='iCheckLabel' for="common_border_style_dotted" data-key='border-style'>dotted</label>
+                        </li>
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="common_border_style_dash" name="common_border_style">
+                            <label class='iCheckLabel' for="common_border_style_dash" data-key='border-style'>dashed</label>
+                        </li>
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="common_border_style_double" name="common_border_style">
+                            <label class='iCheckLabel' for="common_border_style_double" data-key='border-style'>double</label>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <h4 class='level3'>color</h4>
+                <div id='common_border_color_wrap'>
+                    <div id='common_border_color_preview'>
+
+                    </div>
+                    <div class='content_wrap' id='common_border_color_controller'>
+                        <div class='control_slider'  id="common_border_color_r_slider"></div>
+                        <div class='control_slider'  id="common_border_color_g_slider"></div>
+                        <div class='control_slider'  id="common_border_color_b_slider"></div>
+                    </div>
+
+                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>opacity</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="common_border_opacity" data-key='border-color-opacity' style='margin-top:20px;'></div>
+                    </div>
+                </div>
+
+
+            </li>
+            <li>
+                <h4 class='level3'>width</h4>
+                <div class='content_wrap' id='common_border_width_wrap'>
+                    <div class='control_label'><input id='common_border_width_value' value='10'>px</div>
+                    <div class='control_slider' id="common_border_width_slider" ></div>
+                </div>
+            </li>
+            <li>
+                <h4 class='level3'>radius</h4>
+                <div class='content_wrap' id='common_border_radius_wrap'>
+
+                    <div style='border-top : 1px solid #fff; padding-top : 4px;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>top-left</span>
+                                        <span style='float : right; margin-right : 10px;'>
+                                            <input class='iCheckTarget' type="checkbox" id="common_border_style_radius_lock" >
+                                            <label class='iCheckLabel' for="common_border_style_radius_lock">all-lock</label>
+                                        </span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="common_border_radius_top_left" data-key='border-top-left-radius' style='margin-top:20px;'></div>
+                    </div>
+
+
+
+
+                    <div style='padding-top : 4px;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>top-right</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="common_border_radius_top_right" data-key='border-top-right-radius' style='margin-top:20px;'></div>
+                    </div>
+
+
+
+
+                    <div style='padding-top : 4px;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>bottom-left</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="common_border_radius_bottom_left" data-key='border-bottom-left-radius' style='margin-top:20px;'></div>
+                    </div>
+
+                    <div style='padding-top : 4px;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>bottom-right</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="common_border_radius_bottom_right" data-key='border-bottom-right-radius' style='margin-top:20px;'></div>
+                    </div>
+
+                </div>
+            </li>
+        </ul>
+
+    </div>
+</li>
+<li>
+    <h5 class='level2'>Box-Shadow</h5>
+    <div  class='content_wrap' style='margin-left: 10px;'>
+        <div style='float :left; margin-left : 10px;'>
+            <input class='iCheckTarget' type="checkbox" id="common_shadow_inset_check">
+            <label class='iCheckLabel' for="common_shadow_inset_check">Inset</label>
+        </div>
+
+
+        <div style='margin-top : 30px;'>
+            <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>h-shadow</span>
+            </div>
+
+            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                <div class='control_slider'  id="common_shadow_h" data-key="" style='margin-top:20px;'></div>
+            </div>
+
+
+            <div style='padding-top : 4px;'>
+                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>v-shadow</span>
+            </div>
+
+            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                <div class='control_slider'  id="common_shadow_v" style='margin-top:20px;'></div>
+            </div>
+
+            <div style='padding-top : 4px;'>
+                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>blur</span>
+            </div>
+
+            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                <div class='control_slider'  id="common_shadow_blur" style='margin-top:20px;'></div>
+            </div>
+
+            <div style='padding-top : 4px;'>
+                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>spreed</span>
+            </div>
+
+            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                <div class='control_slider'  id="common_shadow_spreed" style='margin-top:20px;'></div>
+            </div>
+
+
+            <div style='padding-top : 4px;'>
+                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>color</span>
+            </div>
+
+            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                <div id='common_shadow_color_wrap'>
+                    <div id='common_shadow_color_preview'>
+
+                    </div>
+                    <div class='content_wrap' id='common_shadow_color_controller'>
+                        <div class='control_slider'  id="common_shadow_color_r_slider"></div>
+                        <div class='control_slider'  id="common_shadow_color_g_slider"></div>
+                        <div class='control_slider'  id="common_shadow_color_b_slider"></div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</li>
+<li>
+    <h5 class='level2'>Background</h5>
+    <div  class='content_wrap' style='margin-left: 10px;'>
+        <div style='padding-top : 2px;'>
+            <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>color</span>
+        </div>
+
+        <div style='border-bottom : 1px solid #fff; padding-bottom:20px;'>
+            <div id='common_background_color_wrap'>
+                <div id='common_background_color_preview'>
+
+                </div>
+                <div class='content_wrap' id='common_background_color_controller'>
+                    <div class='control_slider'  id="common_background_color_r_slider"></div>
+                    <div class='control_slider'  id="common_background_color_g_slider"></div>
+                    <div class='control_slider'  id="common_background_color_b_slider"></div>
+                    <div class='control_slider'  id="common_background_opacity_slider"></div>
+                    <div style='float :left; margin-left : 8px; margin-bottom : 10px;'>
+                        <input class='iCheckTarget' type="checkbox" id="common_background_transparent_check">
+                        <label class='iCheckLabel' for="common_background_transparent_check">transparent</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</li>
+</ul>
+</div>
+</li>
+<li id='textStyleSection'>
+    <h4 class='level1'>Text</h4>
+    <div>
+        <ul class='accordionWrap'>
+            <li>
+                <h5 class='level2'>Spacing</h5>
+                <div  class='content_wrap'>
+
+                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>line-height</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="text_spacing_line" style='margin-top:20px;'></div>
+                    </div>
+
+
+                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>word-spacing</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="text_spacing_word" style='margin-top:20px;'></div>
+                    </div>
+
+
+                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>letter-spacing</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="text_spacing_letter" style='margin-top:20px;'></div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <h5 class='level2'>Decoration</h5>
+                <div class='content_wrap'>
+                    <ul>
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="text_decoration_none" name="text_decoration_style">
+                            <label class='iCheckLabel' for="text_decoration_none">none</label>
+                        </li>
+                        <li>
+                            <input class='iCheckTarget' type="checkbox" id="text_decoration_italic">
+                            <label class='iCheckLabel' for="text_decoration_italic">italic</label>
+                        </li>
+
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="text_decoration_overline" name="text_decoration_style">
+                            <label class='iCheckLabel' for="text_decoration_overline">overline</label>
+                        </li>
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="text_decoration_linethrough" name="text_decoration_style">
+                            <label class='iCheckLabel' for="text_decoration_linethrough">line-through</label>
+                        </li>
+                        <li>
+                            <input class='iCheckTarget' type="radio" id="text_decoration_underline" name="text_decoration_style">
+                            <label class='iCheckLabel' for="text_decoration_underline">underline</label>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <h5 class='level2'>Font</h5>
+                <div  class='content_wrap'>
+                    <div style='padding-top : 6px; margin-bottom : 6px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>font</span>
+                    </div>
+
+                    <div style='padding-bottom:10px; margin-left : 10px;'>
+                        <select id="font_selectbox" class="cd-select">
+                            <option value="Arail" class="icon-tux">Arail</option>
+                            <option value="Arial Black" class="icon-finder">Arial Black</option>
+                            <option value="Impact" class="icon-windows">Impact</option>
+                            <option value="Palatino Linotype" class="icon-android">Palatino Linotype</option>
+                        </select>
+                    </div>
+
+
+                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>color</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <form   class="color_picker_form" action="" style="width: 400px;">
+                            <div><input type="text" id="text_font_color_value" name="color" value="#000000" /></div><div id="text_font_color_picker"></div>
+                        </form>
+                    </div>
+
+                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>opacity</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="text_font_opacity" style='margin-top:20px;'></div>
+                    </div>
+
+                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>size</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="text_font_size" data-key='font-size' style='margin-top:20px;'></div>
+                    </div>
+
+
+                    <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                        <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>bold</span>
+                    </div>
+
+                    <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                        <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                        <div class='control_slider'  id="text_font_bold" data-key='font-weight'  style='margin-top:20px;'></div>
+                    </div>
+
+                </div>
+            </li>
+            <li>
+
+                <h5 class='level2'>Shadow</h5>
+                <div>
+                    <ul class='accordionWrap'>
+                        <li>
+                            <h4 class='level3'>Apply List</h4>
+                            <div class='content_wrap'>
+                                <div id="textShadowList">
+                                    <p id="notice">You have any Shadow Effect.</p>
+
+                                    <ul id="list">
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>shadow-h</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                <div class='control_slider'  id="text_shadow_h" style='margin-top:20px;'></div>
+                            </div>
+
+
+
+                            <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>shadow-v</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                <div class='control_slider'  id="text_shadow_v" style='margin-top:20px;'></div>
+                            </div>
+
+
+                            <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>blur</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                <div class='control_slider'  id="text_shadow_blur" style='margin-top:20px;'></div>
+                            </div>
+
+
+
+                            <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>color</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <form   class="color_picker_form" action="" style="width: 400px;">
+                                    <div><input type="text" id="text_shadow_color_value" name="color" value="#000000" /></div><div id="text_shadow_color_picker"></div>
+                                </form>
+                            </div>
+
+
+
+                            <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                                <span style='margin-left : 10px; font-size : 12px; color : #F6F6F6; font-weight: bold '>opacity</span>
+                            </div>
+
+                            <div style='border-bottom : 1px solid #fff; padding-bottom:10px;'>
+                                <div class='control_label' style='margin-top:-8px;'><input value='10'>px</div>
+                                <div class='control_slider'  id="text_shadow_opacity" style='margin-top:20px;'></div>
+                            </div>
+
+                            <div style='padding-top : 4px; border-top : 1px solid #fff;'>
+                                <a href="#" id='addTextShadowLayerBtn' class="m-btn white" style='margin-left : 46px; margin-bottom : 10px;;'><i class="icon-plus m-icon-black"></i> New Shadow</a>
+                            </div>
+
+                        </li>
+                     </ul>
+                </div>
+
+            </li>
+
+        </ul>
+    </div>
+</li>
+
+<li id='containStyleSection'>
+    <h4 class='level1'>Contain</h4>
+    <div>
+        <ul class='accordionWrap'>
+            <li>
+                <div class='content_wrap' id='contain_wrap'>
+                    <ul>
+                        <li>
+                            <input class='iCheckTarget' type="checkbox" id="contain_mode_toggle" name="contain_mode_toggle">
+                            <label class='iCheckLabel' for="contain_mode_toggle">contain mode</label>
+                        </li>
+                        <div style='padding-top : 4px; border-top : 1px solid #fff;' >
+                            <ul id='contain_list'>
+
+                            </ul>
+                        </div>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+</li>
+
+</ul>

@@ -1,0 +1,23 @@
+#viewPort {
+    -webkit-perspective: 600;
+    -webkit-perspective-origin: 50% 50%;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background-image: -webkit-radial-gradient(center, ellipse cover,  rgb(70,70,70) 0%, rgb(0,0,0) 100%);
+}
+
+#world {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -256px;
+    margin-top: -256px;
+    height: 512px;
+    width: 512px;
+    -webkit-transform-style: preserve-3d;
+}

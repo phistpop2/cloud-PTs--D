@@ -1,0 +1,100 @@
+<div class='border_style_control'>
+
+    <div class='style_group'>
+        <div class="setting-block">
+            <div class="row">
+                <label for="allCorners">Border Width</label>
+                <label class="align-right" for="borderWidth">px</label>
+                <div class="text-1">
+                    <input id="borderWidth" type="text" value="0">
+                </div>
+            </div>
+            <div class='style_slider'  data-min='0' data-max='100' data-key='borderWidth'>
+            </div>
+        </div>
+
+        <div class='divider_line'></div>
+
+        <div class="setting-block">
+            <div class="row">
+                <label for="borderStyle">Border Style</label>
+                <div class="text-1">
+                    <select id='borderStyle'>
+                        <option>none</option>
+                        <option>solid</option>
+                        <option>dotted</option>
+                        <option>dashed</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row color-row">
+                <label for="borderColor">Border Color</label>
+                <div class="text-2">
+                    <input id="borderColor" class='color_picker' value="#000000">
+                </div>
+                <span class='color_thumb'></span>
+            </div>
+        </div>
+    </div>
+
+    <div class='style_group  margin_top'>
+        <div class="setting-block">
+            <div class="row">
+                <label for="allCorners">All Corners</label>
+                <label class="align-right" for="allCorners">px</label>
+                <div class="text-1">
+                    <input id="allCorners" type="text" value="0" >
+                </div>
+            </div>
+            <div class='style_slider' id='allCornersSlider' data-min='0' data-max='100'>
+            </div>
+        </div>
+
+        <div class='divider_line'></div>
+
+        <div class="setting-block">
+            <div class="row">
+                <label for="topLeftCorner">Top Left</label>
+                <label class="align-right" for="topLeftCorner">px</label>
+                <div class="text-1">
+                    <input id="topLeftCorner" type="text" value="0">
+                </div>
+            </div>
+            <div class='style_slider' id='topLeftCornerSlider' data-min='0' data-max='100' data-key='borderTopLeftRadius'>
+            </div>
+
+            <div class="row margin_top">
+                <label for="topRightCorner">Top Right</label>
+                <label class="align-right" for="topRightCorner">px</label>
+                <div class="text-1">
+                    <input id="topRightCorner" type="text" value="0">
+                </div>
+            </div>
+            <div class='style_slider' id='topRightCornerSlider' data-min='0' data-max='100' data-key='borderTopRightRadius'>
+            </div>
+
+            <div class="row margin_top">
+                <label for="bottomLeftCorner">Bottom Left</label>
+                <label class="align-right" for="bottomLeftCorner">px</label>
+                <div class="text-1">
+                    <input id="bottomLeftCorner" type="text" value="0">
+                </div>
+            </div>
+            <div class='style_slider' id='bottomLeftCornerSlider' data-min='0' data-max='100' data-key='borderBottomLeftRadius'>
+            </div>
+
+            <div class="row margin_top">
+                <label for="bottomRightCorner">Bottom Right</label>
+                <label class="align-right" for="bottomRightCorner">px</label>
+                <div class="text-1">
+                    <input id="bottomRightCorner" type="text" value="0">
+                </div>
+            </div>
+            <div class='style_slider' id='bottomRightCornerSlider' data-min='0' data-max='100' data-key='borderBottomRightRadius'>
+            </div>
+        </div>
+
+    </div>
+
+</div>

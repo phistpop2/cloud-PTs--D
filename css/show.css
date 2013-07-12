@@ -1,0 +1,39 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+#mainLayout {
+    height: 100%;
+    width : 100%;
+    background: #0da861;
+    overflow : hidden;
+}
+
+#showWorkspace{
+    width: 700px;
+    height : 500px;
+    display: block;
+    -webkit-perspective: 600;
+    -webkit-perspective-origin: 50% 50%;
+    border : 1px solid #000;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+#world {
+    position: absolute;
+    height: 0;
+    width: 0;
+    -webkit-transform-style: preserve-3d;
+}
+
+
+
