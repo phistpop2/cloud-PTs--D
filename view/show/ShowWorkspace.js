@@ -44,7 +44,8 @@ define(['jquery','underscore','backbone',
                console.log('scale : ' + scale);
 
                $(this_.el).css({
-                  '-webkit-transform' : 'scale('+scale+')'
+                  '-webkit-transform' : 'scale('+scale+')',
+                   '-webkit-transform-origin' : '0% 0%'
                });
 
            },
