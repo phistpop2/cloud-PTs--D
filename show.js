@@ -4,8 +4,8 @@ define(
      'underscore',
      'backbone',
 
-     'collection/ContentsCollection',
-     'collection/SequenceCollection',
+
+     'collection/ShowCollection',
 
      'view/show/ShowWorkspace',
 
@@ -39,14 +39,14 @@ define(
         'RenderFPS'
     ],
     function($, _, Backbone,
-             ContentsCollection,
-             SequenceCollection,
+             ShowCollection,
              ShowWorkspace){
 
     var MainView = Backbone.View.extend({
 
-        contentsCollection : null,
+        showCollection : null,
         cameraModule : null,
+        showData : null,
 
         initialize : function()
         {
@@ -57,7 +57,7 @@ define(
 
         setupWork : function(event)
         {
-            this.cameraModule = new CameraModule({viewPort : $('#workSpace')});
+            this.cameraModule = new CameraModule({viewPort : $('#showWorkspace')});
             this.initCollections();
             this.initShowWorkspace();
         },
@@ -65,18 +65,17 @@ define(
 
         initCollections : function()
         {
-            this.contentsCollection = new ContentsCollection();
-            this.contentsCollection.setCameraModule(this.cameraModule);
+            this.showData = JSON.parse(localStorage.getItem('showData'));
 
-            this.sequenceCollection = new SequenceCollection();
-            this.sequenceCollection.setCameraModule(this.cameraModule);
-            this.sequenceCollection.setContentsCollection(this.contentsCollection);
+            this.showCollection = new ShowCollection();
+            this.showCollection.setShowData(this.showData);
+
         },
 
         initShowWorkspace : function()
         {
             var showWorkspace = new ShowWorkspace({
-                "contentsCollection" : this.contentsCollection,
+                "showCollection" : this.showCollection,
                 'cameraModule' : this.cameraModule
             });
 

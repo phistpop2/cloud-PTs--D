@@ -26,7 +26,7 @@ define(['jquery','underscore','backbone',
                 var li = $("<li></li>");
                 li.append($(this.el));
 
-                $(this.el).append("<div class='sequence_view'><div class='sequence_view_world'></div></div>");
+                $(this.el).append("<div class='sequence_view' data-id='"+this.model.cid+"'><div class='sequence_view_world'></div></div>");
                 $(this.el).css({
                     'margin' : '0px',
                     'padding' : '0px',
@@ -39,7 +39,7 @@ define(['jquery','underscore','backbone',
 
                 var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
                 var models = this.contentsCollection.models;
-
+                var modelIdArray = this.model.get('models');
 
                 world.css({
                     webkitTransform: 'matrix3d('+this.model.get('matrix3d')+')'
@@ -65,7 +65,11 @@ define(['jquery','underscore','backbone',
                     {
                         this.views[model.cid] = new ObjectView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid, 'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence'}).render();
                     }
+
+                    modelIdArray.push(model.cid);
                 }
+
+                this.model.set('models',modelIdArray);
 
                 return this;
             }

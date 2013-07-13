@@ -74,7 +74,9 @@ define(
 
         initLeftMenu : function()
         {
-            this.leftMenu = new LeftMenu();
+            this.leftMenu = new LeftMenu({
+                "sequenceCollection" : this.sequenceCollection
+            });
         },
 
         initCollections : function()

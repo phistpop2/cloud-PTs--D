@@ -222,14 +222,24 @@ define(['jquery','underscore','backbone',
 
                 var width = this.model.get('width');
                 var height = this.model.get('height');
+                var matrix3d = 0;
 
-                this.model.controller.setRotation(this.model.get('rotateX'),this.model.get('rotateY'),this.model.get('rotateZ'));
-                this.model.controller.setPosition(this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
+                if(this.viewType!='show')
+                {
+                    this.model.controller.setRotation(this.model.get('rotateX'),this.model.get('rotateY'),this.model.get('rotateZ'));
+                    this.model.controller.setPosition(this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
 
-                var matrix3d = this.model.controller.getMatrixQuery();
+                    matrix3d = this.model.controller.getMatrixQuery();
+                    this.model.set('matrix3d',matrix3d);
+                }
+                else
+                {
+                    matrix3d = this.model.get('matrix3d');
+                    console.log('matrix3d',matrix3d);
+                }
+
 
                 $(this.el).css({
-
                     position: 'absolute',
                     padding : '0px',
                     margin : '0px',
@@ -246,6 +256,7 @@ define(['jquery','underscore','backbone',
                     "padding" : '0px',
                     "margin" : '0px'
                 });
+
 
                 this.cssRenderer();
 

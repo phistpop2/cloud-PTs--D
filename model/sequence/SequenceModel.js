@@ -4,7 +4,9 @@ define(['jquery','underscore','backbone'],
     var ObjectModel = Backbone.Model.extend({
 
         defaults:{
-            matrix3d :''
+            matrix3d :'',
+            moveAction : '',
+            moveDuration : 700
         },
 
         controller : null,
@@ -12,6 +14,10 @@ define(['jquery','underscore','backbone'],
         initialize : function()
         {
             _.bindAll(this);
+            if(!this.get('models'))
+            {
+                this.set('models',new Array());
+            }
         }
 
 

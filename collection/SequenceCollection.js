@@ -49,13 +49,9 @@ define(['underscore','backbone',
                this.contentsCollection = contentsCollection_;
            },
 
-           setSelected : function(model){
-
-           },
-
-           getSelected : function()
+           getContentsCollection : function()
            {
-
+                return this.contentsCollection;
            },
 
            addFunc : function(model)
@@ -73,122 +69,62 @@ define(['underscore','backbone',
                 this.history.push(historyData);
            },
 
-           redo : function()
+           extractCollectionToJson : function()
            {
-               var historyItem = this.redoHistory.pop();
+                var this_ = this;
+                var results = {};
 
-               if(historyItem)
-               {
-                   this.history.push(historyItem);
-                   var type = historyItem.type;
+                var sequenceDatas = [];
 
-                   if(type=='add')
-                   {
-
-                   }else if(type=='remove')
-                   {
-
-                   }else if(type=='obj')
-                   {
-                       var model = historyItem.model;
-                       var key = historyItem.key;
-                       var value = historyItem.value;
-
-                       if(typeof(key)=='string')
-                       {
-                           model.set(key,value);
-                       }
-                       else
-                       {
-                           var setData ={}
-                           if(typeof(value)=='object')
-                           {
-                               for(var i = 0 ; i < key.length ; i++)
-                               {
-                                   setData[key[i]] = value[i];
-
-                               }
-                           }
-                           else
-                           {
-                               for(var i = 0 ; i < key.length ; i++)
-                               {
-                                   setData[key[i]] = value;
-                               }
-                           }
-
-                           model.set(setData);
-                       }
+                var sequenceViewEls = $('#sequenceArrayContainer').find('.sequence_view');
+                var sequenceIdArray = [];
 
 
+                _.each(sequenceViewEls, function(sequenceView){
 
-                       this.trigger('recoverEvent',{
-                           'model' : model,
-                           'key' : key,
-                           'value' : value
-                       });
-                   }
-               }
+                   var id = $(sequenceView).data('id');
+                    sequenceIdArray.push(id);
+                });
+
+               _.each(sequenceIdArray,function(id){
+                    var model = this_.getByCid(id);
+                    var properties = this_.copyObject(model.attributes);
+                    sequenceDatas.push(properties);
+                });
+
+                var contentModels = this.contentsCollection.models;
+                var contentDatas = [];
+
+               _.each(contentModels,function(model){
+                    var properties = this_.copyObject(model.attributes);
+                    properties.cid = model.cid;
+                    contentDatas.push(properties);
+                });
+
+                results.sequenceDatas = sequenceDatas;
+                results.contentDatas = contentDatas;
+               console.log(results);
+                return results;
            },
 
-           undo : function()
-           {
-                var historyItem = this.history.pop();
-
-                if(historyItem)
-                {
-                    this.redoHistory.push(historyItem);
-                    var type = historyItem.type;
-
-                    if(type=='add')
+            copyObject : function(obj) {
+                var newObj = {};
+                for (var key in obj) {
+                    //copy all the fields
+                    if( Object.prototype.toString.call( obj[key] ) === '[object Array]' ) {
+                        newObj[key] = obj[key].slice(0);
+                    }
+                    else
                     {
-
-                    }else if(type=='remove')
-                    {
-
-                    }else if(type=='obj')
-                    {
-
-                        var model = historyItem.model;
-                        var key = historyItem.key;
-                        var value = historyItem.prevValue;
-
-                        if(typeof(key)=='string')
-                        {
-                            model.set(key,value);
-                        }
-                        else
-                        {
-                            var setData ={}
-
-                            if(typeof(value)=='object')
-                            {
-                                for(var i = 0 ; i < key.length ; i++)
-                                {
-                                    setData[key[i]] = value[i];
-
-                                }
-                            }
-                            else
-                            {
-                                for(var i = 0 ; i < key.length ; i++)
-                                {
-                                    setData[key[i]] = value;
-                                }
-                            }
-
-                            model.set(setData);
-                        }
-
-                        this.trigger('recoverEvent',{
-                            'model' : model,
-                            'key' : key,
-                            'value' : value
-                        });
+                        newObj[key] = obj[key];
                     }
 
                 }
-           }
+
+                return newObj;
+            }
+
+
         });
 
         return sequenceColletion;

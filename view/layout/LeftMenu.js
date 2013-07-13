@@ -11,11 +11,15 @@ define(['jquery','underscore','backbone',
             template : LeftMenuBar,
             session : null,
 
+            sequenceCollection : null,
+
             initialize : function()
             {
                 _.bindAll(this);
                 this.mode = this.options.mode;
                 this.session = this.options.session;
+                this.sequenceCollection = this.options.sequenceCollection;
+
                 this.render();
                 this.eventBind();
             },
@@ -110,6 +114,11 @@ define(['jquery','underscore','backbone',
                     'width='+screen.width,
                     'fullscreen=yes'
                 ].join(',');
+
+                var showData = this.sequenceCollection.extractCollectionToJson();
+
+                var showDataJson = JSON.stringify(showData);
+                localStorage.setItem('showData',showDataJson);
 
 
                 var popup = window.open('/show.html', 'popup_window', params);
