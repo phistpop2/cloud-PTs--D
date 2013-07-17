@@ -92,19 +92,47 @@ define(['jquery','underscore','backbone',
                     changeDuration = moveDuration;
                 }
 
+                $('.fixWorkspace').each(function(){
+                    $(this).remove();
+                });
+
+                var prevWorld = $("<div class='prevWorld'></div>").append(world.clone());
+                prevWorld.css('transitionDuration',moveDuration+"00ms");
 
                 world.css({
                     webkitTransform: 'matrix3d('+matrix3d+')',
-                    transitionDuration:  moveDuration+"ms",
+                    transitionDuration:  "0ms",
                     '-webkit-animation-timing-function' : 'linear'
                 });
+
+                var currentWorld = $("<div class='currentWorld'></div>").append(world.clone());
+                currentWorld.addClass('future');
+                currentWorld.css('transitionDuration',moveDuration+"00ms");
+
+                var fixWorkspace = $('<div class=fixWorkspace></div>');
+                fixWorkspace.append(prevWorld);
+                fixWorkspace.append(currentWorld);
+
+                $(fixWorkspace).insertBefore('#showWorkspace');
+                $('#showWorkspace').hide();
+
+                prevWorld.addClass('past');
+                currentWorld.removeClass('future');
+
+                $(prevWorld).bind('webkitTransitionEnd',function(){
+                    $('.fixWorkspace').each(function(){
+                        $(this).remove();
+                    });
+                    $('#showWorkspace').show();
+                })
+
+
 
                 var backgroundAnimateDiv =$('#mainLayout').find('.backgroundAnimateDiv');
 
 
                 if(backgroundAnimateDiv.length!=0)
                 {
-
                     var transformAction = '';
 
                     if(slideBackgroundAction=='card_left')
@@ -145,13 +173,11 @@ define(['jquery','underscore','backbone',
                         });
                     }
 
-
-
                     $('#mainLayout').css({
                         background : background
 
-                    });
 
+                    });
 
 
                     backgroundAnimateDiv.bind('webkitTransitionEnd',function(){
