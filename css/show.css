@@ -11,6 +11,8 @@ html, body {
     width : 100%;
     background: #0da861;
     overflow : hidden;
+    position : absolute;
+
 }
 
 #showWorkspace{

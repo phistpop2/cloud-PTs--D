@@ -1,7 +1,9 @@
 define(['jquery','underscore','backbone',
     'text!template/layout/leftMenuBar.html',
-    'text!template/layout/StyleTemplate.html'],
-    function($,_,Backbone,LeftMenuBar,StyleTemplate){
+    'text!template/layout/StyleTemplate.html',
+    'text!template/dialog/SequenceDialog.html'],
+    function($,_,Backbone,LeftMenuBar,
+             StyleTemplate,SequenceDialogTemplate){
         var leftMenu = Backbone.View.extend({
             el : $('#mainLeftLayout'),
 
@@ -50,11 +52,13 @@ define(['jquery','underscore','backbone',
                 $('#lmStyleButton').click(this.stylePanelToggle);
                 $('#lmStyleButton').bind('mousedown',function(e){e.preventDefault();})
 
+/*
                 $('#lmSequenceButton').click(this.sequencePanelToggle);
                 $('#lmSequenceButton').bind('mousedown',function(e){e.preventDefault();})
+*/
 
                 $('#lmShowButton').bind('click',this.presentationShow);
-
+                $('#mainLayout').append(SequenceDialogTemplate);
             },
 
             sequencePanelToggle : function(e)

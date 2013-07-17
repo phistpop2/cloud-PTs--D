@@ -11,6 +11,8 @@ define(
      'view/layout/TopToolBar',
      'view/layout/LeftMenu',
 
+     'model/app/SettingModel',
+
      'jquery_knob',
      'jquery_jlayout',
      'jquery_dim',
@@ -26,6 +28,7 @@ define(
      'jquery_sidelayer',
      'jquery_sortable',
      'jquery_colorpicker',
+     'jquery_bpopup',
 
       //camera
      'vector3',
@@ -43,12 +46,14 @@ define(
     function($, _, Backbone,
              ContentsCollection,
              SequenceCollection,
-             WorkSpace,TopToolBar,LeftMenu){
+             WorkSpace,TopToolBar,LeftMenu,
+             SettingModel){
 
     var MainView = Backbone.View.extend({
 
         contentsCollection : null,
         cameraModule : null,
+        setting : null,
 
         initialize : function()
         {
@@ -57,12 +62,11 @@ define(
             this.setupWork();
         },
 
-
-
         setupWork : function(event)
         {
             this.cameraModule = new CameraModule({viewPort : $('#workSpace')});
 
+            this.initSetting();
             this.initCollections();
 
             this.initTopToolBar();
@@ -70,6 +74,13 @@ define(
             this.initLeftMenu();
 
             this.shortKey();
+        },
+
+        initSetting : function()
+        {
+            this.setting = new SettingModel({
+                'backgroundColor' : '#0da861'
+            });
         },
 
         initLeftMenu : function()
@@ -93,6 +104,7 @@ define(
         initWorkspace : function()
         {
             var workSpace = new WorkSpace({
+                'setting' : this.setting,
                 "contentsCollection" : this.contentsCollection,
                 'cameraModule' : this.cameraModule
             });
@@ -102,6 +114,7 @@ define(
         initTopToolBar : function()
         {
             var topToolBar = new TopToolBar({
+                "setting"  : this.setting,
                 "contentsCollection" : this.contentsCollection,
                 "sequenceCollection" : this.sequenceCollection,
                 'cameraModule' : this.cameraModule

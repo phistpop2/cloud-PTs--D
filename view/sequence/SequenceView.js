@@ -1,24 +1,42 @@
 define(['jquery','underscore','backbone',
+        'view/sequence/SequenceDialogView',
         'view/contents/ObjectView',
         'view/contents/TextView',
         'view/contents/ImageView',
         'view/contents/VideoView',
         'view/contents/FrameView',
+        'view/contents/FrameView',
         'ObjectController'],
     function($,_,Backbone,
+             SequenceDialogView,
              ObjectView,TextView,ImageView,VideoView,FrameView){
         var sequenceView = Backbone.View.extend({
 
             cameraModule : null,
             contentsCollection : null,
+            sequenceCollection : null,
             views : [],
 
             initialize : function()
             {
-                this.model.bind('change',this.updateView,this);
+                this.model = this.options.model;
+
                 this.cameraModule = this.options.cameraModule;
                 this.contentsCollection = this.options.contentsCollection;
+                this.sequenceCollection = this.options.sequenceCollection;
+                this.eventBind();
+            },
 
+            eventBind : function()
+            {
+                var sequenceCollection = this.sequenceCollection;
+                var this_ = this;
+
+                $(this.el).dblclick(function(){
+                    new SequenceDialogView({
+                        'model' : this_.model,
+                        'sequenceCollection' : sequenceCollection});
+                });
             },
 
             render : function()

@@ -22,13 +22,14 @@ define(['jquery','underscore','backbone',
             contentsCollection : null,
             sequenceCollection : null,
             cameraModule : null,
-
+            setting : null,
             isObjectSelected : false,
 
             initialize : function()
             {
                 _.bindAll(this);
 
+                this.setting = this.options.setting;
                 this.contentsCollection = this.options.contentsCollection;
                 this.sequenceCollection = this.options.sequenceCollection;
                 this.cameraModule = this.options.cameraModule;
@@ -72,23 +73,10 @@ define(['jquery','underscore','backbone',
                 });
 
                 $('#frameInsertButton').click(function(){
-/*
-                    this_.contentsCollection.add(new FrameModel({
-                            width : 1024,
-                            height : 768,
 
-                            translateX:0,
-                            translateY:0,
-                            translateZ:0,
-
-                            rotateX:0,
-                            rotateY: 0,
-                            rotateZ:0
-                        }
-                    ));
- */
 
                     this_.sequenceCollection.add(new SequenceModel({
+                        'slideBackgroundColor' : this_.setting.get('backgroundColor'),
                         'matrix3d' : this_.cameraModule.getCamera().getMatrixQuery()
                     }));
                 });
@@ -225,6 +213,7 @@ define(['jquery','underscore','backbone',
             activeSentenceSortSelection : function()
             {
                 var this_ = this;
+
                 $('#sentenceSortButton').each(function(){
                     $(this).children('div.selected').click(function(){
                         if($(this).parent().children('div.sentenceSortToolTip').css('display') == 'none'){

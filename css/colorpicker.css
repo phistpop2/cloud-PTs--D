@@ -147,6 +147,7 @@
 	top: 142px;
 	overflow: hidden;
 }
+
 .colorpicker_focus {
 	background-position: center;
 }
@@ -158,4 +159,8 @@
 }
 .colorpicker_slider {
 	background-position: bottom;
+}
+
+.colorpicker, .colorpicker * {
+    z-index: 19999;
 }

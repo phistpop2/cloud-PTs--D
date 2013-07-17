@@ -1,0 +1,93 @@
+<div id="slide_style_control">
+    <div class='dialog_content'>
+        <div class='left_panel'>
+            <div class='style_selector'>
+                <select id='style_selector'>
+                    <option value='slide_style'>slide style</option>
+                    <option value='action_style'>action style</option>
+                </select>
+                <ul class='style_header_btn_set'>
+
+                    <li id='styleCancelBtn'>×</li>
+                </ul>
+            </div>
+            <div class='style_control_panel' id='styleControlPanel'>
+                <div class='sequence_style_control'>
+
+                    <div class='style_group margin_top'>
+                        <div class="setting-block">
+
+                            <div class="row color-row">
+                                <label for="slideBackgroundColor">slide color</label>
+                                <div class="text-2">
+                                    <input id="slideBackgroundColor" class='color_picker' value="#000000">
+                                </div>
+                                <span class='color_thumb'></span>
+                            </div>
+
+                            <div class="row color-row">
+                                <label for="slideBackgroundGradation">gradation color</label>
+                                <div id='slideBackgroundGradation'></div>
+                            </div>
+
+                        </div>
+                        <div class='divider_line'></div>
+
+                        <div class="setting-block">
+                            <div class="row">
+                                <label for="slideBackgroundActionStyle">active action</label>
+                                <div class="text-1">
+                                    <select id='slideBackgroundActionStyle'>
+                                        <option value='none'>none</option>
+                                        <option value='fade'>fade</option>
+                                        <option value='card_left'>card left</option>
+                                        <option value='card_right'>card right</option>
+                                        <option value='card_up'>card up</option>
+                                        <option value='card_down'>card down</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class='style_group  margin_top'>
+                        <div class="setting-block">
+                            <div class="row margin_top">
+                                <label for="slideChangeDuration">duration</label>
+                                <label class="align-right" for="slideChangeDuration">ms</label>
+                                <div class="text-1">
+                                    <input id="slideChangeDuration" type="text" value="0">
+                                </div>
+                            </div>
+                            <div class='style_slider'    data-min='0' data-max='60000' data-key='moveDuration'>
+                            </div>
+                        </div>
+
+                        <div class='divider_line'></div>
+
+                        <div class="setting-block">
+                            <div class="row">
+                                <label for="slideChangeStyle">move style</label>
+                                <div class="text-1">
+                                    <select id='slideChangeStyle'>
+                                        <option value='linear'>linear</option>
+                                        <option value='cube'>cube(fixed)</option>
+                                        <option value='fade'>fade(fixed)</option>
+                                        <option value='concave'>concave(fixed)</option>
+                                        <option value='zoom'>zoom(fixed)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+

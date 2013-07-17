@@ -1,6 +1,6 @@
 define(['jquery','underscore','backbone',
 
-            'CameraModule'],
+    'CameraModule'],
     function($,_,Backbone,
              ObjectModel,
              TextModel){
@@ -12,44 +12,44 @@ define(['jquery','underscore','backbone',
 
             currentShowPage : 0,
 
-           initialize : function()
-           {
+            initialize : function()
+            {
                 _.bindAll(this);
-               this.showCollection = this.options.showCollection;
-               this.cameraModule = this.options.cameraModule;
-               this.camera = this.cameraModule.getCamera();
+                this.showCollection = this.options.showCollection;
+                this.cameraModule = this.options.cameraModule;
+                this.camera = this.cameraModule.getCamera();
 
-               this.render();
+                this.render();
 
 
-               this.eventBind();
-               this.show(this.currentShowPage);
-           },
+                this.eventBind();
+                this.show(this.currentShowPage);
+            },
 
-           eventBind : function()
-           {
+            eventBind : function()
+            {
                 var this_ = this;
                 $(window).resize(this.resize);
 
-                $(window).keyup(function(e){
-                   var rightKey = 39, leftKey = 37
+                $(window).keydown(function(e){
+                    var rightKey = 39, leftKey = 37
 
-                   if(e.keyCode == rightKey)
-                   {
-                       console.log('check');
-                       this_.nextPage();
-                   }
-                   else if(e.keyCode == leftKey)
-                   {
+                    if(e.keyCode == rightKey)
+                    {
+
+                        this_.nextPage();
+                    }
+                    else if(e.keyCode == leftKey)
+                    {
                         this_.prevPage();
-                   }
+                    }
                 });
-           },
+            },
 
-           nextPage : function()
-           {
+            nextPage : function()
+            {
                 var pageSize = this.showCollection.models.length;
-                console.log('pageSize',pageSize);
+
 
                 this.currentShowPage++;
 
@@ -60,58 +60,161 @@ define(['jquery','underscore','backbone',
 
                 this.show(this.currentShowPage);
 
-           },
+            },
 
-           prevPage : function()
-           {
-               var pageSize = this.showCollection.models.length;
+            prevPage : function()
+            {
+                var pageSize = this.showCollection.models.length;
 
-               this.currentShowPage--;
-               if(this.currentShowPage < 0)
-               {
-                   this.currentShowPage = pageSize-1;
-               }
+                this.currentShowPage--;
+                if(this.currentShowPage < 0)
+                {
+                    this.currentShowPage = pageSize-1;
+                }
 
-               this.show(this.currentShowPage);
-           },
+                this.show(this.currentShowPage);
+            },
 
-           show : function(page)
-           {
-               var showModel = this.showCollection.models[page];
-               var matrix3d = showModel.get('matrix3d');
-               var moveDuration = showModel.get('moveDuration');
-               var world = $('#showWorkspace').find('#world');
+            show : function(page)
+            {
+                var showModel = this.showCollection.models[page];
+                var matrix3d = showModel.get('matrix3d');
+                var background = showModel.get('slideBackgroundColor');
+                var slideChangeStyle = showModel.get('slideChangeStyle');
 
-               world.css({
-                   webkitTransform: 'matrix3d('+matrix3d+')',
-                   transitionDuration:  moveDuration+"ms"
-               });
-           },
+                var moveDuration = showModel.get('moveDuration');
+                var changeDuration = 0;
+                var slideBackgroundAction = showModel.get('slideBackgroundAction');
+                var world = $('#showWorkspace').find('#world');
 
-           resize : function()
-           {
-               var this_ = this;
-               var scaleH = window.innerHeight / parseInt($(this_.el).css('height'));
-               var scaleW = window.innerWidth / parseInt($(this_.el).css('width'));
-               var scale = scaleW;
+                if(slideBackgroundAction!='none')
+                {
+                    changeDuration = moveDuration;
+                }
 
-               if(scaleH < scaleW)  {
-                   scale = scaleH;
-               }
 
-               console.log('scale : ' + scale);
+                world.css({
+                    webkitTransform: 'matrix3d('+matrix3d+')',
+                    transitionDuration:  moveDuration+"ms",
+                    '-webkit-animation-timing-function' : 'linear'
+                });
 
-               $(this_.el).css({
-                  '-webkit-transform' : 'scale('+scale+')',
-                  '-webkit-transform-origin' : '0% 0%'
-               });
+                var backgroundAnimateDiv =$('#mainLayout').find('.backgroundAnimateDiv');
 
-           },
 
-           render : function()
-           {
-               this.resize();
-           }
+                if(backgroundAnimateDiv.length!=0)
+                {
+
+                    var transformAction = '';
+
+                    if(slideBackgroundAction=='card_left')
+                    {
+                        transformAction = 'translate(100%, 0)';
+                    }
+                    else if(slideBackgroundAction=='card_right')
+                    {
+                        transformAction = 'translate(-100%, 0)';
+                    }
+                    else if(slideBackgroundAction=='card_up')
+                    {
+                        transformAction = 'translate(0, 100%)';
+                    }
+                    else if(slideBackgroundAction=='card_down')
+                    {
+                        transformAction = 'translate(0, -100%)';
+                    }
+                    else        //may be 'fade
+                    {
+                        transformAction = 'translate(0, 0)';
+                    }
+
+                    if((slideBackgroundAction!='none')&&
+                        (slideBackgroundAction!='fade'))
+                    {
+                        backgroundAnimateDiv.css({
+                            webkitTransform: transformAction,
+                            transitionDuration:  changeDuration+"ms"
+                        });
+                    }
+                    else
+                    {
+
+                        backgroundAnimateDiv.css({
+                            background : background,
+                            transitionDuration:  changeDuration+"ms"
+                        });
+                    }
+
+
+
+                    $('#mainLayout').css({
+                        background : background
+
+                    });
+
+
+
+                    backgroundAnimateDiv.bind('webkitTransitionEnd',function(){
+
+                        $('#mainLayout').find('.backgroundAnimateDiv').each(function(){
+                            $(this).remove();
+                        });
+
+
+                        var newDiv = $("<div class='backgroundAnimateDiv'></div>");
+                        newDiv.css({
+                            width : "100%",
+                            height : "100%",
+                            background : background,
+                            transitionDuration:  changeDuration+"ms"
+                        });
+                        newDiv.insertBefore('#showWorkspace');
+                    });
+                }
+                else
+                {
+
+                    var newDiv = $("<div class='backgroundAnimateDiv'></div>");
+                    newDiv.css({
+                        width : "100%",
+                        height : "100%",
+                        background : background,
+                        transitionDuration:  changeDuration+"ms"
+                    });
+                    newDiv.insertBefore('#showWorkspace');
+
+                    $('#mainLayout').css({
+                        background : background
+                    });
+                }
+
+
+
+            },
+
+            resize : function()
+            {
+                var this_ = this;
+                var scaleH = window.innerHeight / parseInt($(this_.el).css('height'));
+                var scaleW = window.innerWidth / parseInt($(this_.el).css('width'));
+                var scale = scaleW;
+
+                if(scaleH < scaleW)  {
+                    scale = scaleH;
+                }
+
+
+                $(this_.el).css({
+                    '-webkit-transform' : 'scale('+scale+')',
+                    '-webkit-transform-origin' : '0% 0%'
+                });
+
+            },
+
+            render : function()
+            {
+                this.resize();
+            }
         }) ;
 
 

@@ -15,6 +15,7 @@ define(['jquery','underscore','backbone',
            initialize : function()
            {
                 _.bindAll(this);
+               this.setting = this.options.setting;
                this.contentsCollection = this.options.contentsCollection;
                this.cameraModule = this.options.cameraModule;
                this.camera = this.cameraModule.getCamera();
@@ -139,6 +140,8 @@ define(['jquery','underscore','backbone',
 
            render : function()
            {
+               $('#mainCanvasLayout').css('background',this.setting.get('backgroundColor'));
+
                for(var i = 0 ; i < 2;  i++)
                {
                    var rotateX =  Math.floor(Math.random() * 359) + 1;

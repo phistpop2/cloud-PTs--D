@@ -26,6 +26,7 @@ require.config({
         'jquery_sidelayer' : 'lib/jqueryPlugin/jquery.side.layer',
         'jquery_sortable' : 'lib/jqueryPlugin/jquery-sortable',
         'jquery_colorpicker' : 'lib/jqueryPlugin/colorpicker',
+        'jquery_bpopup' : 'lib/jqueryPlugin/jquery.bpopup',
         'snapshot' : 'lib/html2canvas',
 
       'underscore' : 'lib/underscore-min',
@@ -62,6 +63,7 @@ require.config({
       'jquery_lightbox' : ['jquery'],
       'jquery_sidelayer' : ['jquery'],
       'jquery_sortable' : ['jquery'],
+      'jquery_bpopup' : ['jquery'],
       'jquery_jmenu' : ['jquery_ui'],
       'jlayout_flexgrid' : ['jquery_ui'],
       'jlayout_border' : ['jquery_ui'],

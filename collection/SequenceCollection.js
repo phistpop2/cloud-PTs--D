@@ -59,6 +59,7 @@ define(['underscore','backbone',
                 this.views[model.cid] = new SequenceView({model: model,
                                                             id:'view_'+model.cid,
                                                             'contentsCollection' : this.contentsCollection,
+                                                            'sequenceCollection' : this,
                                                             'cameraModule' : this.cameraModule}).render();
 
 

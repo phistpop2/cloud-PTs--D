@@ -133,7 +133,6 @@
     width : 60px;
 }
 
-/* box shadow */
 .border_style_control,
 .box_shadow_style_control,
 .text_shadow_style_control
@@ -243,3 +242,27 @@
     font-style: normal;
 }
 
+
+#slide_style_control .dialog_content{
+    position: relative;
+    width : 300px;
+    padding : 4px;
+    background : #222;
+    border-radius: 4px;
+}
+
+#slide_style_control .left_panel{
+    padding-right : 10px;
+}
+
+
+.sequence_style_control
+{
+    padding-top : 10px;
+    padding-bottom : 10px;
+    padding-right : 10px;
+}
+
+#slideChangeDuration{
+    width : 40px;
+}

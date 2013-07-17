@@ -5,8 +5,13 @@ define(['jquery','underscore','backbone'],
 
         defaults:{
             matrix3d :'',
-            moveAction : '',
-            moveDuration : 700
+
+            slideBackgroundColor : '',
+            slideBackgroundAction : 'none',
+
+
+            moveDuration : 400,
+            slideChangeStyle : 'linear'
         },
 
         controller : null,
