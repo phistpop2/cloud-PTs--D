@@ -11,7 +11,7 @@ define(['jquery','underscore','backbone'],
 
 
             moveDuration : 400,
-            slideChangeStyle : 'linear'
+            slideChangeStyle : 'default'
         },
 
         controller : null,
