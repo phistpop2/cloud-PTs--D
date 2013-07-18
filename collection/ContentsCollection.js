@@ -49,7 +49,6 @@ define(['underscore','backbone',
                else
                {
                    this.selected = null;
-
                    this.trigger('unSelected');
                }
            },
