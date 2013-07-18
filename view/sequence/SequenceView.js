@@ -37,11 +37,6 @@ define(['jquery','underscore','backbone',
                         'model' : this_.model,
                         'sequenceCollection' : sequenceCollection});
                 });
-                $(this.el).click(function(){
-                    console.debug( 'click', this.cameraModule );
-                    this_.cameraModule.getCamera().lookFacade( this_.model.get('quaternion') );
-                    this_.cameraModule.getCamera().zoomFacade( this_.model.get('zoom') );
-                });
             },
 
             render : function()

@@ -37,11 +37,6 @@ define(['jquery','underscore','backbone',
                 var prevY = 0 ;
                 var moveEnable = false;
 
-
-                var zooming = false;
-                var selection = $('<div>').addClass('selection-box');
-                var wBias = 200;    //workspace bias(gap)
-
                 var ctrlKey = 17;
                 var ctrlDown = false;
 
@@ -57,26 +52,11 @@ define(['jquery','underscore','backbone',
                     });
 
                 $(this.el).bind('mousedown',function(e){
+                    moveEnable = true;
                     prevX = e.clientX;
                     prevY = e.clientY;
 
-
                     this_.contentsCollection.setSelected();
-                    if(e.altKey){
-                        zooming = true;
-                        selection.css({
-                            'position': 'absolute',
-                            'border': '2px dotted #ffff00',
-                            'top': prevY,
-                            'left': prevX-wBias,
-                            'width': 0,
-                            'height': 0
-                        });
-                        $('#world').append( selection );
-
-                    }else
-                        moveEnable = true;
-                    console.debug(e.clientX, e.clientY, e.pageX, e.pageY);
                 })
 
 
@@ -90,12 +70,7 @@ define(['jquery','underscore','backbone',
                         var scalar1 = (currX-prevX)/2;
                         var scalar2 = (currY-prevY)/2;
 
-
-                        if(e.altKey)    //zoom
-                        {
-
-                        }
-                        else if(e.ctrlKey && e.shiftKey)
+                        if(e.ctrlKey && e.shiftKey)
                         {
                             camera_.rotateZ(-(scalar2+scalar1));
                         }
@@ -112,31 +87,9 @@ define(['jquery','underscore','backbone',
 
                         prevX = currX;
                         prevY = currY;
-                    }else if( zooming ){
-                        var currX = e.clientX;
-                        var currY = e.clientY;
-
-
-                        var width  = Math.abs(currX - prevX);
-                        var height = Math.abs(currY - prevY);
-                        var newX, newY;
-
-                        newX = (currX < prevX) ? (prevX - width) : prevX;
-                        newY = (currY < prevY) ? (prevY - height) : prevY;
-
-                        selection.css({
-                            'width': width,
-                            'height': height,
-                            'top': newY,
-                            'left': newX-wBias
-                        });
-                        console.debug('zoom', newX, newY, prevX, prevY);
                     }
                 }).bind('mouseup',function(e){
-                        selection.remove();
                         moveEnable = false;
-                        zooming = false;
-
                     });
 
 

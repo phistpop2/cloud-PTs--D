@@ -77,9 +77,7 @@ define(['jquery','underscore','backbone',
 
                     this_.sequenceCollection.add(new SequenceModel({
                         'slideBackgroundColor' : this_.setting.get('backgroundColor'),
-                        'matrix3d' : this_.cameraModule.getCamera().getMatrixQuery(),
-                        'quaternion' : this_.cameraModule.getCamera().getQuaternion().clone(),
-                        'zoom': this_.cameraModule.getCamera().getLocation().clone()
+                        'matrix3d' : this_.cameraModule.getCamera().getMatrixQuery()
                     }));
                 });
 
