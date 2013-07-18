@@ -5,7 +5,7 @@ define(['jquery','underscore','backbone',
              ObjectModel,
              TextModel){
         var showWorkspace = Backbone.View.extend({
-            el : $('#showWorkspace'),
+            el : $('#workspaceWrap'),
 
             showCollection : null,
             cameraModule : null,
@@ -83,28 +83,71 @@ define(['jquery','underscore','backbone',
                 var slideChangeStyle = showModel.get('slideChangeStyle');
 
                 var moveDuration = showModel.get('moveDuration');
-                var changeDuration = 0;
+                var backgroundDuration = 0;
                 var slideBackgroundAction = showModel.get('slideBackgroundAction');
                 var world = $('#showWorkspace').find('#world');
 
-                if(slideBackgroundAction!='none')
+                if(slideChangeStyle=='default')
                 {
-                    changeDuration = moveDuration;
+                    world.css({
+                        webkitTransform: 'matrix3d('+matrix3d+')',
+                        transitionDuration:  moveDuration+"ms",
+                        '-webkit-animation-timing-function' : 'linear'
+                    });
+
+                }
+                else        //fixed style
+                {
+                    $('#showWorkspace').hide();
+                    $('.fixWorkspace').each(function(){
+                        $(this).remove();
+                    });
+
+                    var prevWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
+                    prevWorkspace.css('transitionDuration',moveDuration+"ms");
+
+                    world.css({
+                        webkitTransform: 'matrix3d('+matrix3d+')',
+                        transitionDuration:  "0ms",
+                        '-webkit-animation-timing-function' : 'linear'
+                    });
+
+                    var currentWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
+                    currentWorkspace.addClass('future');
+                    currentWorkspace.css('transitionDuration',moveDuration+"ms");
+
+                    var fixWorkspace = $('<div class=fixWorkspace></div>').append("<div class='fixWorld "+slideChangeStyle+"'></div>");
+                    fixWorkspace.find('.fixWorld').append(prevWorkspace);
+                    fixWorkspace.find('.fixWorld').append(currentWorkspace);
+
+                    $(fixWorkspace).insertBefore('#showWorkspace');
+                    $('#showWorkspace').hide();
+
+                    prevWorkspace.addClass('past');
+                    currentWorkspace.removeClass('future');
+
+
+                    $(currentWorkspace).bind('webkitTransitionEnd',function(){
+
+                        $('.fixWorkspace').each(function(){
+                            $(this).remove();
+                        });
+                        $('#showWorkspace').show();
+                    });
                 }
 
 
-                world.css({
-                    webkitTransform: 'matrix3d('+matrix3d+')',
-                    transitionDuration:  moveDuration+"ms",
-                    '-webkit-animation-timing-function' : 'linear'
-                });
+                //background setting
+                if(slideBackgroundAction!='none')
+                {
+                    backgroundDuration = moveDuration;
+                }
 
                 var backgroundAnimateDiv =$('#mainLayout').find('.backgroundAnimateDiv');
 
 
                 if(backgroundAnimateDiv.length!=0)
                 {
-
                     var transformAction = '';
 
                     if(slideBackgroundAction=='card_left')
@@ -133,7 +176,7 @@ define(['jquery','underscore','backbone',
                     {
                         backgroundAnimateDiv.css({
                             webkitTransform: transformAction,
-                            transitionDuration:  changeDuration+"ms"
+                            transitionDuration:  backgroundDuration+"ms"
                         });
                     }
                     else
@@ -141,17 +184,15 @@ define(['jquery','underscore','backbone',
 
                         backgroundAnimateDiv.css({
                             background : background,
-                            transitionDuration:  changeDuration+"ms"
+                            transitionDuration:  backgroundDuration+"ms"
                         });
                     }
-
-
 
                     $('#mainLayout').css({
                         background : background
 
-                    });
 
+                    });
 
 
                     backgroundAnimateDiv.bind('webkitTransitionEnd',function(){
@@ -166,7 +207,7 @@ define(['jquery','underscore','backbone',
                             width : "100%",
                             height : "100%",
                             background : background,
-                            transitionDuration:  changeDuration+"ms"
+                            transitionDuration:  backgroundDuration+"ms"
                         });
                         newDiv.insertBefore('#showWorkspace');
                     });
@@ -179,7 +220,7 @@ define(['jquery','underscore','backbone',
                         width : "100%",
                         height : "100%",
                         background : background,
-                        transitionDuration:  changeDuration+"ms"
+                        transitionDuration:  backgroundDuration+"ms"
                     });
                     newDiv.insertBefore('#showWorkspace');
 
@@ -189,25 +230,26 @@ define(['jquery','underscore','backbone',
                 }
 
 
-
             },
 
             resize : function()
             {
                 var this_ = this;
-                var scaleH = window.innerHeight / parseInt($(this_.el).css('height'));
                 var scaleW = window.innerWidth / parseInt($(this_.el).css('width'));
+                var scaleH = window.innerHeight / parseInt($(this_.el).css('height'));
+
                 var scale = scaleW;
 
                 if(scaleH < scaleW)  {
                     scale = scaleH;
                 }
 
-
                 $(this_.el).css({
                     '-webkit-transform' : 'scale('+scale+')',
                     '-webkit-transform-origin' : '0% 0%'
                 });
+
+
 
             },
 
