@@ -65,6 +65,7 @@ define(
 
         initCollections : function()
         {
+            console.log('show');
             this.showData = JSON.parse(localStorage.getItem('showData'));
 
             this.showCollection = new ShowCollection();

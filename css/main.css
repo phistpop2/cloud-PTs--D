@@ -11,7 +11,7 @@ html, body {
 #mainLayout {
     height: 100%;
     width : 100%;
-    background-color: #f6f6f6;
+    background : #222;
     overflow : hidden;
 }
 
@@ -30,8 +30,8 @@ html, body {
     display: block;
     -webkit-perspective: 600;
     -webkit-perspective-origin: 50% 50%;
-    border : 1px solid #000;
     position: absolute;
+
     left: 0;
     top: 0;
     right: 0;

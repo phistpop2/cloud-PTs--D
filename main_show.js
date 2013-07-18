@@ -77,6 +77,3 @@ require.config({
   }
 });
 
-require(['show'],function(App){
-    App.initialize();
-});

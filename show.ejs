@@ -23,12 +23,18 @@
     <script>
         window.onload = function(){
 
-            require(['show'],function(App){
-                App.initialize();
-            });
-        };
+             var presentationData = '<%=presentationData%>';
+             var presentationKey = '<%=presentationKey%>';
 
+             presentationData = presentationData.replace(/&shin;/gi,'\\').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&quot;/gi,'"');
+             localStorage.setItem('showData',presentationData);
+
+             require(['show'],function(App){
+                  App.initialize();
+             });
+        };
     </script>
+
 </head>
 <body>
 <div id="mainLayout">

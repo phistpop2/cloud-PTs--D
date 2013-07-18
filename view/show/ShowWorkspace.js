@@ -12,12 +12,21 @@ define(['jquery','underscore','backbone',
 
             currentShowPage : 0,
 
+            fixWorkspace : null,
+
+            prevWorkspace : null,
+            prevWorld : null,
+
+            currentWorkspace : null,
+            currentWorld : null,
+
             initialize : function()
             {
                 _.bindAll(this);
                 this.showCollection = this.options.showCollection;
                 this.cameraModule = this.options.cameraModule;
                 this.camera = this.cameraModule.getCamera();
+
 
                 this.render();
 
@@ -89,6 +98,7 @@ define(['jquery','underscore','backbone',
 
                 if(slideChangeStyle=='default')
                 {
+                    this.fixWorkspace.hide();
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
                         transitionDuration:  moveDuration+"ms",
@@ -98,13 +108,14 @@ define(['jquery','underscore','backbone',
                 }
                 else        //fixed style
                 {
+                    var this_ = this;
                     $('#showWorkspace').hide();
-                    $('.fixWorkspace').each(function(){
-                        $(this).remove();
-                    });
+                    this.fixWorkspace.show();
 
-                    var prevWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
-                    prevWorkspace.css('transitionDuration',moveDuration+"ms");
+                    this.fixWorkspace.addClass(slideChangeStyle);
+                    this.prevWorkspace.css('transitionDuration',moveDuration+"ms");
+
+                    this.prevWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
@@ -112,26 +123,28 @@ define(['jquery','underscore','backbone',
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
-                    var currentWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
-                    currentWorkspace.addClass('future');
-                    currentWorkspace.css('transitionDuration',moveDuration+"ms");
+                    console.log("-webkit-transform",$(world).css('-webkit-transform'));
+                    this.currentWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
-                    var fixWorkspace = $('<div class=fixWorkspace></div>').append("<div class='fixWorld "+slideChangeStyle+"'></div>");
-                    fixWorkspace.find('.fixWorld').append(prevWorkspace);
-                    fixWorkspace.find('.fixWorld').append(currentWorkspace);
+                    this.currentWorkspace.css('transitionDuration',moveDuration+"ms");
 
-                    $(fixWorkspace).insertBefore('#showWorkspace');
-                    $('#showWorkspace').hide();
+                    this.prevWorkspace.addClass('past');
+                    this.currentWorkspace.removeClass('future');
 
-                    prevWorkspace.addClass('past');
-                    currentWorkspace.removeClass('future');
+                    $(this.currentWorkspace).bind('webkitTransitionEnd',function(){
+
+                        this_.prevWorkspace.css('transitionDuration','');
+                        this_.currentWorkspace.css('transitionDuration','');
+
+                        this_.fixWorkspace.removeClass(slideChangeStyle);
+                        this_.prevWorkspace.removeClass('past');
+                        this_.prevWorkspace.removeClass('future');
+                        this_.currentWorkspace.removeClass('past');
+                        this_.currentWorkspace.addClass('future');
 
 
-                    $(currentWorkspace).bind('webkitTransitionEnd',function(){
 
-                        $('.fixWorkspace').each(function(){
-                            $(this).remove();
-                        });
+                        this_.fixWorkspace.hide();
                         $('#showWorkspace').show();
                     });
                 }
@@ -255,6 +268,20 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
+                var world = $('#showWorkspace').find('#world');
+
+                this.prevWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
+                this.prevWorld = $(this.prevWorkspace).find('#world');
+
+                this.currentWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
+                this.currentWorkspace.addClass('future');
+                this.currentWorld = $(this.currentWorkspace).find('#world');
+
+                this.fixWorkspace =  $('<div class=fixWorkspace></div>').append("<div class='fixWorld'></div>");
+                this.fixWorkspace.find('.fixWorld').append(this.prevWorkspace);
+                this.fixWorkspace.find('.fixWorld').append(this.currentWorkspace);
+
+                $(this.fixWorkspace).insertBefore('#showWorkspace');
                 this.resize();
             }
         }) ;

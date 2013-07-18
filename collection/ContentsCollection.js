@@ -31,6 +31,7 @@ define(['underscore','backbone',
            {
                _.bindAll(this);
                this.bind('add',this.addFunc);
+               this.bind('remove',this.removeFunc)
 
            },
 
@@ -88,9 +89,17 @@ define(['underscore','backbone',
 
            },
 
+            removeFunc : function(model)
+            {
+                this.views[model.cid].remove(model);
+
+            },
+
+
            addToHistory : function(historyData)
            {
                 this.history.push(historyData);
+                this.setSelected();
            },
 
            redo : function()

@@ -3,21 +3,27 @@ define(['jquery','underscore','backbone',
     'view/dialog/StyleView',
 
     'model/contents/TextModel',
+    'model/contents/ImageModel',
     'model/contents/FrameModel',
     'model/sequence/SequenceModel',
 
+    'text!template/dialog/ImageInsertDialog.html',
     'jquery_knob'],
     function($,_,Backbone,
              TopToolBarTemplate,
              StyleView,
 
              TextModel,
+             ImageModel,
              FrameModel,
-             SequenceModel){
+             SequenceModel,
+
+             ImageInsertDialogTemplate){
 
         var topToolBar = Backbone.View.extend({
             template : TopToolBarTemplate,
 
+            session : null,
             styleView : null,
             contentsCollection : null,
             sequenceCollection : null,
@@ -29,10 +35,12 @@ define(['jquery','underscore','backbone',
             {
                 _.bindAll(this);
 
+                this.session  = this.options.session;
                 this.setting = this.options.setting;
                 this.contentsCollection = this.options.contentsCollection;
                 this.sequenceCollection = this.options.sequenceCollection;
                 this.cameraModule = this.options.cameraModule;
+
                 this.render();
                 this.bindEvents();
                 this.initInsertButtons();
@@ -81,9 +89,77 @@ define(['jquery','underscore','backbone',
                     }));
                 });
 
+                this.initImageInsertButton();
             },
 
+            initImageInsertButton : function()
+            {
+                $('#TopToolBar').append(ImageInsertDialogTemplate);
 
+                $('#TopToolBar').find('#imageInsertButton').click(function(e){
+
+                    $('#ImageInsertDialog').lightbox_me({
+                        centered: true
+                    });
+
+                    e.preventDefault();
+                });
+                $('#TopToolBar').find('#doImageInsert').click(this.addImage);
+
+                $('#ImageInsertDialog').find('#closeImageDlgBtn').click(this.closeDialog);
+
+
+                $('#ImageInsertDialog').find('#imageFile').bind('change', this.handleFileSelect);
+            },
+
+            closeDialog : function()
+            {
+                $('.topToolDialog').trigger('close');
+            },
+
+            addImage : function()
+            {
+                var this_ = this;
+
+                if(this.enc)
+                {
+                    this.session.uploadFile(this.enc,this.fileType,function(data){
+                        var src = data.file.webContentLink;
+                        console.log("src",src);
+                        this_.contentsCollection.add(new ImageModel({'src' : src}));
+                        $('#imageUrl').val('');
+                        this_.closeDialog();
+                        this_.enc = null;
+                    });
+
+
+                }
+                var src =   $('#imageUrl').val();
+                this.contentsCollection.add(new ImageModel({'src' : src}));
+                $('#imageUrl').val('');
+
+
+
+            },
+
+            handleFileSelect : function(evt)
+            {
+                var files = evt.target.files; // FileList object
+
+                var file = files[0];
+                var reader = new FileReader();
+
+                var this_ = this;
+                reader.onloadend = function(s)
+                {
+                    this_.enc = btoa(reader.result);
+
+                    this_.fileType = file.type;
+                    console.log("readed");
+                }
+
+                reader.readAsBinaryString(file);
+            },
 
 
             activeFontFamilySelection : function ()

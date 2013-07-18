@@ -36,6 +36,7 @@ define(['jquery','underscore','backbone',
 
                 var ctrlKey = 17;
 
+
                 var ctrlDown = false;
 
                 $(document).keydown(function(e)
@@ -126,6 +127,7 @@ define(['jquery','underscore','backbone',
 
 
                 $('#workSpace').bind('mousewheel',function(e){
+
                     if(model_.isSelected())
                     {
                         var pos3d = model_.controller.getDepth(-e.originalEvent.wheelDelta/10);
@@ -136,6 +138,7 @@ define(['jquery','underscore','backbone',
                         );
                     }
                 });
+
             },
 
 
@@ -261,8 +264,6 @@ define(['jquery','underscore','backbone',
                 this.cssRenderer();
 
             }
-
-
     });
 
         return ObjectView;

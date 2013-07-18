@@ -3,6 +3,7 @@ define(
      'jquery',
      'underscore',
      'backbone',
+      'session',
 
      'collection/ContentsCollection',
      'collection/SequenceCollection',
@@ -10,8 +11,12 @@ define(
      'view/layout/WorkSpace',
      'view/layout/TopToolBar',
      'view/layout/LeftMenu',
+     'view/dialog/WorkListView',
 
      'model/app/SettingModel',
+     'model/contents/TextModel',
+     'model/contents/ImageModel',
+
 
      'jquery_knob',
      'jquery_jlayout',
@@ -43,23 +48,66 @@ define(
         'groundListener',
         'RenderFPS'
     ],
-    function($, _, Backbone,
+    function($, _, Backbone,session,
              ContentsCollection,
              SequenceCollection,
-             WorkSpace,TopToolBar,LeftMenu,
-             SettingModel){
+             WorkSpace,TopToolBar,LeftMenu,WorkListView,
+             SettingModel,TextModel,ImageModel){
 
     var MainView = Backbone.View.extend({
 
         contentsCollection : null,
         cameraModule : null,
         setting : null,
+        session : null,
 
         initialize : function()
         {
             _.bindAll(this);
 
-            this.setupWork();
+            this.eventBind();
+            this.sessionCheck();
+        },
+
+
+        sessionCheck : function()
+        {
+            this.session = new PSession();
+            this.session.authorization();
+        },
+
+        setupUserInfo : function()
+        {
+            this.session.setUserInformation();
+        },
+
+        getWorkList : function()
+        {
+            this.session.checkWorkFolder();
+        },
+
+        showWorkList : function(e)
+        {
+            if(!this.workListView)
+            {
+                this.workListView = new WorkListView({'session' : this.session});
+            }
+
+            if(e)
+            {
+                this.workListView.updateListData(e.workDatas);
+            }
+
+            this.workListView.show();
+        },
+
+
+        eventBind : function()
+        {
+            $(document).bind('accountSuccess',this.setupUserInfo);
+            $(document).bind('completeUserInfo',this.getWorkList);
+            $(document).bind('workList',this.showWorkList);
+            $(document).bind('completeWorkLoad',this.setupWork);
         },
 
         setupWork : function(event)
@@ -86,6 +134,7 @@ define(
         initLeftMenu : function()
         {
             this.leftMenu = new LeftMenu({
+                "session" : this.session,
                 "sequenceCollection" : this.sequenceCollection
             });
         },
@@ -114,6 +163,7 @@ define(
         initTopToolBar : function()
         {
             var topToolBar = new TopToolBar({
+                "session" : this.session,
                 "setting"  : this.setting,
                 "contentsCollection" : this.contentsCollection,
                 "sequenceCollection" : this.sequenceCollection,
@@ -126,7 +176,7 @@ define(
             var this_ = this;
             var ctrlDown = false;
             var shiftDown = false;
-            var ctrlKey = 17,shiftKey = 16, zKey = 90;
+            var ctrlKey = 17,shiftKey = 16, zKey = 90, vKey = 86;
 
             $(document).keydown(function(e)
             {
@@ -149,8 +199,92 @@ define(
                     this_.contentsCollection.undo();
                     return false;
                 }
+                else if(ctrlDown && e.keyCode == vKey)
+                {
+                    var clipboard = localStorage.getItem('clipboard');
+
+                    try{
+                        clipboard = JSON.parse(clipboard);
+                        if(clipboard.type == 'content')
+                        {
+                            var modelAttributes = clipboard.data;
+                            var model = null;
+
+                            if(modelAttributes.type=='text')
+                            {
+                                model = new TextModel(modelAttributes);
+                            }
+                            else if(modelAttributes.type=='image')
+                            {
+                                model = new ImageModel(modelAttributes);
+                            }
+
+                            this_.contentsCollection.add(model);
+                        }
+                    }
+                    catch(e)
+                    {
+
+                    }
+
+
+
+                    return false;
+                }
             });
 
+
+            $(document).bind('keyup',function(e)
+            {
+                if(ctrlDown)
+                {
+
+                    if ((e.keyCode==67) || (e.keyCode == 88))     //ctrl+c
+                    {
+                        var clipboard= {};
+                        var model_ = this_.contentsCollection.getSelected();
+
+                        if(model_)
+                        {
+                            clipboard.type = 'content';
+                            console.log('model_.attributes',model_.attributes);
+                            clipboard.data = this_.copyObject(model_.attributes);
+
+                            localStorage.setItem('clipboard',JSON.stringify(clipboard));
+
+                            if(e.keyCode == 88)      //ctrl+x
+                            {
+                                model_.selfRemove();
+                            }
+                        }
+
+
+                    }
+
+                }
+                else if(e.keyCode == 46)    //delete
+                {
+                    model_.selfRemove();
+                }
+
+            });
+        },
+
+        copyObject : function(obj) {
+            var newObj = {};
+            for (var key in obj) {
+                //copy all the fields
+                if( Object.prototype.toString.call( obj[key] ) === '[object Array]' ) {
+                    newObj[key] = obj[key].slice(0);
+                }
+                else
+                {
+                    newObj[key] = obj[key];
+                }
+
+            }
+
+            return newObj;
         }
     });
 

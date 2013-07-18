@@ -72,11 +72,21 @@ define(['jquery','underscore','backbone'],
         isSelected : function()
         {
             var selected = false;
-            if(this.collection.getSelected()==this)
+
+
+            if( (this.collection) && (this.collection.getSelected()==this))
             {
                 selected=true;
             }
             return selected;
+        },
+
+        selfRemove : function()
+        {
+            if(this.collection)
+            {
+                this.collection.remove(this);
+            }
         },
 
         commitToCollection : function(key,value)
