@@ -52,9 +52,6 @@ define(['jquery','underscore','backbone'],
                 this.set('rotateX',angle.getX());
                 this.set('rotateY',angle.getY());
                 this.set('rotateZ',angle.getZ());
-
-
-
             }
         },
 

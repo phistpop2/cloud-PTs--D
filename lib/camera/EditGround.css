@@ -19,5 +19,6 @@
     margin-top: -256px;
     height: 512px;
     width: 512px;
+    -webkit-perspective: 600;
     -webkit-transform-style: preserve-3d;
 }
