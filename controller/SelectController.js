@@ -27,6 +27,9 @@ define(['jquery','underscore','backbone',
             setSelectedObjects : function(selectedObjects)
             {
                 this.selectedObjects = selectedObjects;
+
+                this.broadcastSelectChange();
+
                 console.log('selectedObejcts',this.selectedObjects)
             },
 
@@ -45,13 +48,26 @@ define(['jquery','underscore','backbone',
                         (prevSelectedObject.data == selectedObject.data) )
                     {
                         push = false;
+                        this.selectedObjects.splice(i,1);
                     }
                 }
 
                 if(push)
                 {
                     this.selectedObjects.push(selectedObject);
-                    console.log('selectedObejcts',this.selectedObjects)
+
+                }
+
+                console.log('selectedObejcts',this.selectedObjects)
+                this.broadcastSelectChange();
+            },
+
+            broadcastSelectChange : function()
+            {
+                for(var i in this.listeners)
+                {
+                    var listener = this.listeners[i];
+                    listener.trigger('changeSelect');
                 }
             }
         });

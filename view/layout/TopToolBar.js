@@ -49,15 +49,19 @@ define(['jquery','underscore','backbone',
             bindEvents : function()
             {
                 var this_= this;
-                this.contentsCollection.bind("unSelected",function()
-                {
 
-                    this_.unActiveMenuSelection();
-                });
+                this.contentsCollection.bind("changeSelect",function(){
 
-                this.contentsCollection.bind("selected",function(){
 
-                    this_.activeMenuSelection();
+
+                    if(this.getSelectedObjects())
+                    {
+                        this_.activeMenuSelection();
+                    }
+                    else
+                    {
+                        this_.unActiveMenuSelection();
+                    }
                 });
             },
 

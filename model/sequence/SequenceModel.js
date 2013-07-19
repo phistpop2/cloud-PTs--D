@@ -25,6 +25,14 @@ define(['jquery','underscore','backbone'],
             {
                 this.set('models',new Array());
             }
+        },
+
+        selfRemove : function()
+        {
+            if(this.collection)
+            {
+                this.collection.remove(this);
+            }
         }
 
 

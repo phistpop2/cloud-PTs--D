@@ -28,6 +28,12 @@ define(['jquery','underscore','backbone',
                 this.eventBind();
             },
 
+
+            events : {
+                "mousedown" : "objectSelect",
+                "remove" : "objectRemove"
+            },
+
             eventBind : function()
             {
                 var sequenceCollection = this.sequenceCollection;
@@ -38,11 +44,34 @@ define(['jquery','underscore','backbone',
                         'model' : this_.model,
                         'sequenceCollection' : sequenceCollection});
                 });
+
                 $(this.el).click(function(){
-                    console.debug( 'click', this.cameraModule );
+                    console.log("this_.model.get('quaternion')",this_.model.get('quaternion'));
                     this_.cameraModule.getCamera().lookFacade( this_.model.get('quaternion') );
                     this_.cameraModule.getCamera().zoomFacade( this_.model.get('zoom') );
                 });
+
+
+            },
+
+            objectSelect : function(e)
+            {
+
+                if(e.ctrlKey)
+                {
+                    this.model.collection.addSelected(this.model);
+                }
+                else
+                {
+                    this.model.collection.setSelected(this.model);
+                }
+
+                e.stopPropagation();
+            },
+
+            objectRemove : function()
+            {
+                $(this.el).parent().remove();
             },
 
             render : function()

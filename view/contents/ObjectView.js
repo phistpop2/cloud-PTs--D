@@ -145,10 +145,9 @@ define(['jquery','underscore','backbone',
 
             objectSelect : function(e)
             {
-                  console.log('objectSelect');
+
                 if(e.ctrlKey)
                 {
-
                     this.model.collection.addSelected(this.model);
                 }
                 else

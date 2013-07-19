@@ -31,9 +31,10 @@ define(['underscore','backbone',
            {
                _.bindAll(this);
                this.bind('add',this.addFunc);
-               this.bind('remove',this.removeFunc)
+               this.bind('remove',this.removeFunc);
 
            },
+
 
             setSelectController : function(selectController)
             {
@@ -59,6 +60,11 @@ define(['underscore','backbone',
                this.trigger('selected');
            },
 
+            getSelectedObjects : function()
+            {
+                return this.selectorController.getSelectedObjects();
+            },
+
            setSelected : function(model){
                if(model)
                {
@@ -72,14 +78,13 @@ define(['underscore','backbone',
                    selectedObjects.push(selectedObject);
 
                    this.selectorController.setSelectedObjects(selectedObjects);
-                   this.trigger('selected');
                }
                else
                {
                    this.selected = null;
 
                    this.selectorController.setSelectedObjects(null);
-                   this.trigger('unSelected');
+
                }
            },
 
