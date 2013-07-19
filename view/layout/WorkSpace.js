@@ -76,7 +76,7 @@ define(['jquery','underscore','backbone',
 
                     }else
                         moveEnable = true;
-                    console.debug(e.clientX, e.clientY, e.pageX, e.pageY);
+
                 })
 
 

@@ -3,6 +3,7 @@ define(['underscore','backbone',
     'model/contents/ObjectModel',
     'model/sequence/SequenceModel',
 
+
     'view/contents/ObjectView',
     'view/contents/TextView',
     'view/contents/ImageView',
@@ -12,14 +13,14 @@ define(['underscore','backbone',
 
     'model/contents/TextModel',
     'model/contents/ImageModel',
-    'model/contents/VideoModel',
     'model/contents/FrameModel',
 
     'model/command/RemoveCommandModel'],
+
     function(_,Backbone,
              ObjectModel,SequenceModel,
              ObjectView,TextView,ImageView,VideoView,FrameView,SequenceView,
-             TextModel,ImageModel){
+             TextModel,ImageModel,FrameModel){
 
         var showCollection = Backbone.Collection.extend({
 
@@ -68,6 +69,10 @@ define(['underscore','backbone',
                     {
                         model = new ImageModel(content);
                     }
+                    else if(content.type == 'frame')
+                    {
+                        model = new FrameModel(content);
+                    }
                    model.cid = model.cid;
 
                    if(model.get('type') == 'text')
@@ -84,6 +89,7 @@ define(['underscore','backbone',
                    }
                    else if(model.get('type') == 'frame')
                    {
+
                        this_.contentViews[model.cid] = new FrameView({model: model,id:'view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world, 'viewType' : 'show' }).render();
                    }
                    else

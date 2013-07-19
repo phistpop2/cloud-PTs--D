@@ -10,8 +10,10 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
+
                 if(ObjectView.prototype.render.call(this))
                 {
+
                     var model = this.model;
                     var width = model.get('width');
                     var height = model.get('height');
@@ -22,26 +24,12 @@ define(['jquery','underscore','backbone',
 
                     var objectWrap = $(this.el).find('.objectWrap');
 
-                    var item = $("<div class=frame>");
-
-                    item.css({
-                        'background' : 'transparent',
-                        'width' : width,
-                        'height' : height,
-                        'padding' : '0px',
-                        'margin' : '0px'
-                    });
                     objectWrap.css({
                         'width': width,
                         'height':  height,
                         'padding' : '0px',
                         'margin' : '0px'
                     });
-
-                    objectWrap.append(item);
-
-                    model.set('width',width);
-                    model.set('height',height);
 
                     this.updateView();
 

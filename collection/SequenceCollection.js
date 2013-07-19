@@ -39,6 +39,13 @@ define(['underscore','backbone',
 
            },
 
+
+           setSelectController : function(selectController)
+           {
+               this.selectorController = selectController;
+               this.selectorController.addCollection('sequenceCollection',this);
+           },
+
            setCameraModule : function(cameraModule_)
            {
                this.cameraModule = cameraModule_;

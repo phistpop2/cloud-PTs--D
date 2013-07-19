@@ -35,20 +35,50 @@ define(['underscore','backbone',
 
            },
 
+            setSelectController : function(selectController)
+            {
+                this.selectorController = selectController;
+                this.selectorController.addCollection('contentsCollection',this);
+            },
+
            setCameraModule : function(cameraModule_)
            {
                this.cameraModule = cameraModule_;
+           },
+
+           addSelected : function(model)
+           {
+               this.selected = model;
+
+               var selectedObject = {
+                   'type' : 'content',
+                   'data' : this.selected.cid
+               };
+
+               this.selectorController.addSelectedObjects(selectedObject);
+               this.trigger('selected');
            },
 
            setSelected : function(model){
                if(model)
                {
                    this.selected = model;
+
+                   var selectedObjects = [];
+                   var selectedObject = {
+                       'type' : 'content',
+                       'data' : this.selected.cid
+                   };
+                   selectedObjects.push(selectedObject);
+
+                   this.selectorController.setSelectedObjects(selectedObjects);
                    this.trigger('selected');
                }
                else
                {
                    this.selected = null;
+
+                   this.selectorController.setSelectedObjects(null);
                    this.trigger('unSelected');
                }
            },

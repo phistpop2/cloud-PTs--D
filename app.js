@@ -8,6 +8,8 @@ define(
      'collection/ContentsCollection',
      'collection/SequenceCollection',
 
+     'controller/SelectController',
+
      'view/layout/WorkSpace',
      'view/layout/TopToolBar',
      'view/layout/LeftMenu',
@@ -16,7 +18,8 @@ define(
      'model/app/SettingModel',
      'model/contents/TextModel',
      'model/contents/ImageModel',
-
+     'model/contents/FrameModel',
+     'model/sequence/SequenceModel',
 
      'jquery_knob',
      'jquery_jlayout',
@@ -49,12 +52,13 @@ define(
         'RenderFPS'
     ],
     function($, _, Backbone,session,
-             ContentsCollection,
-             SequenceCollection,
+             ContentsCollection,SequenceCollection,
+             SelectController,
              WorkSpace,TopToolBar,LeftMenu,WorkListView,
-             SettingModel,TextModel,ImageModel){
+             SettingModel,TextModel,ImageModel,FrameModel,SequenceModel){
 
     var MainView = Backbone.View.extend({
+
 
         contentsCollection : null,
         cameraModule : null,
@@ -113,6 +117,7 @@ define(
         setupWork : function(event)
         {
             this.cameraModule = new CameraModule({viewPort : $('#workSpace')});
+            this.selectorController = new SelectController();
 
             this.initSetting();
             this.initCollections();
@@ -143,10 +148,12 @@ define(
         {
             this.contentsCollection = new ContentsCollection();
             this.contentsCollection.setCameraModule(this.cameraModule);
+            this.contentsCollection.setSelectController(this.selectorController);
 
             this.sequenceCollection = new SequenceCollection();
             this.sequenceCollection.setCameraModule(this.cameraModule);
             this.sequenceCollection.setContentsCollection(this.contentsCollection);
+            this.sequenceCollection.setSelectController(this.selectorController);
 
         },
 
@@ -199,28 +206,43 @@ define(
                     this_.contentsCollection.undo();
                     return false;
                 }
-                else if(ctrlDown && e.keyCode == vKey)
+                else if(ctrlDown && e.keyCode == vKey)    //ctrl+v
                 {
                     var clipboard = localStorage.getItem('clipboard');
 
                     try{
                         clipboard = JSON.parse(clipboard);
-                        if(clipboard.type == 'content')
+
+                        for(var i in clipboard)
                         {
-                            var modelAttributes = clipboard.data;
+                            var modelAttributes = clipboard[i].data;
                             var model = null;
 
-                            if(modelAttributes.type=='text')
+                            if(clipboard[i].type == 'content')
                             {
-                                model = new TextModel(modelAttributes);
-                            }
-                            else if(modelAttributes.type=='image')
-                            {
-                                model = new ImageModel(modelAttributes);
-                            }
 
-                            this_.contentsCollection.add(model);
+                                if(modelAttributes.type=='text')
+                                {
+                                    model = new TextModel(modelAttributes);
+                                }
+                                else if(modelAttributes.type=='image')
+                                {
+                                    model = new ImageModel(modelAttributes);
+                                }
+                                else if(modelAttributes.type=='frame')
+                                {
+                                    model = new FrameModel(modelAttributes);
+                                }
+
+                                this_.contentsCollection.add(model);
+                            }
+                            else if(clipboard[i].type == 'sequence')
+                            {
+                                model = new SequenceModel(modelAttributes);
+                                this_.sequenceCollection.add(model);
+                            }
                         }
+
                     }
                     catch(e)
                     {
@@ -241,30 +263,77 @@ define(
 
                     if ((e.keyCode==67) || (e.keyCode == 88))     //ctrl+c
                     {
-                        var clipboard= {};
-                        var model_ = this_.contentsCollection.getSelected();
+                        var clipboard= [];
+                        var selectedObjects = this_.selectorController.getSelectedObjects();
+                        console.log('ctrl+c',selectedObjects);
 
-                        if(model_)
+                        for(var i in selectedObjects)
                         {
-                            clipboard.type = 'content';
-                            console.log('model_.attributes',model_.attributes);
-                            clipboard.data = this_.copyObject(model_.attributes);
+                           var selectedObject = selectedObjects[i];
+                           if(selectedObject.type=='content')
+                           {
+                               var model_ = this_.contentsCollection.getByCid(selectedObject.data);
 
-                            localStorage.setItem('clipboard',JSON.stringify(clipboard));
+                               if(model_)
+                               {
+                                   var clipData = {};
+                                   clipData.type = 'content';
+                                   clipData.data = this_.copyObject(model_.attributes);
 
-                            if(e.keyCode == 88)      //ctrl+x
-                            {
-                                model_.selfRemove();
-                            }
+                                   clipboard.push(clipData);
+
+                                   if(e.keyCode == 88)      //ctrl+x
+                                   {
+                                       model_.selfRemove();
+                                   }
+                               }
+                           }
+                           else if(selectedObject.type=='sequence')
+                           {
+                               var model_ = this_.sequenceCollection.getByCid(selectedObject.data);
+                               if(model_)
+                               {
+                                   var clipData = {};
+                                   clipData.type = 'sequence';
+                                   clipData.data = this_.copyObject(model_.attributes);
+
+                                   clipboard.push(clipData);
+
+                                   if(e.keyCode == 88)      //ctrl+x
+                                   {
+                                       model_.selfRemove();
+                                   }
+                               }
+                           }
+                           localStorage.setItem('clipboard',JSON.stringify(clipboard));
                         }
-
-
                     }
 
                 }
                 else if(e.keyCode == 46)    //delete
                 {
-                    model_.selfRemove();
+                    var selectedObjects = this_.selectorController.getSelectedObjects();
+
+                    for(var i in selectedObjects)
+                    {
+                        var selectedObject = selectedObjects[i];
+
+                        var model_ = null;
+                        if(selectedObject.type=='content')
+                        {
+                            model_ = this_.contentsCollection.getByCid(selectedObject.data);
+                        }
+                        else if(selectedObject.type=='sequence')
+                        {
+                            model_ = this_.sequenceCollection.getByCid(selectedObject.data);
+                        }
+
+                        if(model_)
+                        {
+                            model_.selfRemove();
+                        }
+                    }
+
                 }
 
             });
@@ -274,7 +343,8 @@ define(
             var newObj = {};
             for (var key in obj) {
                 //copy all the fields
-                if( Object.prototype.toString.call( obj[key] ) === '[object Array]' ) {
+                if( Object.prototype.toString.call( obj[key] ) === '[object Array]' )
+                {
                     newObj[key] = obj[key].slice(0);
                 }
                 else

@@ -81,8 +81,16 @@ define(['jquery','underscore','backbone',
                 });
 
                 $('#frameInsertButton').click(function(){
+                    this_.contentsCollection.add(new FrameModel({
+                        'borderWidth' : '2',
+                        'borderStyle' : 'dotted',
+                        'width' :  '520px',
+                        'height' : '400px'
+                    }));
+                });
 
-
+                $('#sequenceInsertButton').click(function()
+                {
                     this_.sequenceCollection.add(new SequenceModel({
                         'slideBackgroundColor' : this_.setting.get('backgroundColor'),
                         'matrix3d' : this_.cameraModule.getCamera().getMatrixQuery(),
@@ -91,7 +99,10 @@ define(['jquery','underscore','backbone',
                     }));
                 });
 
+
                 this.initImageInsertButton();
+
+
             },
 
             initImageInsertButton : function()

@@ -59,7 +59,6 @@ define(['jquery','underscore','backbone',
             {
                 var pageSize = this.showCollection.models.length;
 
-
                 this.currentShowPage++;
 
                 if(this.currentShowPage > pageSize-1)

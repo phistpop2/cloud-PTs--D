@@ -49,7 +49,7 @@ define(['jquery','underscore','backbone',
                 });
 
                 $(this.el).bind('mousedown',function(e){
-                    model_.setSelected();
+
                     moveEnable = true;
                     prevX = e.clientX;
                     prevY = e.clientY;
@@ -145,7 +145,17 @@ define(['jquery','underscore','backbone',
 
             objectSelect : function(e)
             {
-                this.model.setSelected();
+                  console.log('objectSelect');
+                if(e.ctrlKey)
+                {
+
+                    this.model.collection.addSelected(this.model);
+                }
+                else
+                {
+                    this.model.collection.setSelected(this.model);
+                }
+
                 e.stopPropagation();
             },
 
@@ -186,6 +196,7 @@ define(['jquery','underscore','backbone',
 
             cssRenderer : function()
             {
+                var backgroundColor = this.model.get('background');
                 var borderWidth = this.model.get('borderWidth');
                 var borderColor = this.model.get('borderColor');
                 var borderStyle = this.model.get('borderStyle');
@@ -196,7 +207,7 @@ define(['jquery','underscore','backbone',
                 var borderBottomRightRadius = this.model.get('borderBottomRightRadius');
                 var boxShadows = this.model.get('boxShadows');
 
-                var objectWrap = $(this.el)[0];
+                var objectWrap = $(this.el).find('.objectWrap')[0];
 
                 objectWrap.style['borderWidth'] = borderWidth+'px';
 
@@ -206,6 +217,8 @@ define(['jquery','underscore','backbone',
                 objectWrap.style['borderTopRightRadius'] = borderTopRightRadius+'px';
                 objectWrap.style['borderBottomLeftRadius'] = borderBottomLeftRadius+'px';
                 objectWrap.style['borderBottomRightRadius'] = borderBottomRightRadius+'px';
+                objectWrap.style['backgroundColor'] = backgroundColor;
+
 
                 var boxShadowsCss = '';
                 for(i in boxShadows)
@@ -238,7 +251,6 @@ define(['jquery','underscore','backbone',
                 else
                 {
                     matrix3d = this.model.get('matrix3d');
-                    console.log('matrix3d',matrix3d);
                 }
 
 
@@ -246,10 +258,7 @@ define(['jquery','underscore','backbone',
                     position: 'absolute',
                     padding : '0px',
                     margin : '0px',
-                    width : width,
-                    height : height,
                     webkitTransformStyle : 'preserve-3d',
-                    background: this.model.get('background'),
                     webkitTransform: 'matrix3d('+matrix3d+')'
                 });
 

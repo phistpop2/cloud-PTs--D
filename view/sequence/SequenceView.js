@@ -10,6 +10,7 @@ define(['jquery','underscore','backbone',
     function($,_,Backbone,
              SequenceDialogView,
              ObjectView,TextView,ImageView,VideoView,FrameView){
+
         var sequenceView = Backbone.View.extend({
 
             cameraModule : null,

@@ -16,6 +16,7 @@ define(['jquery','underscore','backbone',
 
                 if(ObjectView.prototype.render.call(this)){
                     var objectWrap = $(this.el).find('.objectWrap');
+
                     var editbox = $("<div class='textEditBox' >");
                     objectWrap.append(editbox);
                     editbox.html('messagehere');

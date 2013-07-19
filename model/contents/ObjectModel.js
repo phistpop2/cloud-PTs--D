@@ -6,7 +6,7 @@ define(['jquery','underscore','backbone'],
             type :'object',
             width : '100%',
             height : '100%',
-            background : '#ffffff',
+            background : 'transparent',
             translateX : 0,
             translateY : 0,
             translateZ : 0,
@@ -52,9 +52,6 @@ define(['jquery','underscore','backbone'],
                 this.set('rotateX',angle.getX());
                 this.set('rotateY',angle.getY());
                 this.set('rotateZ',angle.getZ());
-
-
-
             }
         },
 
@@ -210,9 +207,6 @@ define(['jquery','underscore','backbone'],
             }
         },
 
-        setSelected : function() {
-            this.collection.setSelected(this);
-        },
 
         copyObject : function(obj) {
             var newObj = {};
