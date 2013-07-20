@@ -62,66 +62,89 @@ define(['jquery','underscore','backbone',
 
                  $('#workSpace').bind('mousemove',function(e){
 
-                    if(moveEnable && model_.isSelected())
+                    if(moveEnable)
                     {
                         var currX = e.clientX;
                         var currY = e.clientY;
 
-                        var scalar1 = currX-prevX;
-                        var scalar2 = currY-prevY;
-
-
-                        if(e.ctrlKey  && e.shiftKey)
+                        for(var i  in this_.model.collection.models)
                         {
-                            var rot3d = model_.controller.getRotation(0,0,scalar2+scalar1);
+                            var model = this_.model.collection.models[i];
 
-                            model_.set({
-                                    'rotateX':rot3d.getX(),
-                                    'rotateY':rot3d.getY(),
-                                    'rotateZ':rot3d.getZ()}
-                            );
+
+                            if(model.isSelected())
+                            {
+
+
+                                var scalar1 = currX-prevX;
+                                var scalar2 = currY-prevY;
+
+
+                                if(e.altKey  && e.shiftKey)
+                                {
+                                    var rot3d = model.controller.getRotation(0,0,scalar2+scalar1);
+
+                                    model.set({
+                                            'rotateX':rot3d.getX(),
+                                            'rotateY':rot3d.getY(),
+                                            'rotateZ':rot3d.getZ()}
+                                    );
+                                }
+                                else if(e.altKey)
+                                {
+                                    var rot3d = model.controller.getRotation(scalar1,scalar2);
+
+                                    model.set({
+                                            'rotateX':rot3d.getX(),
+                                            'rotateY':rot3d.getY(),
+                                            'rotateZ':rot3d.getZ()}
+                                    );
+                                }
+                                else
+                                {
+                                    var pos3d = model.controller.getPosition(scalar1,scalar2);
+
+                                    model.set({
+                                            'translateX':pos3d.getX(),
+                                            'translateY':pos3d.getY(),
+                                            'translateZ':pos3d.getZ()}
+                                    );
+                                }
+
+                            }
                         }
-                        else if(e.ctrlKey)
-                        {
-                            var rot3d = model_.controller.getRotation(scalar1,scalar2);
-
-                            model_.set({
-                                    'rotateX':rot3d.getX(),
-                                    'rotateY':rot3d.getY(),
-                                    'rotateZ':rot3d.getZ()}
-                            );
-                        }
-                        else
-                        {
-                            var pos3d = model_.controller.getPosition(scalar1,scalar2);
-
-                            model_.set({
-                                    'translateX':pos3d.getX(),
-                                    'translateY':pos3d.getY(),
-                                    'translateZ':pos3d.getZ()}
-                            );
-                        }
-
 
                         prevX = currX;
                         prevY = currY;
                     }
+
+
                 }).bind('mouseup',function(e){
-                     moveEnable = false;
 
-                     if(model_.isSelected())
+                     if(moveEnable)
                      {
+                         moveEnable = false;
+                         for(var i  in this_.model.collection.models)
+                         {
+                             var model = this_.model.collection.models[i];
 
-                         model_.commitToCollection({
-                                 'rotateX': model_.get('rotateX'),
-                                 'rotateY': model_.get('rotateY'),
-                                 'rotateZ': model_.get('rotateZ'),
-                                 'translateX': model_.get('translateX'),
-                                 'translateY': model_.get('translateY'),
-                                 'translateZ': model_.get('translateZ')
-                             });
+                             if(model.isSelected())
+                             {
+                                 model.commitToCollection({
+                                     'rotateX': model.get('rotateX'),
+                                     'rotateY': model.get('rotateY'),
+                                     'rotateZ': model.get('rotateZ'),
+                                     'translateX': model.get('translateX'),
+                                     'translateY': model.get('translateY'),
+                                     'translateZ': model.get('translateZ')
+                                 });
+
+                             }
+                         }
+
 
                      }
+
 
                 });
 

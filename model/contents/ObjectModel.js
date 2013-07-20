@@ -31,6 +31,7 @@ define(['jquery','underscore','backbone'],
         doCommited : true,
         commitBeforeData : {},
         controller : null,
+        selected : false,
 
         initialize : function()
         {
@@ -68,14 +69,7 @@ define(['jquery','underscore','backbone'],
 
         isSelected : function()
         {
-            var selected = false;
-
-
-            if( (this.collection) && (this.collection.getSelected()==this))
-            {
-                selected=true;
-            }
-            return selected;
+            return this.selected;
         },
 
         selfRemove : function()

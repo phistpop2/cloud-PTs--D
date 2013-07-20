@@ -65,8 +65,6 @@ define(['jquery','underscore','backbone',
                 {
                     this.model.collection.setSelected(this.model);
                 }
-
-                e.stopPropagation();
             },
 
             objectRemove : function()

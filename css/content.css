@@ -18,13 +18,23 @@
 
 
 .textEditBox{
-    display :inline-block;
+    display :table;
+    table-layout: fixed;
+    word-wrap: break-word;
+    -webkit-line-break: after-white-space;
     font-size : 80px;
+    width : 400px;
+    height : 20px;
 }
 
 [contenteditable="true"].textEditBox {
-    display :inline-block;
-
+    display :table;
+    table-layout: fixed;
+    word-wrap: break-word;
+    -webkit-line-break: after-white-space;
+    font-size : 80px;
+    width : 400px;
+    height : 20px;
 }
 
 .lcWord{

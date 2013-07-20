@@ -53,12 +53,37 @@ define(['underscore','backbone',
 
                var selectedObject = {
                    'type' : 'content',
-                   'data' : this.selected.cid
+                   'data' : model.cid
                };
 
                this.selectorController.addSelectedObjects(selectedObject);
+
+               var selectedObjects = this.selectorController.getSelectedObjects();
+               for(var i in this.models)
+               {
+                   var selected = false;
+                   var model_=    this.models[i];
+
+                   for(var j in selectedObjects)
+                   {
+
+                       if( (selectedObjects[j].type=='content')&&
+                           (selectedObjects[j].data==model_.cid)){
+
+                            selected = true;
+                       }
+                   }
+
+                   console.log('selected',selected);
+
+                   model_.selected = selected;
+                   console.log(model_.cid,model_.selected);
+               }
+
                this.trigger('selected');
            },
+
+
 
             getSelectedObjects : function()
             {
@@ -68,12 +93,10 @@ define(['underscore','backbone',
            setSelected : function(model){
                if(model)
                {
-                   this.selected = model;
-
-                   var selectedObjects = [];
+                      var selectedObjects = [];
                    var selectedObject = {
                        'type' : 'content',
-                       'data' : this.selected.cid
+                       'data' : model.cid
                    };
                    selectedObjects.push(selectedObject);
 
@@ -81,9 +104,26 @@ define(['underscore','backbone',
                }
                else
                {
-                   this.selected = null;
+                  this.selectorController.setSelectedObjects(null);
+               }
 
-                   this.selectorController.setSelectedObjects(null);
+               var selectedObjects = this.selectorController.getSelectedObjects();
+               for(var i in this.models)
+               {
+                   var selected = false;
+                   var model_ = this.models[i];
+                   for(var j in selectedObjects)
+                   {
+
+                       if( (selectedObjects[j].type=='content')&&
+                           (selectedObjects[j].data==model_.cid)){
+                           selected = true;
+                       }
+                   }
+
+                   console.log('selected',selected);
+
+                   model_.selected = selected;
 
                }
            },

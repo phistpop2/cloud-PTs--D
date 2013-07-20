@@ -141,7 +141,7 @@ define(['jquery','underscore','backbone',
 
 
                 $('#workSpace').bind('mousewheel',function(e){
-                    if(!this_.contentsCollection.getSelected())
+                    if(!this_.contentsCollection.getSelectedObjects())
                     {
                         var scalar = e.originalEvent.wheelDelta/10;
                         camera_.setPosition(0,0,scalar);

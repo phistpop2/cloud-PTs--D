@@ -44,7 +44,7 @@ define(['jquery','underscore','backbone',
                 var sequenceArrayContainerHeight = (height - (parseInt($('#lmSettingButton').css('height'))))-230
                 $('#sequenceArrayContainer').css('height',sequenceArrayContainerHeight+'px');
 
-                $('#sequenceArrayContainer').sortable();
+                $('#sequenceArrayContainer').multisortable();
 
                 $('#lmSaveButton').click(this.saveCurrentWork);
                 $('#lmSaveButton').bind('mousedown',function(e){e.preventDefault();})
