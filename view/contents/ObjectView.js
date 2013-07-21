@@ -59,6 +59,8 @@ define(['jquery','underscore','backbone',
                         model_.controller.zoomFacade(parseInt(model_.get('width')),parseInt(model_.get('height')));
                     }
 
+
+                    e.stopPropagation();
                 })
 
                  $('#workSpace').bind('mousemove',function(e){
@@ -171,6 +173,7 @@ define(['jquery','underscore','backbone',
             objectSelect : function(e)
             {
 
+                e.stopPropagation();
                 if(e.ctrlKey)
                 {
                     this.model.collection.addSelected(this.model);
@@ -180,7 +183,7 @@ define(['jquery','underscore','backbone',
                     this.model.collection.setSelected(this.model);
                 }
 
-                e.stopPropagation();
+
             },
 
             render : function()

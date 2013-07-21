@@ -52,17 +52,16 @@ define(['jquery','underscore','backbone',
 
                 this.contentsCollection.bind("changeSelect",function(){
 
-
-
                     if(this.getSelectedObjects())
                     {
                         this_.activeMenuSelection();
                     }
-                    else
-                    {
+                    else{
                         this_.unActiveMenuSelection();
                     }
                 });
+
+                $('#TopToolBar > *').bind('mousedown',function(e){ return false;})
             },
 
             initInsertButtons : function()
@@ -79,7 +78,9 @@ define(['jquery','underscore','backbone',
 
                             rotateX:0,
                             rotateY:0,
-                            rotateZ:0
+                            rotateZ:0,
+
+                            content : 'messagehere'
                         }
                     ));
                 });
@@ -98,6 +99,8 @@ define(['jquery','underscore','backbone',
                     this_.sequenceCollection.add(new SequenceModel({
                         'slideBackgroundColor' : this_.setting.get('backgroundColor'),
                         'matrix3d' : this_.cameraModule.getCamera().getMatrixQuery(),
+                        'translateX' : this_.cameraModule.getCamera().getLocation().getX(),
+                        'translateY' : this_.cameraModule.getCamera().getLocation().getY(),
                         'quaternion' : this_.cameraModule.getCamera().getQuaternion().clone(),
                         'zoom': this_.cameraModule.getCamera().getLocation().clone()
                     }));
@@ -629,6 +632,7 @@ define(['jquery','underscore','backbone',
             {
                 this.isObjectSelected = true;
 
+
                 $('#TopToolBar').find('#styleButton').find('.icon').css('opacity','1.0');
 
                 $('#TopToolBar').find('#layoutButton').find('.icon').css('opacity','1.0');
@@ -643,6 +647,7 @@ define(['jquery','underscore','backbone',
 
             unActiveMenuSelection : function()
             {
+
                 this.isObjectSelected = false;
                 $('#TopToolBar').find('#styleButton').find('.icon').css('opacity','0.3');
                 $('#TopToolBar').find('#layoutButton').find('.icon').css('opacity','0.3');

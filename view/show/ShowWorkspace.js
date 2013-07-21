@@ -85,6 +85,7 @@ define(['jquery','underscore','backbone',
 
             show : function(page)
             {
+                var cameraModule = this.cameraModule;
                 var showModel = this.showCollection.models[page];
                 var matrix3d = showModel.get('matrix3d');
                 var background = showModel.get('slideBackgroundColor');
@@ -98,11 +99,23 @@ define(['jquery','underscore','backbone',
                 if(slideChangeStyle=='default')
                 {
                     this.fixWorkspace.hide();
+                    var left = parseFloat((parseInt($('#showWorkspace').css('width')) - 1024)/2);
+                    var top = parseFloat((parseInt($('#showWorkspace').css('height')) - 768)/2);
+
+                    console.log('matrix3d',matrix3d);
+                    matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+                   console.log('matrix3d',matrix3d);
+
+
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
                         transitionDuration:  moveDuration+"ms",
                         '-webkit-animation-timing-function' : 'linear'
                     });
+
+
+
+
 
                 }
                 else        //fixed style
@@ -246,9 +259,10 @@ define(['jquery','underscore','backbone',
 
             resize : function()
             {
+                console.log('resize');
                 var this_ = this;
-                var scaleW = window.innerWidth / parseInt($(this_.el).css('width'));
-                var scaleH = window.innerHeight / parseInt($(this_.el).css('height'));
+                var scaleW = window.innerWidth / 1024;//parseInt($(this_.el).css('width'));
+                var scaleH = window.innerHeight / 768;//parseInt($(this_.el).css('height'));
 
                 var scale = scaleW;
 
@@ -256,12 +270,60 @@ define(['jquery','underscore','backbone',
                     scale = scaleH;
                 }
 
-                $(this_.el).css({
+                var originAspect = 1024/768;
+                var currentAspect = window.innerWidth / window.innerHeight;
+                var newHeight = 0, newWidth = 0;
+
+                console.log('aspacet',originAspect,currentAspect);
+                if(originAspect > currentAspect)
+                {
+                    newWidth = 1024;
+                    newHeight = 1024/currentAspect;
+                }
+                else
+                {
+                    newWidth = 768*currentAspect;
+                    newHeight = 768
+                }
+
+                $('#showWorkspace').css({
+                   'width' : newWidth,
+                    'height' : newHeight
+                });
+
+
+                $('#showWorkspace').css({
                     '-webkit-transform' : 'scale('+scale+')',
                     '-webkit-transform-origin' : '0% 0%'
                 });
 
 
+                var workspaceWidth = parseFloat($('#showWorkspace').css('width'))*scale;
+                var workspaceHeight = parseFloat($('#showWorkspace').css('height'))*scale;
+                var marginLeft =   parseFloat((window.innerWidth-workspaceWidth)/2);
+                var marginTop =   parseFloat((window.innerHeight-workspaceHeight)/2);
+
+                var cameraModule = this.cameraModule;
+
+                var showModel = this.showCollection.models[this.currentShowPage];
+                var matrix3d = showModel.get('matrix3d');
+
+
+                var left = parseFloat((parseInt($('#showWorkspace').css('width')) - 1024)/2);
+                var top = parseFloat((parseInt($('#showWorkspace').css('height')) - 768)/2);
+
+
+
+                console.log('matrix3d',matrix3d);
+                matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+                console.log('matrix3d',matrix3d);
+
+                var world = $('#showWorkspace').find('#world');
+                world.css({
+                    webkitTransform: 'matrix3d('+matrix3d+')',
+                    transitionDuration: '200ms',
+                    '-webkit-animation-timing-function' : 'linear'
+                });
 
             },
 

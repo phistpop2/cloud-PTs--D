@@ -49,7 +49,6 @@ define(['underscore','backbone',
 
            addSelected : function(model)
            {
-               this.selected = model;
 
                var selectedObject = {
                    'type' : 'content',
@@ -85,13 +84,14 @@ define(['underscore','backbone',
 
             getSelectedObjects : function()
             {
+
                 return this.selectorController.getSelectedObjects();
             },
 
            setSelected : function(model){
                if(model)
                {
-                      var selectedObjects = [];
+                   var selectedObjects = [];
                    var selectedObject = {
                        'type' : 'content',
                        'data' : model.cid
@@ -102,10 +102,12 @@ define(['underscore','backbone',
                }
                else
                {
+
                   this.selectorController.setSelectedObjects(null);
                }
 
                var selectedObjects = this.selectorController.getSelectedObjects();
+
                for(var i in this.models)
                {
                    var selected = false;
@@ -127,7 +129,15 @@ define(['underscore','backbone',
 
            getSelected : function()
            {
-                return this.selected;
+                var selected = this.getSelectedObjects();
+
+                if(selected)
+                {
+                    selected = selected[selected.length-1];
+                    selected = this.getByCid(selected.data);
+                }
+
+                return selected;
            },
 
            addFunc : function(model)
@@ -170,7 +180,7 @@ define(['underscore','backbone',
            addToHistory : function(historyData)
            {
                 this.history.push(historyData);
-                this.setSelected();
+           //     this.setSelected();
            },
 
            redo : function()

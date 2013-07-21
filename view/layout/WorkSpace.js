@@ -47,9 +47,14 @@ define(['jquery','underscore','backbone',
 
                 var camera_ = this.camera;
 
+                $(document).unbind('keydown').bind('keydown', function (event) {
+                    event.preventDefault();
+                });
+
                 $(document).keydown(function(e)
                 {
                     if (e.keyCode == ctrlKey) ctrlDown = true;
+
 
                 }).keyup(function(e)
                     {
@@ -59,8 +64,7 @@ define(['jquery','underscore','backbone',
                 $(this.el).bind('mousedown',function(e){
                     prevX = e.clientX;
                     prevY = e.clientY;
-
-
+                    console.log('workspace');
                     this_.contentsCollection.setSelected();
                     if(e.altKey){
                         zooming = true;
@@ -130,7 +134,7 @@ define(['jquery','underscore','backbone',
                             'top': newY,
                             'left': newX-wBias
                         });
-                        console.debug('zoom', newX, newY, prevX, prevY);
+
                     }
                 }).bind('mouseup',function(e){
                         selection.remove();
@@ -188,35 +192,6 @@ define(['jquery','underscore','backbone',
            render : function()
            {
                $('#mainCanvasLayout').css('background',this.setting.get('backgroundColor'));
-
-               for(var i = 0 ; i < 2;  i++)
-               {
-                   var rotateX =  Math.floor(Math.random() * 359) + 1;
-                   var rotateY =  Math.floor(Math.random() * 359) + 1;
-                   var rotateZ =  Math.floor(Math.random() * 359) + 1;
-
-                   var textModel1 = new TextModel({
-                       width : 100,
-                       height : 100,
-
-                       translateX:100 + (500*i),
-
-                       translateY:-100,
-                       translateZ:0,
-
-                       rotateX:0,
-                       rotateY:0,
-                       rotateZ:0
-                   });
-
-
-
-                   this.contentsCollection.add(textModel1);
-               }
-
-
-
-
            }
         }) ;
 

@@ -36,7 +36,9 @@ define(['jquery','underscore','backbone',
             addSelectedObjects : function(selectedObject)
             {
                 var push = true;
-                if(!this.selectedObjects)
+
+                if((!this.selectedObjects) ||
+                    (this.selectedObjects[0].type!=selectedObject.type))
                 {
                     this.selectedObjects = new Array();
                 }

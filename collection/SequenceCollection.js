@@ -138,6 +138,7 @@ define(['underscore','backbone',
                _.each(sequenceIdArray,function(id){
                     var model = this_.getByCid(id);
                     var properties = this_.copyObject(model.attributes);
+
                     sequenceDatas.push(properties);
                 });
 

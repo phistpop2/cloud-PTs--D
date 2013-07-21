@@ -7,7 +7,6 @@ define(['jquery','underscore','backbone',
           {
               ObjectModel.prototype.initialize.call(this);
               this.set('type','text');
-
           }
 
     });

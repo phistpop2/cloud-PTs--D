@@ -81,6 +81,9 @@ define(['jquery','underscore','backbone',
                         }
 
                 });
+
+                $('#style_selector').bind('mousedown',function(e){console.log(this); return false;})
+
             },
 
             render : function()
@@ -463,6 +466,7 @@ define(['jquery','underscore','backbone',
                     }
                 }
 
+
             },
 
             isOpen : function()
@@ -491,6 +495,7 @@ define(['jquery','underscore','backbone',
             },
 
             close : function(){
+
                 $(this.el).find('#styleDialog').css('display','none');
             },
 

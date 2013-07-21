@@ -22,6 +22,7 @@ define(['jquery','underscore','backbone',
                         {
                             e.stopPropagation();
                         }
+
                 }).keypress(function(e){
                         var contenteditable = $(this).attr('contenteditable');
 
@@ -29,6 +30,7 @@ define(['jquery','underscore','backbone',
                         {
                             e.stopPropagation();
                         }
+
                 }).keyup(function(e){
                         var contenteditable = $(this).attr('contenteditable');
 
@@ -36,6 +38,7 @@ define(['jquery','underscore','backbone',
                         {
                             e.stopPropagation();
                         }
+
                 }).mousemove(function(e){
                         var contenteditable = $(this).attr('contenteditable');
 
@@ -44,6 +47,7 @@ define(['jquery','underscore','backbone',
                             return false;
                         }
                 })
+
             },
 
             render : function()
@@ -55,12 +59,19 @@ define(['jquery','underscore','backbone',
 
                     var editbox = $("<div class='textEditBox' >");
                     objectWrap.append(editbox);
-                    editbox.html('messagehere');
+                    editbox.html(this_.model.get('content'));
                 }
 
                 this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
 
                 this.updateView();
+
+                editbox.bind('allEventRefresh',function()
+                {
+                    var content = $(this).html();
+                    this_.model.set('content',content);
+                    console.log('content',content);
+                });
 
                 this.editor.bind('textInput',function()
                 {

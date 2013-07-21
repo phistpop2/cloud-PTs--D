@@ -5,6 +5,8 @@ define(['jquery','underscore','backbone'],
 
         defaults:{
             matrix3d :'',
+            translateX :'',
+            translateY :'',
             quaternion:'',
             zoom:'',
 
