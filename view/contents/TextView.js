@@ -60,11 +60,14 @@ define(['jquery','underscore','backbone',
                     var editbox = $("<div class='textEditBox' >");
                     objectWrap.append(editbox);
                     editbox.html(this_.model.get('content'));
+
                 }
 
                 this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
 
+
                 this.updateView();
+
 
                 editbox.bind('allEventRefresh',function()
                 {
@@ -73,15 +76,6 @@ define(['jquery','underscore','backbone',
                     console.log('content',content);
                 });
 
-                this.editor.bind('textInput',function()
-                {
-                    var width = $(this_.el).find('.textEditBox').css('width');
-                    var height = $(this_.el).find('.textEditBox').css('height');
-
-                    this_.model.set('width',width);
-                    this_.model.set('height',height);
-
-                });
 
                 if(this.viewType == 'workspace')
                 {
@@ -96,13 +90,23 @@ define(['jquery','underscore','backbone',
             updateView : function()
             {
                 ObjectView.prototype.updateView.call(this);
-                this.resize();
+
+                $(this.el).find('.textEditBox').css('width',this.model.get('width'));
+                $(this.el).find('.textEditBox').css('height',this.model.get('height'));
+//                this.resize();
             },
 
             resize : function()
             {
-                var width = $(this.el).find('.textEditBox').css('width');
-                var height = $(this.el).find('.textEditBox').css('height');
+                var width = parseFloat($(this.el).find('.textEditBox').css('width'));
+
+                var height = 0;
+
+                $(this.el).find('.textEditBox').find('.clSentence').each(function(){
+                    height+=parseFloat($(this).css('height'));
+                });
+
+                $(this.el).find('.textEditBox').css('height',height);
 
                 this.model.set('width',width);
                 this.model.set('height',height);

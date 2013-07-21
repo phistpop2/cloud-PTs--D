@@ -186,8 +186,8 @@
 
 
 .sequence_view{
-    width: 1024px;
-    height : 768px;
+    width: 100%;
+    height : 100%;
     display: inline-block;
     -webkit-perspective: 600;
     -webkit-perspective-origin: 50% 50%;
@@ -200,9 +200,12 @@
     margin : 0px;
     padding : 0px;
     background: #0da861;
+
 }
 
 .sequence_view_world{
+    width: 100%;
+    height : 100%;
     position: absolute;
     height: 0;
     width: 0;

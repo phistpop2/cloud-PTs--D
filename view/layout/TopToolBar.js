@@ -44,6 +44,252 @@ define(['jquery','underscore','backbone',
                 this.render();
                 this.bindEvents();
                 this.initInsertButtons();
+                this.initTextToolButton();
+            },
+
+            initTextToolButton : function()
+            {
+                var this_ = this;
+                $('#boldButton').click(function(){
+                    this_.textToolFunc(function()
+                    {
+                        this_.getSelectRange().each(function(){
+                            var fontWeight = $(this).css('fontWeight');
+
+                            if(fontWeight=='bold')
+                            {
+                                $(this).css('fontWeight','normal');
+                            }
+                            else
+                            {
+                                $(this).css('fontWeight','bold');
+                            }
+                        });
+                    });
+                });
+
+                $('#italicButton').click(function(){
+                    this_.textToolFunc(function()
+                    {
+                        this_.getSelectRange().each(function(){
+                            var fontStyle = $(this).css('fontStyle');
+
+                            if(fontStyle=='italic')
+                            {
+                                $(this).css('fontStyle','normal');
+                            }
+                            else
+                            {
+                                $(this).css('fontStyle','italic');
+                            }
+                        });
+                    });
+                });
+
+                $('#underlineButton').click(function(){
+                    this_.textToolFunc(function()
+                    {
+                        this_.getSelectRange().each(function(){
+                            var textDecoration = $(this).css('textDecoration');
+
+                            if(textDecoration=='underline')
+                            {
+                                $(this).css('textDecoration','none');
+                            }
+                            else
+                            {
+                                $(this).css('textDecoration','underline');
+                            }
+                        });
+                    });
+                });
+
+
+                $('.fontSizeSelectOptions').find('.selectOption').click(function(){
+                    $(this).parent().parent().css('display','none');
+                    var val = $(this).html();
+                    $('#fontSizeButton').find('input.selected').val(val);
+
+                    this_.textToolFunc(function()
+                    {
+                        this_.getSelectRange().each(function(){
+
+                            $(this).css('fontSize',val);
+
+                        });
+                    });
+                });
+
+                $('.fontFamilySelectOptions').find('.selectOption').click(function(){
+                    $(this).parent().parent().css('display','none');
+                    var val = $(this).html();
+                    $('#fontFamilyButton').find('span.selected').html(val);
+
+                    this_.textToolFunc(function()
+                    {
+                        this_.getSelectRange().each(function(){
+
+                            $(this).css('fontFamily',val);
+
+                        });
+                    });
+                });
+
+
+                $('.sentenceSortToolTip').find('.icon').click(function()
+                {
+                    if($(this).hasClass('plainSentence'))
+                    {
+                        this_.textToolFunc(function(view)
+                        {
+                            var textEditBox = $(view.el).find('.textEditBox');
+                            $(textEditBox).css({
+                                'textAlign' : 'initial'
+                            });
+                        });
+                    }
+                    else if($(this).hasClass('leftSentence'))
+                    {
+                        this_.textToolFunc(function(view)
+                        {
+                            var textEditBox = $(view.el).find('.textEditBox');
+                            $(textEditBox).css({
+                                'textAlign' : 'left'
+                            });
+                        });
+                    }
+                    else if($(this).hasClass('rightSentence'))
+                    {
+                        this_.textToolFunc(function(view)
+                        {
+                            var textEditBox = $(view.el).find('.textEditBox');
+                            $(textEditBox).css({
+                                'textAlign' : 'right'
+                            });
+                        });
+                    }
+                    else if($(this).hasClass('centerSentence'))
+                    {
+                        this_.textToolFunc(function(view)
+                        {
+                            var textEditBox = $(view.el).find('.textEditBox');
+                            $(textEditBox).css({
+                                'textAlign' : 'center'
+                            });
+                        });
+                    }
+                 });
+            },
+
+            textToolFunc : function(func)
+            {
+                var objects = this.contentsCollection.getSelectedObjects();
+                var view = null;
+
+                if(objects && objects.length>0)
+                {
+                    view = this.contentsCollection.views[objects[0].data];
+
+                    if(view.model.get('type')!='text')
+                    {
+                        return;
+                    }
+                }
+
+                if(view)
+                {
+                    func(view);
+                }
+            },
+
+            getSelectRange : function(){
+                var sel = window.getSelection();
+
+                var startWordNode = sel.anchorNode.parentNode;
+                var startWordIdx = $(startWordNode).index();
+                var startSentenceNode = startWordNode.parentNode;
+                var startSentenceIdx = $(startSentenceNode).index();
+
+                var endWordNode = sel.focusNode.parentNode;
+                var endWordIdx = $(endWordNode).index();
+
+                var endSentenceNode = endWordNode.parentNode;
+                var endSentenceIdx = $(endSentenceNode).index();
+
+                var editBox = startSentenceNode.parentNode;
+
+
+
+                if(startSentenceIdx > endSentenceIdx)
+                {
+                    startWordNode = sel.focusNode.parentNode;
+                    startWordIdx = $(startWordNode).index();
+                    startSentenceNode = startWordNode.parentNode;
+                    startSentenceIdx = $(startSentenceNode).index();
+
+                    endWordNode = sel.anchorNode.parentNode;
+                    endWordIdx = $(endWordNode).index();
+                    endSentenceNode = endWordNode.parentNode;
+                    endSentenceIdx = $(endSentenceNode).index();
+
+
+                }
+                else if(startSentenceIdx == endSentenceIdx)
+                {
+                    if(startWordIdx > endWordIdx)
+                    {
+                        startWordNode = sel.focusNode.parentNode;
+                        startWordIdx = $(startWordNode).index();
+                        startSentenceNode = startWordNode.parentNode;
+                        startSentenceIdx = $(startSentenceNode).index();
+
+                        endWordNode = sel.anchorNode.parentNode;
+                        endWordIdx = $(endWordNode).index();
+                        endSentenceNode = endWordNode.parentNode;
+                        endSentenceIdx = $(endSentenceNode).index();
+
+                    }
+                }
+
+                var selectedSentence = [];
+                if(startSentenceIdx == endSentenceIdx)
+                {
+
+                    var gtVal = startWordIdx;
+                    var ltVal = (endWordIdx - gtVal);
+                    selectedSentence = $(startSentenceNode).find('.lcWord:gt('+gtVal+'):lt('+ltVal+'), .lcWord:eq('+gtVal+')');
+                }
+                else
+                {
+
+                    var gtVal = startWordIdx;
+                    var ltVal = endWordIdx;
+                    for(var i = startSentenceIdx ; i <= endSentenceIdx ; i++)
+                    {
+                        var addSentence=[];
+
+                        if(i==startSentenceIdx)
+                        {
+                            addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord:gt('+gtVal+'), .lcWord:eq('+gtVal+')');
+                        }
+                        else if(i==endSentenceIdx)
+                        {
+                            addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord:lt('+ltVal+'), .lcWord:eq('+ltVal+')');
+                        }
+                        else
+                        {
+                            addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord');
+                        }
+
+                        selectedSentence.push(addSentence);
+                    }
+
+                }
+
+
+
+
+                return selectedSentence;
             },
 
             bindEvents : function()
@@ -69,8 +315,8 @@ define(['jquery','underscore','backbone',
                 var this_ = this;
                 $('#textInsertButton').click(function(){
                     this_.contentsCollection.add(new TextModel({
-                            width : 0,
-                            height : 0,
+                            width : 400,
+                            height : 200,
 
                             translateX:0,
                             translateY:0,
@@ -96,8 +342,13 @@ define(['jquery','underscore','backbone',
 
                 $('#sequenceInsertButton').click(function()
                 {
+                    var width = $('#workSpace').css('width');
+                    var height = $('#workSpace').css('height');
+
                     this_.sequenceCollection.add(new SequenceModel({
                         'slideBackgroundColor' : this_.setting.get('backgroundColor'),
+                        'width' : width,
+                        'height' : height,
                         'matrix3d' : this_.cameraModule.getCamera().getMatrixQuery(),
                         'translateX' : this_.cameraModule.getCamera().getLocation().getX(),
                         'translateY' : this_.cameraModule.getCamera().getLocation().getY(),
@@ -215,11 +466,7 @@ define(['jquery','underscore','backbone',
                     $(this).val(val+'px');
                 });
 
-                $('.fontFamilySelectOptions').find('.selectOption').click(function(){
-                    $(this).parent().parent().css('display','none');
 
-                    $('#fontFamilyButton').find('span.selected').html($(this).html());
-                });
             },
 
             activeFontSizeSelection : function ()
@@ -270,12 +517,7 @@ define(['jquery','underscore','backbone',
                     $(this).val(val+'px');
                 });
 
-                $('.fontSizeSelectOptions').find('.selectOption').click(function(){
-                    $(this).parent().parent().css('display','none');
-                    console.log($(this).html());
-                    $('#fontSizeButton').find('input.selected').val($(this).html());
 
-                });
 ////
             },
 
@@ -383,7 +625,13 @@ define(['jquery','underscore','backbone',
                         onChange :  function (hsb, hex, rgb) {
                             var model = this_.contentsCollection.getSelected();
 
-                            if(model)
+                            var selectRange = this_.getSelectRange();
+                            console.log('selectRange',selectRange);
+                            if(selectRange)
+                            {
+                                selectRange.css('color','#'+hex);
+                            }
+                            else if(model)
                             {
                                 model.set('color','#'+hex);
                             }
@@ -435,7 +683,13 @@ define(['jquery','underscore','backbone',
                         onSubmit :  function (hsb, hex, rgb) {
                             var model = this_.contentsCollection.getSelected();
 
-                            if(model)
+
+                            var selectRange = this_.getSelectRange();
+                            if(selectRange)
+                            {
+                                selectRange.css('background','#'+hex);
+                            }
+                            else if(model)
                             {
                                 model.commitToCollection('background','#'+hex);
                             }

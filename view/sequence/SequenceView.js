@@ -78,11 +78,17 @@ define(['jquery','underscore','backbone',
                 li.append($(this.el));
 
                 $(this.el).append("<div class='sequence_view' data-id='"+this.model.cid+"'><div class='sequence_view_world'></div></div>");
+
+                console.log('size',this.model.get('width'),this.model.get('height'));
+                var scale = 0.18;
+
+
                 $(this.el).css({
-                    'margin' : '0px',
+
                     'padding' : '0px',
                     '-webkit-transform-origin' : '0% 0%',
-                    '-webkit-transform': 'scale(0.18)'
+                    '-webkit-transform': 'scale('+scale+')'
+
                 });
 
                 $('#sequenceArrayContainer').append(li);
@@ -121,6 +127,26 @@ define(['jquery','underscore','backbone',
                 }
 
                 this.model.set('models',modelIdArray);
+
+                var wrapWidth = parseFloat($(li).css('width'));
+                var wrapHeight = parseFloat($(li).css('height'));
+
+                var contentWidth = parseFloat(this.model.get('width'));
+                var contentHeight = parseFloat(this.model.get('height'));
+
+                var marginLeft = (wrapWidth-contentWidth*scale)/2;
+                var marginTop = (wrapHeight-contentHeight*scale)/2;
+
+                console.log('wrapSize',wrapWidth,wrapHeight);
+                console.log('margin',marginLeft,marginTop)
+
+
+                $(this.el).css({
+                    'width' : contentWidth,
+                    'height' : contentHeight,
+                    'marginLeft' : marginLeft,
+                    'marginTop' : marginTop
+                });
 
                 return this;
             }

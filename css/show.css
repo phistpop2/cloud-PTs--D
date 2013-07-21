@@ -9,7 +9,6 @@ html, body {
 #mainLayout {
     height: 100%;
     width : 100%;
-    background: #0da861;
     overflow : hidden;
     position : absolute;
 
@@ -25,8 +24,7 @@ html, body {
 }
 
 #showWorkspace, .fixInnerWorkspace{
-    width: 1024px;
-    height : 768px;
+
     display: block;
     -webkit-perspective: 600px;
     -webkit-perspective-origin: 50% 50%;

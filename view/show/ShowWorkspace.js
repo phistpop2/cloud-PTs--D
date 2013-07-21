@@ -20,6 +20,7 @@ define(['jquery','underscore','backbone',
             currentWorkspace : null,
             currentWorld : null,
 
+
             initialize : function()
             {
                 _.bindAll(this);
@@ -88,7 +89,23 @@ define(['jquery','underscore','backbone',
                 var cameraModule = this.cameraModule;
                 var showModel = this.showCollection.models[page];
                 var matrix3d = showModel.get('matrix3d');
+                var slideWidth = parseFloat(showModel.get('width'));
+                var slideHeight = parseFloat(showModel.get('height'));
                 var background = showModel.get('slideBackgroundColor');
+
+
+                var color = background;
+                var rgb = this.hexToRgb(color);
+
+                var r_ = (rgb.r-40)%255;
+                var g_ = (rgb.g-40)%255;
+                var b_ = (rgb.b-40)%255;
+
+                var secondColor = this.rgbToHex(r_,g_,b_);
+
+                var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%)'
+
+
                 var slideChangeStyle = showModel.get('slideChangeStyle');
 
                 var moveDuration = showModel.get('moveDuration');
@@ -96,16 +113,11 @@ define(['jquery','underscore','backbone',
                 var slideBackgroundAction = showModel.get('slideBackgroundAction');
                 var world = $('#showWorkspace').find('#world');
 
+
+
                 if(slideChangeStyle=='default')
                 {
                     this.fixWorkspace.hide();
-                    var left = parseFloat((parseInt($('#showWorkspace').css('width')) - 1024)/2);
-                    var top = parseFloat((parseInt($('#showWorkspace').css('height')) - 768)/2);
-
-                    console.log('matrix3d',matrix3d);
-                    matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
-                   console.log('matrix3d',matrix3d);
-
 
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
@@ -114,7 +126,7 @@ define(['jquery','underscore','backbone',
                     });
 
 
-
+                //    this.resize();
 
 
                 }
@@ -249,9 +261,8 @@ define(['jquery','underscore','backbone',
                     });
                     newDiv.insertBefore('#showWorkspace');
 
-                    $('#mainLayout').css({
-                        background : background
-                    });
+                    $('#mainLayout').css('background',background);
+
                 }
 
 
@@ -261,35 +272,43 @@ define(['jquery','underscore','backbone',
             {
                 console.log('resize');
                 var this_ = this;
-                var scaleW = window.innerWidth / 1024;//parseInt($(this_.el).css('width'));
-                var scaleH = window.innerHeight / 768;//parseInt($(this_.el).css('height'));
+                var showModel = this.showCollection.models[this.currentShowPage];
+                var slideWidth = parseFloat(showModel.get('width'));
+                var slideHeight = parseFloat(showModel.get('height'));
 
-                var scale = scaleW;
 
-                if(scaleH < scaleW)  {
-                    scale = scaleH;
-                }
 
-                var originAspect = 1024/768;
+                var originAspect = slideWidth/slideHeight;
                 var currentAspect = window.innerWidth / window.innerHeight;
                 var newHeight = 0, newWidth = 0;
 
                 console.log('aspacet',originAspect,currentAspect);
                 if(originAspect > currentAspect)
                 {
-                    newWidth = 1024;
-                    newHeight = 1024/currentAspect;
+                    newWidth = slideWidth;
+                    newHeight = slideWidth/currentAspect;
                 }
                 else
                 {
-                    newWidth = 768*currentAspect;
-                    newHeight = 768
+                    newWidth = slideHeight*currentAspect;
+                    newHeight = slideHeight
                 }
 
                 $('#showWorkspace').css({
-                   'width' : newWidth,
+                    'width' : newWidth,
                     'height' : newHeight
                 });
+
+                var scaleW = window.innerWidth / newWidth;//parseInt($(this_.el).css('width'));
+                var scaleH = window.innerHeight / newHeight;//parseInt($(this_.el).css('height'));
+
+
+                console.log('new',newWidth,newHeight);
+                var scale = scaleW;
+
+                if(scaleH < scaleW)  {
+                    scale = scaleH;
+                }
 
 
                 $('#showWorkspace').css({
@@ -298,14 +317,14 @@ define(['jquery','underscore','backbone',
                 });
 
 
-                var workspaceWidth = parseFloat($('#showWorkspace').css('width'))*scale;
-                var workspaceHeight = parseFloat($('#showWorkspace').css('height'))*scale;
+                var workspaceWidth = slideWidth*scale;
+                var workspaceHeight = slideHeight*scale;
                 var marginLeft =   parseFloat((window.innerWidth-workspaceWidth)/2);
                 var marginTop =   parseFloat((window.innerHeight-workspaceHeight)/2);
 
                 var cameraModule = this.cameraModule;
 
-                var showModel = this.showCollection.models[this.currentShowPage];
+
                 var matrix3d = showModel.get('matrix3d');
 
 
@@ -344,6 +363,24 @@ define(['jquery','underscore','backbone',
 
                 $(this.fixWorkspace).insertBefore('#showWorkspace');
                 this.resize();
+            },
+
+            componentToHex : function(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+            },
+
+            rgbToHex : function(r, g, b) {
+                return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+            },
+
+            hexToRgb : function(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
             }
         }) ;
 

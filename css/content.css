@@ -18,34 +18,26 @@
 
 
 .textEditBox{
-    display :table;
-    table-layout: fixed;
+
+    margin : 4px;
+
+    -webkit-user-modify: read-write;
     word-wrap: break-word;
 
-    font-size : 80px;
-    width : 400px;
-    height : 20px;
-    margin : 4px;
 }
 
 [contenteditable="true"].textEditBox {
-    display :table;
-    table-layout: fixed;
-    word-wrap: break-word;
 
-    font-size : 80px;
-    width : 400px;
-    height : 20px;
 }
 
 .lcWord{
-    font-size : 80px;
-    display : lnline-block;
+
+
 }
 
 
 .clSentence{
-    display : lnline-block;
+
 }
 
 .containIdentify{

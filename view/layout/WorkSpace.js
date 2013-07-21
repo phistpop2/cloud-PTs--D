@@ -191,8 +191,37 @@ define(['jquery','underscore','backbone',
 
            render : function()
            {
-               $('#mainCanvasLayout').css('background',this.setting.get('backgroundColor'));
-           }
+               var color = this.setting.get('backgroundColor');
+               var rgb = this.hexToRgb(color);
+
+               var r_ = (rgb.r+60)%255;
+               var g_ = (rgb.g+60)%255;
+               var b_ = (rgb.b+60)%255;
+
+               var secondColor = this.rgbToHex(r_,g_,b_);
+
+               var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%);'
+               $('#workSpace').css('background',background);
+           },
+
+           componentToHex : function(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+           },
+
+           rgbToHex : function(r, g, b) {
+                return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+           },
+
+            hexToRgb : function(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+
         }) ;
 
 

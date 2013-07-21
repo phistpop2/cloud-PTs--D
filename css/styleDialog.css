@@ -6,6 +6,10 @@
     width : 0px;
 }
 
+#slide_style_control{
+    display : none;
+}
+
 #styleDialog .dialog_content{
     position: relative;
     left: -50%;
