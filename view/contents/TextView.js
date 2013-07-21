@@ -8,6 +8,42 @@ define(['jquery','underscore','backbone',
 
             initialize : function(){
                 ObjectView.prototype.initialize.call(this);
+
+            },
+
+            eventBind : function()
+            {
+                ObjectView.prototype.eventBind.call(this);
+
+                $(this.el).find(".textEditBox").keydown(function(e){
+                        var contenteditable = $(this).attr('contenteditable');
+
+                        if(contenteditable=='true')
+                        {
+                            e.stopPropagation();
+                        }
+                }).keypress(function(e){
+                        var contenteditable = $(this).attr('contenteditable');
+
+                        if(contenteditable=='true')
+                        {
+                            e.stopPropagation();
+                        }
+                }).keyup(function(e){
+                        var contenteditable = $(this).attr('contenteditable');
+
+                        if(contenteditable=='true')
+                        {
+                            e.stopPropagation();
+                        }
+                }).mousemove(function(e){
+                        var contenteditable = $(this).attr('contenteditable');
+
+                        if(contenteditable=='true')
+                        {
+                            return false;
+                        }
+                })
             },
 
             render : function()
@@ -41,18 +77,19 @@ define(['jquery','underscore','backbone',
                     this.initPosition();
                 }
 
+
+                this.eventBind();
                 return this;
             },
 
             updateView : function()
             {
                 ObjectView.prototype.updateView.call(this);
-                this.refreshSize();
+                this.resize();
             },
 
-            refreshSize : function()
+            resize : function()
             {
-
                 var width = $(this.el).find('.textEditBox').css('width');
                 var height = $(this.el).find('.textEditBox').css('height');
 

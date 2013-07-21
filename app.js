@@ -185,9 +185,24 @@ define(
             var shiftDown = false;
             var ctrlKey = 17,shiftKey = 16, zKey = 90, vKey = 86;
 
+            $(window).keydown(function(e){
+                if(e.keyCode==8){   //backspace
+                    e.preventDefault();
+                }
+            }).keypress(function(e){
+                    if(e.keyCode==8){   //backspace
+                        e.preventDefault();
+                    }
+            }).keyup(function(e){
+                if(e.keyCode==8){   //backspace
+                    e.preventDefault();
+                }
+            });
+
+
+
             $(document).keydown(function(e)
             {
-
                 if (e.keyCode == ctrlKey) ctrlDown = true;
                 if (e.keyCode == shiftKey) shiftDown = true;
             }).keyup(function(e)
@@ -248,7 +263,6 @@ define(
                     {
 
                     }
-
 
 
                     return false;

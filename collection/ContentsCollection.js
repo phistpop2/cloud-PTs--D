@@ -74,10 +74,8 @@ define(['underscore','backbone',
                        }
                    }
 
-                   console.log('selected',selected);
 
                    model_.selected = selected;
-                   console.log(model_.cid,model_.selected);
                }
 
                this.trigger('selected');
@@ -121,7 +119,6 @@ define(['underscore','backbone',
                        }
                    }
 
-                   console.log('selected',selected);
 
                    model_.selected = selected;
 

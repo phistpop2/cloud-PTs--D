@@ -58,9 +58,11 @@ define(['jquery','underscore','backbone',
                         model_.controller.lookFacade();
                         model_.controller.zoomFacade(parseInt(model_.get('width')),parseInt(model_.get('height')));
                     }
+
                 })
 
                  $('#workSpace').bind('mousemove',function(e){
+
 
                     if(moveEnable)
                     {

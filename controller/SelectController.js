@@ -30,7 +30,7 @@ define(['jquery','underscore','backbone',
 
                 this.broadcastSelectChange();
 
-                console.log('selectedObejcts',this.selectedObjects)
+
             },
 
             addSelectedObjects : function(selectedObject)
