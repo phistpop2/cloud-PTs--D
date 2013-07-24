@@ -43,7 +43,6 @@ define(['jquery','underscore','backbone',
                 var this_= this;
                 this.contentsCollection.bind("unSelected",function()
                 {
-
                     this_.unActiveMenuSelection();
                 });
 
@@ -347,8 +346,6 @@ define(['jquery','underscore','backbone',
                             }
                         }
                     });
-
-
                     $('.objectBackgroundColorButtonToolTip').ColorPickerSetColor(value);
                 }
             },

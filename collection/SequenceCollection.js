@@ -25,6 +25,8 @@ define(['underscore','backbone',
             model:SequenceModel,
 
             views : [],
+            model_indexes: [],
+
 
             selected : null,
 
@@ -56,13 +58,39 @@ define(['underscore','backbone',
 
            addFunc : function(model)
            {
+               this.model_indexes[model.cid] = this.models.length - 1;
+               console.debug( this.models );
                 this.views[model.cid] = new SequenceView({model: model,
                                                             id:'view_'+model.cid,
                                                             'contentsCollection' : this.contentsCollection,
                                                             'sequenceCollection' : this,
                                                             'cameraModule' : this.cameraModule}).render();
 
-
+           },
+           setSelected : function(model){
+               if( this.selected ){
+                   this.selected.set({
+                       selected : false
+                   });
+                   this.selected = null;
+               }
+               if( model ){
+                   this.selected = model;
+                   this.selected.set({
+                      selected : true
+                   });
+               }
+               /*
+                if(model)
+                {
+                    this.selected = model;
+                    this.trigger('selected');
+                }
+                else
+                {
+                    this.selected = null;
+                    this.trigger('unSelected');
+                }*/
            },
 
            addToHistory : function(historyData)

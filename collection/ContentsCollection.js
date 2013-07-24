@@ -40,14 +40,23 @@ define(['underscore','backbone',
            },
 
            setSelected : function(model){
+               if( this.selected != null ){
+                   this.selected.set({
+                       selected : false
+                   });
+                   this.selected = null;
+               }
+
                if(model)
                {
                    this.selected = model;
                    this.trigger('selected');
+                   model.set({
+                       selected : true
+                   });
                }
                else
                {
-                   this.selected = null;
                    this.trigger('unSelected');
                }
            },

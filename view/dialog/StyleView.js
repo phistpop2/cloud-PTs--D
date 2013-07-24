@@ -486,7 +486,9 @@ define(['jquery','underscore','backbone',
                                                         });
 
                 var styleValue = $('#style_selector').val();
+
                 var model = this.contentsCollection.getSelected();
+
                 this.activeStylePanel(styleValue,model);
             },
 

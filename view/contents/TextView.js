@@ -46,7 +46,7 @@ define(['jquery','underscore','backbone',
             updateView : function()
             {
                 ObjectView.prototype.updateView.call(this);
-                this.refreshSize();
+  //              this.refreshSize();
             },
 
             refreshSize : function()

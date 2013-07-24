@@ -40,11 +40,26 @@ define(['jquery','underscore','backbone',
             render : function(){
                 $(this.el).html(this.template);
 
+                var this_ = this;
+
                 var height = parseInt($('#lmListButtonWrap').css('height'));
                 var sequenceArrayContainerHeight = (height - (parseInt($('#lmSettingButton').css('height'))))-230
                 $('#sequenceArrayContainer').css('height',sequenceArrayContainerHeight+'px');
 
                 $('#sequenceArrayContainer').sortable();
+
+                $('#sequenceArrayContainer').bind('sortupdate',function(e){
+
+                    var views = $('#sequenceArrayContainer').children();
+                    var collection = this_.sequenceCollection;
+
+                    for( var i = 0; i < views.length; i++ ){
+                        collection.models[ collection.model_indexes[ views[i].id ] ].set({
+                            'slideNumber' : i+1
+                        });
+                    }
+
+                });
 
                 $('#lmSaveButton').click(this.saveCurrentWork);
                 $('#lmSaveButton').bind('mousedown',function(e){e.preventDefault();})
@@ -59,6 +74,7 @@ define(['jquery','underscore','backbone',
 
                 $('#lmShowButton').bind('click',this.presentationShow);
                 $('#mainLayout').append(SequenceDialogTemplate);
+
             },
 
             sequencePanelToggle : function(e)
@@ -83,7 +99,6 @@ define(['jquery','underscore','backbone',
 
             saveCurrentWork : function(e)
             {
-
                 var saveDatas = this.collection.extractCurrentWorkToJSON();
                 this.session.saveToGoogleDrive(saveDatas);
             },
@@ -104,8 +119,6 @@ define(['jquery','underscore','backbone',
                         $('#mainRightLayout').css('display','none');
                     }
                 }
-
-
             },
 
             presentationShow : function()
