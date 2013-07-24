@@ -23,7 +23,11 @@ define(['jquery','underscore','backbone'],
             borderTopLeftRadius : 0,
             borderTopRightRadius : 0,
             borderBottomLeftRadius : 0,
-            borderBottomRightRadius : 0
+            borderBottomRightRadius : 0,
+
+            //etc
+            selected : false
+
 
 
         },
@@ -215,7 +219,6 @@ define(['jquery','underscore','backbone'],
                 }
 
             }
-
             return newObj;
         }
 
