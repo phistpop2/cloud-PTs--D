@@ -80,7 +80,28 @@ define(['underscore','backbone',
                this.trigger('selected');
            },
 
+            getSelectedLastObject : function()
+            {
+                var selectedObject = null;
+                var selectedObjects = this.selectorController.getSelectedObjects();
 
+                if(selectedObjects && selectedObjects.length>0)
+                {
+                    selectedObject = selectedObjects[selectedObjects.length-1];
+
+                    if(selectedObject.type!='content')
+                    {
+                        selectedObject = null;
+                    }
+                    else
+                    {
+                        selectedObject = this.getByCid(selectedObject.data);
+
+                    }
+                }
+
+                return   selectedObject;
+            },
 
             getSelectedObjects : function()
             {

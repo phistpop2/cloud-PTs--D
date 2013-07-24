@@ -53,16 +53,16 @@ define(['jquery','underscore','backbone',
                 $('#boldButton').click(function(){
                     this_.textToolFunc(function()
                     {
-                        this_.getSelectRange().each(function(){
-                            var fontWeight = $(this).css('fontWeight');
+                        _.each(window.getSelectMergeRange(),function(item){
+                            var fontWeight = $(item).css('fontWeight');
 
                             if(fontWeight=='bold')
                             {
-                                $(this).css('fontWeight','normal');
+                                $(item).css('fontWeight','normal');
                             }
                             else
                             {
-                                $(this).css('fontWeight','bold');
+                                $(item).css('fontWeight','bold');
                             }
                         });
                     });
@@ -71,16 +71,16 @@ define(['jquery','underscore','backbone',
                 $('#italicButton').click(function(){
                     this_.textToolFunc(function()
                     {
-                        this_.getSelectRange().each(function(){
-                            var fontStyle = $(this).css('fontStyle');
+                        _.each(window.getSelectMergeRange(),function(item){
+                            var fontStyle = $(item).css('fontStyle');
 
                             if(fontStyle=='italic')
                             {
-                                $(this).css('fontStyle','normal');
+                                $(item).css('fontStyle','normal');
                             }
                             else
                             {
-                                $(this).css('fontStyle','italic');
+                                $(item).css('fontStyle','italic');
                             }
                         });
                     });
@@ -89,16 +89,16 @@ define(['jquery','underscore','backbone',
                 $('#underlineButton').click(function(){
                     this_.textToolFunc(function()
                     {
-                        this_.getSelectRange().each(function(){
-                            var textDecoration = $(this).css('textDecoration');
+                        _.each(window.getSelectMergeRange(),function(item){
+                            var textDecoration = $(item).css('textDecoration');
 
                             if(textDecoration=='underline')
                             {
-                                $(this).css('textDecoration','none');
+                                $(item).css('textDecoration','none');
                             }
                             else
                             {
-                                $(this).css('textDecoration','underline');
+                                $(item).css('textDecoration','underline');
                             }
                         });
                     });
@@ -112,12 +112,14 @@ define(['jquery','underscore','backbone',
 
                     this_.textToolFunc(function()
                     {
-                        this_.getSelectRange().each(function(){
+                        _.each(window.getSelectMergeRange(),function(item){
 
-                            $(this).css('fontSize',val);
+                            $(item).css('fontSize',val);
 
                         });
                     });
+
+
                 });
 
                 $('.fontFamilySelectOptions').find('.selectOption').click(function(){
@@ -127,10 +129,9 @@ define(['jquery','underscore','backbone',
 
                     this_.textToolFunc(function()
                     {
-                        this_.getSelectRange().each(function(){
+                        _.each(window.getSelectMergeRange(),function(item){
 
-                            $(this).css('fontFamily',val);
-
+                            $(item).css('fontFamily',val);
                         });
                     });
                 });
@@ -202,95 +203,7 @@ define(['jquery','underscore','backbone',
                 }
             },
 
-            getSelectRange : function(){
-                var sel = window.getSelection();
 
-                var startWordNode = sel.anchorNode.parentNode;
-                var startWordIdx = $(startWordNode).index();
-                var startSentenceNode = startWordNode.parentNode;
-                var startSentenceIdx = $(startSentenceNode).index();
-
-                var endWordNode = sel.focusNode.parentNode;
-                var endWordIdx = $(endWordNode).index();
-
-                var endSentenceNode = endWordNode.parentNode;
-                var endSentenceIdx = $(endSentenceNode).index();
-
-                var editBox = startSentenceNode.parentNode;
-
-
-
-                if(startSentenceIdx > endSentenceIdx)
-                {
-                    startWordNode = sel.focusNode.parentNode;
-                    startWordIdx = $(startWordNode).index();
-                    startSentenceNode = startWordNode.parentNode;
-                    startSentenceIdx = $(startSentenceNode).index();
-
-                    endWordNode = sel.anchorNode.parentNode;
-                    endWordIdx = $(endWordNode).index();
-                    endSentenceNode = endWordNode.parentNode;
-                    endSentenceIdx = $(endSentenceNode).index();
-
-
-                }
-                else if(startSentenceIdx == endSentenceIdx)
-                {
-                    if(startWordIdx > endWordIdx)
-                    {
-                        startWordNode = sel.focusNode.parentNode;
-                        startWordIdx = $(startWordNode).index();
-                        startSentenceNode = startWordNode.parentNode;
-                        startSentenceIdx = $(startSentenceNode).index();
-
-                        endWordNode = sel.anchorNode.parentNode;
-                        endWordIdx = $(endWordNode).index();
-                        endSentenceNode = endWordNode.parentNode;
-                        endSentenceIdx = $(endSentenceNode).index();
-
-                    }
-                }
-
-                var selectedSentence = [];
-                if(startSentenceIdx == endSentenceIdx)
-                {
-
-                    var gtVal = startWordIdx;
-                    var ltVal = (endWordIdx - gtVal);
-                    selectedSentence = $(startSentenceNode).find('.lcWord:gt('+gtVal+'):lt('+ltVal+'), .lcWord:eq('+gtVal+')');
-                }
-                else
-                {
-
-                    var gtVal = startWordIdx;
-                    var ltVal = endWordIdx;
-                    for(var i = startSentenceIdx ; i <= endSentenceIdx ; i++)
-                    {
-                        var addSentence=[];
-
-                        if(i==startSentenceIdx)
-                        {
-                            addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord:gt('+gtVal+'), .lcWord:eq('+gtVal+')');
-                        }
-                        else if(i==endSentenceIdx)
-                        {
-                            addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord:lt('+ltVal+'), .lcWord:eq('+ltVal+')');
-                        }
-                        else
-                        {
-                            addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord');
-                        }
-
-                        selectedSentence.push(addSentence);
-                    }
-
-                }
-
-
-
-
-                return selectedSentence;
-            },
 
             bindEvents : function()
             {
@@ -307,7 +220,7 @@ define(['jquery','underscore','backbone',
                     }
                 });
 
-                $('#TopToolBar > *').bind('mousedown',function(e){ return false;})
+
             },
 
             initInsertButtons : function()
@@ -326,7 +239,7 @@ define(['jquery','underscore','backbone',
                             rotateY:0,
                             rotateZ:0,
 
-                            content : 'messagehere'
+                            content : 'message here'
                         }
                     ));
                 });
@@ -472,13 +385,13 @@ define(['jquery','underscore','backbone',
             activeFontSizeSelection : function ()
             {
                 var this_ = this;
-                var val = 8;
+                var val = 20;
                 $('#fontSizeButton').find('input.selected').val('10px');
 
                 for(var i = 0 ; i < 10 ; i++)
                 {
                     var selectOption = $("<li  class='selectOption' value='"+val+"px'>"+val+"px</li>");
-                    val+=4;
+                    val+=10;
                     $('#fontSizeButton').find('ul.topVerticalList').append(selectOption);
                 }
 /////
@@ -514,7 +427,19 @@ define(['jquery','underscore','backbone',
                         val = 0;
                     }
 
-                    $(this).val(val+'px');
+                    val+='px';
+
+                    $(this).val(val);
+
+                    window.selectRangeBackwards();
+                    console.log('selectedrange',window.getSelectRange(),val);
+                    window.getSelectRange().each(function(){
+                        console.log('selectItem',this,val);
+                        $(this).css('fontSize',val);
+
+                    });
+
+
                 });
 
 
@@ -596,6 +521,7 @@ define(['jquery','underscore','backbone',
                       if($(this).parent().find('div.colorButtonToolTip').css('display') == 'none'){
                           this_.hideAllToolTip();
                           $(this).parent().find('div.colorButtonToolTip').css('display','block');
+                          $(this).parent().find('div.colorButtonToolTip').ColorPicker({flat : true});
                       }
                       else
                       {
@@ -622,10 +548,12 @@ define(['jquery','underscore','backbone',
                     $('.colorButtonToolTip').ColorPicker({
                         flat : true,
                         color : value,
-                        onChange :  function (hsb, hex, rgb) {
+
+                        onSubmit :  function (hsb, hex, rgb) {
                             var model = this_.contentsCollection.getSelected();
 
-                            var selectRange = this_.getSelectRange();
+
+                            var selectRange = window.getSelectRange();
                             console.log('selectRange',selectRange);
                             if(selectRange)
                             {
@@ -633,10 +561,13 @@ define(['jquery','underscore','backbone',
                             }
                             else if(model)
                             {
-                                model.set('color','#'+hex);
+                                model.commitToCollection('color','#'+hex);
                             }
                         }
                     });
+
+
+
 
                     $('.colorButtonToolTip').ColorPickerSetColor(value);
                 }
@@ -684,7 +615,8 @@ define(['jquery','underscore','backbone',
                             var model = this_.contentsCollection.getSelected();
 
 
-                            var selectRange = this_.getSelectRange();
+                            var selectRange = window.getSelectRange();
+                            console.log('selectRange',selectRange);
                             if(selectRange)
                             {
                                 selectRange.css('background','#'+hex);
@@ -817,6 +749,13 @@ define(['jquery','underscore','backbone',
                         }
                     }
                });
+
+                $('#layoutButton input').each(function(){
+
+                    $(this).bind('change',function(){
+                        window.selectRangeBackwards();
+                    });
+                });
             },
 
             doDataLayoutSelection : function()
@@ -913,6 +852,7 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
+                var this_ = this;
                 $('#workSpace').parent().append(this.template);
                 this.activeSentenceSortSelection();
                 this.activeFontFamilySelection();
@@ -922,8 +862,38 @@ define(['jquery','underscore','backbone',
                 this.activeLayoutSelection();
                 this.activeStyleDialogSelection();
 
-                this.unActiveMenuSelection()
+                this.unActiveMenuSelection();
+
+                $('#TopToolBar > *').bind('mousedown',this_.saveSelection);
+
+                $('#TopToolBar > *').bind('mouseup',this_.restoreSelection);
+
+                $('#TopToolBar input').each(function(){
+
+                    $(this).unbind('mousedown',this_.saveSelection);
+                    $(this).unbind('mouseup',this_.restoreSelection);
+                    $(this).bind('mouseup',function(e){
+                        $(this).focus();
+                        e.stopPropagation();
+                    });
+                    $(this).bind('focusout',this_.restoreSelection);
+                }) ;
+            },
+
+            saveSelection : function(){
+                    window.saveSelectRange();
+//                window.selection = window.getSelection().getRangeAt(0);
+            },
+
+            restoreSelection : function()
+            {
+
+                window.selectRangeBackwards();
             }
+
+
+
+
          }) ;
 
         return topToolBar;

@@ -79,10 +79,7 @@ define(['jquery','underscore','backbone',
 
                 $(this.el).append("<div class='sequence_view' data-id='"+this.model.cid+"'><div class='sequence_view_world'></div></div>");
 
-                console.log('size',this.model.get('width'),this.model.get('height'));
                 var scale = 0.18;
-
-
                 $(this.el).css({
 
                     'padding' : '0px',
@@ -148,7 +145,49 @@ define(['jquery','underscore','backbone',
                     'marginTop' : marginTop
                 });
 
+                this.updateView();
+
                 return this;
+            },
+
+
+
+            updateView : function()
+            {
+
+                var color = this.model.get('slideBackgroundColor');
+                var rgb = this.hexToRgb(color);
+
+                var r_ = Math.abs(rgb.r+57)%255;
+                var g_ = Math.abs(rgb.g+57)%255;
+                var b_ = Math.abs(rgb.b+57)%255;
+
+                var secondColor = this.rgbToHex(r_,g_,b_);
+
+                var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%)'
+                console.log('updateView',background);
+                $(this.el).find('.sequence_view').css({
+                    'background' : background
+                });
+
+            },
+
+            componentToHex : function(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+            },
+
+            rgbToHex : function(r, g, b) {
+                return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+            },
+
+            hexToRgb : function(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
             }
 
 

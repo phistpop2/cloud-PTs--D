@@ -47,9 +47,6 @@ define(['jquery','underscore','backbone',
 
                 var camera_ = this.camera;
 
-                $(document).unbind('keydown').bind('keydown', function (event) {
-                    event.preventDefault();
-                });
 
                 $(document).keydown(function(e)
                 {
@@ -194,14 +191,15 @@ define(['jquery','underscore','backbone',
                var color = this.setting.get('backgroundColor');
                var rgb = this.hexToRgb(color);
 
-               var r_ = (rgb.r+60)%255;
-               var g_ = (rgb.g+60)%255;
-               var b_ = (rgb.b+60)%255;
+               var r_ = Math.abs(rgb.r+57)%255;
+               var g_ = Math.abs(rgb.g+57)%255;
+               var b_ = Math.abs(rgb.b+57)%255;
 
                var secondColor = this.rgbToHex(r_,g_,b_);
 
                var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%);'
-               $('#workSpace').css('background',background);
+               console.log('background',background);
+               $('#mainCanvasLayout').css('background',background);
            },
 
            componentToHex : function(c) {

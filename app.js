@@ -127,13 +127,22 @@ define(
             this.initLeftMenu();
 
             this.shortKey();
+
+
+            window.getSelectRange = this.getSelectRange;
+            window.getSelectMergeRange = this.getSelectMergeRange;
+            window.selectRangeBackwards = this.selectRangeBackwards;
+            window.saveSelectRange = this.saveSelectRange;;
+
         },
 
         initSetting : function()
         {
             this.setting = new SettingModel({
-                'backgroundColor' : '#0da861'
+                'backgroundColor' : '#1c1e20'
             });
+
+
         },
 
         initLeftMenu : function()
@@ -185,7 +194,7 @@ define(
             var shiftDown = false;
             var ctrlKey = 17,shiftKey = 16, zKey = 90, vKey = 86;
 
-            $(window).keydown(function(e){
+            $(document).keydown(function(e){
                 if(e.keyCode==8){   //backspace
                     e.preventDefault();
                 }
@@ -369,6 +378,175 @@ define(
             }
 
             return newObj;
+        },
+
+        saveSelectRange : function()
+        {
+
+
+            var selectedObject = this.contentsCollection.getSelectedLastObject();
+
+            if(selectedObject)
+            {
+                if(selectedObject.get('type')=='text')
+                {
+                    if(window.getSelection().rangeCount > 0)
+                    {
+                        var selection = window.getSelection().getRangeAt(0) ;
+
+                        var className = selection.commonAncestorContainer.className;
+
+                        if((className=='clSentence')||
+                            (className=='textEditBox'))
+                        {
+                            window.selection = selection;
+                            window.selection.view =  selection.commonAncestorContainer;
+                        }
+                    }
+                    else
+                    {
+                        window.selection = null;
+                    }
+                }
+                else
+                {
+                     window.selection = null;
+                }
+            }
+
+
+
+        },
+
+        getSelectRange : function(){
+            var sel = window.getSelection();
+
+
+
+            var startWordNode = sel.anchorNode.parentNode;
+            var startWordIdx = $(startWordNode).index();
+            var startSentenceNode = startWordNode.parentNode;
+            var startSentenceIdx = $(startSentenceNode).index();
+
+            var endWordNode = sel.focusNode.parentNode;
+            var endWordIdx = $(endWordNode).index();
+
+            var endSentenceNode = endWordNode.parentNode;
+            var endSentenceIdx = $(endSentenceNode).index();
+
+            var editBox = startSentenceNode.parentNode;
+
+            if(startSentenceIdx > endSentenceIdx)
+            {
+                startWordNode = sel.focusNode.parentNode;
+                startWordIdx = $(startWordNode).index();
+                startSentenceNode = startWordNode.parentNode;
+                startSentenceIdx = $(startSentenceNode).index();
+
+                endWordNode = sel.anchorNode.parentNode;
+                endWordIdx = $(endWordNode).index();
+                endSentenceNode = endWordNode.parentNode;
+                endSentenceIdx = $(endSentenceNode).index();
+
+
+            }
+            else if(startSentenceIdx == endSentenceIdx)
+            {
+                if(startWordIdx > endWordIdx)
+                {
+                    startWordNode = sel.focusNode.parentNode;
+                    startWordIdx = $(startWordNode).index();
+                    startSentenceNode = startWordNode.parentNode;
+                    startSentenceIdx = $(startSentenceNode).index();
+
+                    endWordNode = sel.anchorNode.parentNode;
+                    endWordIdx = $(endWordNode).index();
+                    endSentenceNode = endWordNode.parentNode;
+                    endSentenceIdx = $(endSentenceNode).index();
+
+                }
+            }
+
+            var selectedSentence = [];
+            if(startSentenceIdx == endSentenceIdx)
+            {
+
+                var gtVal = startWordIdx;
+                var ltVal = (endWordIdx - gtVal);
+                selectedSentence = $(startSentenceNode).find('.lcWord:gt('+gtVal+'):lt('+ltVal+'), .lcWord:eq('+gtVal+')');
+            }
+            else
+            {
+
+                var gtVal = startWordIdx;
+                var ltVal = endWordIdx;
+                for(var i = startSentenceIdx ; i <= endSentenceIdx ; i++)
+                {
+                    var addSentence=[];
+
+                    if(i==startSentenceIdx)
+                    {
+                        addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord:gt('+gtVal+'), .lcWord:eq('+gtVal+')');
+                    }
+                    else if(i==endSentenceIdx)
+                    {
+                        addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord:lt('+ltVal+'), .lcWord:eq('+ltVal+')');
+                    }
+                    else
+                    {
+                        addSentence = $(editBox).find('.clSentence:eq('+i+')').find('.lcWord');
+                    }
+
+                    selectedSentence.push(addSentence);
+                }
+            }
+
+            return selectedSentence;
+        },
+
+        getSelectMergeRange : function()
+        {
+            var rawSelectRange = window.getSelectRange();
+            var mergeRange = [];
+
+            if(rawSelectRange)
+            {
+                _.each(rawSelectRange,function(c){
+
+                    if(Object.prototype.toString.call( c ) === '[object Object]'){
+                        for(var i = 0 ; i < c.length ; i++)
+                        {
+                            mergeRange.push(c[i]);
+                        }
+                    }
+                    else{
+
+                        mergeRange.push(c)
+                    }
+                });
+            }
+
+            return mergeRange;
+        },
+
+        selectRangeBackwards : function(range) {
+            var savedRange = window.selection;
+
+            if ( savedRange != null ) {
+                if (window.getSelection)
+                {
+                    var selectionView = window.selection.view;
+                    console.log('selectionView',selectionView);
+                    $(selectionView).focus();
+                    var s = window.getSelection();
+                    if (s.rangeCount > 0)
+                        s.removeAllRanges();
+                    s.addRange(savedRange);
+                }
+            }
+
+            console.log('selectRangeBackwards');
+
         }
     });
 
@@ -376,6 +554,7 @@ define(
     {
         var mainView = new MainView;
     }
+
 
     return {
         initialize : initialize

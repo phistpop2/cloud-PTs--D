@@ -82,7 +82,7 @@ define(['jquery','underscore','backbone',
 
                 });
 
-                $('#style_selector').bind('mousedown',function(e){console.log(this); return false;})
+//                $('#style_selector').bind('mousedown',function(e){console.log(this); return false;})
 
             },
 
@@ -97,6 +97,8 @@ define(['jquery','underscore','backbone',
                     var model = this_.contentsCollection.getSelected();
                     this_.activeStylePanel(styleValue,model);
                 });
+
+
             },
 
             activeBackgroundStylePanel : function(model)
@@ -168,6 +170,11 @@ define(['jquery','underscore','backbone',
                     onChange: function (hsb, hex, rgb) {
                         $('#shadowColor').parent().parent().find('.color_thumb').css('backgroundColor', '#' + hex);
                         $('#shadowColor').val('#' + hex);
+                    },
+
+                    onHide : function()
+                    {
+                        window.selectRangeBackwards();
                     }
                 });
 
@@ -196,7 +203,27 @@ define(['jquery','underscore','backbone',
 
                 var boxShadows = model_.get('boxShadows');
                 this_.refreshStyleList(boxShadows,$('#boxShadowList'),model_,'boxShadows');
+
+                $('#styleDialog input').each(function(){
+
+                    $(this).bind('change',function(){
+                        window.selectRangeBackwards();
+                    });
+                });
+
+
+                $('.colorpicker input').each(function(){
+
+                    $(this).unbind('mousedown');
+
+                    $(this).bind('focusout',function(){
+                        window.selectRangeBackwards();
+                    });
+
+                });
+
             },
+
 
             refreshStyleList : function(listItems,listEl,model,key){
                 var this_ = this;
@@ -239,6 +266,21 @@ define(['jquery','underscore','backbone',
 
             activeTextShadowStylePanel : function(model)
             {
+                var this_ = this;
+                var selectRange = [];
+                var rawSelectRange = window.getSelectRange();
+
+
+                if(rawSelectRange)
+                {
+                    _.each(rawSelectRange,function(c){
+                        if(Object.prototype.toString.call( c ) === '[object Array]'){
+                            _.each(c,function(t){selectRange.push(t)})}else{selectRange.push(c)
+                        }
+                    });
+                }
+
+
                 $('#styleControlPanel').html(TextShadowStylePanel);
                 $('.style_slider').slider();
                 $('#textShadowList').sortable();
@@ -247,8 +289,202 @@ define(['jquery','underscore','backbone',
                     onChange: function (hsb, hex, rgb) {
                         $('#shadowColor').parent().parent().find('.color_thumb').css('backgroundColor', '#' + hex);
                         $('#shadowColor').val('#' + hex);
+                    },
+
+                    onHide : function()
+                    {
+                        window.selectRangeBackwards();
                     }
                 });
+
+
+
+                $('.style_slider').each(function()
+                {
+                    var min = $(this).data('min');
+
+                    var max = $(this).data('max');
+                    var input = $(this).prev().find('input');
+                    var slider = $(this);
+
+
+                    $(this).slider({
+                        'max' : max,
+                        'min' : min,
+                        slide : function(e,ui)
+                        {
+                            var val = ui.value;
+
+                            var event = $.Event('change');
+                            event.value = val;
+                            input.trigger(event);
+
+                        }
+                    });
+
+                    $(input).bind('change',function(e){
+                        var val = $(this).val();
+
+                        if(e)
+                        {
+                            val = e.value;
+                        }
+
+                        val = parseFloat(val);
+
+                        if(val+'' == 'NaN')
+                        {
+                            val = 0;
+                        }
+                        else if(val < min)
+                        {
+                            val = min;
+                        }
+                        else if(val > max)
+                        {
+                            val = max;
+                        }
+
+                        $(this).val(val);
+                        slider.slider("option","value",val);
+                    });
+
+                });
+
+
+                $('#shadowColor').ColorPicker({
+                    onChange: function (hsb, hex, rgb) {
+                        $('#shadowColor').parent().parent().find('.color_thumb').css('backgroundColor', '#' + hex);
+                        $('#shadowColor').val('#' + hex);
+                    },
+
+                    onHide : function()
+                    {
+                        window.selectRangeBackwards();
+                    }
+                });
+
+
+                $('#addTextShadowButton').click(function(){
+
+                    var horizontalLengthVal = $('#horizontalLength').val();
+                    var verticalLengthVal = $('#verticalLength').val();
+                    var blurRadiusVal = $('#blurRadius').val();
+                    var shadowColorVal = $('#shadowColor').val();
+
+                    var textShadow = horizontalLengthVal+"px "+verticalLengthVal+"px "+blurRadiusVal+"px "+shadowColorVal;
+                    var text = selectRange[0];
+
+                    var textShadows = $(text).css('textShadow').replace('none','');
+
+                    textShadows+=(', '+textShadow);
+
+                    if(textShadows.indexOf(',')==0)
+                    {
+                        textShadows = textShadows.slice(1,textShadows.length);
+                    }
+
+                    console.log('textShadows : '+textShadows);
+                    $(selectRange).css('textShadow',textShadows);
+
+
+                    this_.refreshTextStyleList(textShadows,$('#textShadowList'),selectRange,'textShadow');
+
+                });
+
+
+                ///////////
+
+                $('#shadowColor').each(function(){
+
+                    $(this).bind('mousedown',function(){
+                        window.selection = window.getSelection().getRangeAt(0);
+                    });
+
+                    $(this).bind('mouseup',function(){
+                        window.selectRangeBackwards();
+                    });
+                });
+
+                $('#styleDialog input').each(function(){
+
+                    $(this).bind('change',function(){
+                        window.selectRangeBackwards();
+                    });
+                });
+
+                $('.colorpicker input').each(function(){
+
+                    $(this).unbind('mousedown');
+
+                    $(this).bind('focusout',function(){
+                        window.selectRangeBackwards();
+                    });
+
+                });
+
+
+            },
+
+
+            refreshTextStyleList : function(listItems,listEl,targetEls,key){
+
+                var this_ = this;
+
+                listItems = listItems.replace(';','');
+                listItems = listItems.replace(' ','');
+
+                var listItems_ = listItems.split('px,');
+
+                for(var i = 0 ; i < listItems_.length-1 ; i++)
+                {
+                    listItems_[i]+='px';
+                }
+
+                var listEl_ = listEl;
+                var els="";
+
+                var targetEls_ = targetEls;
+                var key_ = key;
+
+                console.log(listItems);
+                console.log(listItems_)
+                console.log(targetEls_);
+
+                for(var i = 0 ; i < listItems_.length ; i++)
+                {
+                    var listItem = listItems_[i];
+                    var el = "<li>"+
+                        "<span class='item_name'>"+listItem+"</span>"+
+                        "<span class='delete_btn' data-idx="+i+">Χ</span>"+
+                        "</li>";
+                    els+=el;
+                }
+
+                listEl.html(els);
+                listEl.find('.delete_btn').each(function (){
+                    var targetIdx = $(this).data('idx');
+
+                    $(this).click(function(){
+                        listItems_.splice(targetIdx,1);
+
+                        var value = '';
+                        _.each(listItems_,function(listItem_){value += listItem_+','})
+                        if(value.length )
+                        {
+                            value = value.slice(0,value.length-1);
+                        }
+
+                        this_.refreshTextStyleList(value,listEl_,targetEls_,key_);
+
+                        console.log('targetEls_',targetEls_);
+                        console.log('value',value);
+                        $(targetEls_).css(key_,value);
+
+                    })
+                });
+                listEl.sortable();
+//                model_.commitToCollection(key,listItems);
             },
 
             activeBorderStylePanel : function(model)
@@ -466,6 +702,23 @@ define(['jquery','underscore','backbone',
                     }
                 }
 
+                $('#styleDialog input').each(function(){
+
+                    $(this).bind('change',function(){
+                        window.selectRangeBackwards();
+                    });
+                });
+
+
+                $('.colorpicker input').each(function(){
+
+                    $(this).unbind('mousedown');
+
+                    $(this).bind('focusout',function(){
+                        window.selectRangeBackwards();
+                    });
+
+                });
 
             },
 

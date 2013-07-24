@@ -24,13 +24,23 @@ define(['jquery','underscore','backbone',
                 return this.selectedObjects;
             },
 
+            getSelectedLastObject : function()
+            {
+                var selectedObject = null;
+
+                if(this.selectedObjects && this.selectedObjects.length>0)
+                {
+                    selectedObject = this.selectedObjects[this.selectedObjects.length-1];
+                }
+
+                return   selectedObject;
+            },
+
             setSelectedObjects : function(selectedObjects)
             {
                 this.selectedObjects = selectedObjects;
 
                 this.broadcastSelectChange();
-
-
             },
 
             addSelectedObjects : function(selectedObject)

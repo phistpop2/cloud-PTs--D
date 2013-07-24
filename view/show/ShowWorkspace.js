@@ -97,9 +97,9 @@ define(['jquery','underscore','backbone',
                 var color = background;
                 var rgb = this.hexToRgb(color);
 
-                var r_ = (rgb.r-40)%255;
-                var g_ = (rgb.g-40)%255;
-                var b_ = (rgb.b-40)%255;
+                var r_ = Math.abs(rgb.r+57)%255;
+                var g_ = Math.abs(rgb.g+57)%255;
+                var b_ = Math.abs(rgb.b+57)%255;
 
                 var secondColor = this.rgbToHex(r_,g_,b_);
 
@@ -275,8 +275,6 @@ define(['jquery','underscore','backbone',
                 var showModel = this.showCollection.models[this.currentShowPage];
                 var slideWidth = parseFloat(showModel.get('width'));
                 var slideHeight = parseFloat(showModel.get('height'));
-
-
 
                 var originAspect = slideWidth/slideHeight;
                 var currentAspect = window.innerWidth / window.innerHeight;

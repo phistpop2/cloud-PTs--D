@@ -54,36 +54,51 @@ define(['jquery','underscore','backbone',
             {
                 var this_ = this;
 
-                if(ObjectView.prototype.render.call(this)){
-                    var objectWrap = $(this.el).find('.objectWrap');
+                ObjectView.prototype.render.call(this)
+                var objectWrap = $(this.el).find('.objectWrap');
+                var editbox = null;
 
-                    var editbox = $("<div class='textEditBox' >");
+                console.log('this.viewType',this.viewType);
+
+                if(this.viewType == 'workspace')
+                {
+
+                    editbox = $("<div class='textEditBox' >");
                     objectWrap.append(editbox);
+                    this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
                     editbox.html(this_.model.get('content'));
+
+                    this.initPosition();
+                    (editbox).trigger('refresh');
+
+
+                    editbox.bind('allEventRefresh',function()
+                    {
+                        var content = $(this_.el).html();
+                        this_.model.set('content',content);
+                    });
+
+                    this.eventBind();
+
+                }
+                else
+                {
+                    editbox = this.model.get('content');
+                    editbox = $(editbox).attr('contentEditable',false);
+                    editbox.removeClass('textEditBox');
+                    $(this.el).find('.objectWrap').append(editbox);
+
 
                 }
 
-                this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
+
+
+
+
 
 
                 this.updateView();
 
-
-                editbox.bind('allEventRefresh',function()
-                {
-                    var content = $(this).html();
-                    this_.model.set('content',content);
-                    console.log('content',content);
-                });
-
-
-                if(this.viewType == 'workspace')
-                {
-                    this.initPosition();
-                }
-
-
-                this.eventBind();
                 return this;
             },
 
@@ -91,25 +106,10 @@ define(['jquery','underscore','backbone',
             {
                 ObjectView.prototype.updateView.call(this);
 
+
                 $(this.el).find('.textEditBox').css('width',this.model.get('width'));
                 $(this.el).find('.textEditBox').css('height',this.model.get('height'));
-//                this.resize();
-            },
 
-            resize : function()
-            {
-                var width = parseFloat($(this.el).find('.textEditBox').css('width'));
-
-                var height = 0;
-
-                $(this.el).find('.textEditBox').find('.clSentence').each(function(){
-                    height+=parseFloat($(this).css('height'));
-                });
-
-                $(this.el).find('.textEditBox').css('height',height);
-
-                this.model.set('width',width);
-                this.model.set('height',height);
             }
 
         });

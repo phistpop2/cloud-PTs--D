@@ -130,7 +130,6 @@ define(['underscore','backbone',
 
 
                 _.each(sequenceViewEls, function(sequenceView){
-
                    var id = $(sequenceView).data('id');
                     sequenceIdArray.push(id);
                 });

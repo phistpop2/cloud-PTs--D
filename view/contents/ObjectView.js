@@ -22,7 +22,8 @@ define(['jquery','underscore','backbone',
             },
 
             events : {
-               "mousedown" : "objectSelect"
+               "mousedown" : "objectSelect",
+                "mouseup" : "saveSelectRange"
             },
 
             eventBind : function()
@@ -35,12 +36,11 @@ define(['jquery','underscore','backbone',
                 var moveEnable = false;
 
                 var ctrlKey = 17;
-
-
                 var ctrlDown = false;
 
                 $(document).keydown(function(e)
                 {
+
                     if (e.keyCode == ctrlKey) ctrlDown = true;
 
                 }).keyup(function(e)
@@ -173,17 +173,25 @@ define(['jquery','underscore','backbone',
             objectSelect : function(e)
             {
 
-                e.stopPropagation();
                 if(e.ctrlKey)
                 {
                     this.model.collection.addSelected(this.model);
+
                 }
                 else
                 {
                     this.model.collection.setSelected(this.model);
+
                 }
 
 
+                e.stopPropagation();
+
+            },
+
+            saveSelectRange : function()
+            {
+                window.saveSelectRange();
             },
 
             render : function()
