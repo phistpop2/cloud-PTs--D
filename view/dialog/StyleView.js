@@ -121,7 +121,6 @@ define(['jquery','underscore','backbone',
                     var input = $(this).prev().find('input');
                     var slider = $(this);
 
-
                     $(this).slider({
                         'max' : max,
                         'min' : min,
@@ -743,7 +742,9 @@ define(['jquery','underscore','backbone',
                                                         });
 
                 var styleValue = $('#style_selector').val();
+
                 var model = this.contentsCollection.getSelected();
+
                 this.activeStylePanel(styleValue,model);
             },
 

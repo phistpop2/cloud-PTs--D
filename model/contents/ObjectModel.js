@@ -23,7 +23,11 @@ define(['jquery','underscore','backbone'],
             borderTopLeftRadius : 0,
             borderTopRightRadius : 0,
             borderBottomLeftRadius : 0,
-            borderBottomRightRadius : 0
+            borderBottomRightRadius : 0,
+
+            //etc
+            selected : false
+
 
 
         },
@@ -67,9 +71,26 @@ define(['jquery','underscore','backbone'],
             }
         },
 
+        setSelected : function()
+        {
+            this.set('selected',true);
+            this.collection.setSelected(this);
+        },
+
+        setUnSelected : function()
+        {
+            this.set('selected',false);
+        },
+
+        addSelectedToCollection : function()
+        {
+            this.set('selected',true);
+            this.collection.addSelected(this);
+        },
+
         isSelected : function()
         {
-            return this.selected;
+            return this.get('selected');
         },
 
         selfRemove : function()
@@ -215,7 +236,6 @@ define(['jquery','underscore','backbone'],
                 }
 
             }
-
             return newObj;
         }
 

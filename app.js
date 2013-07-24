@@ -70,7 +70,8 @@ define(
             _.bindAll(this);
 
             this.eventBind();
-            this.sessionCheck();
+        //    this.sessionCheck();
+            this.setupWork();
         },
 
 

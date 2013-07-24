@@ -32,6 +32,38 @@ define(['underscore','backbone',
                _.bindAll(this);
                this.bind('add',this.addFunc);
                this.bind('remove',this.removeFunc);
+               this.eventBind();
+           },
+
+           eventBind : function()
+           {
+               var this_ = this;
+                this.bind('changeSelect',function(){
+
+                    for(var i in this_.models)
+                    {
+                        var model = this_.models[i];
+                        if(model.isSelected())
+                        {
+                            model.set('selected',false);
+                        }
+                    }
+
+                    var selectedObjects = this_.selectorController.getSelectedObjects();
+                        console.log('selectedObjects',selectedObjects);
+                    for(var i in selectedObjects)
+                    {
+                        var selectedObject = selectedObjects[i];
+
+                        if(selectedObject.type=='content')
+                        {
+                            var model = this_.getByCid(selectedObject.data);
+                            model.set('selected',true);
+                        }
+                    }
+
+
+                });
 
            },
 
@@ -80,6 +112,23 @@ define(['underscore','backbone',
                this.trigger('selected');
            },
 
+            isSelectedModel : function(model)
+            {
+                var selected = false;
+
+                var selectedObjects = this.selectorController.getSelectedObjects();
+
+                for(var  i in selectedObjects)
+                {
+                    if((selectedObjects[i].type=='content') && (selectedObjects[i].data==model.cid))
+                    {
+                        selected = true;
+                    }
+                }
+
+                return selected;
+            },
+
             getSelectedLastObject : function()
             {
                 var selectedObject = null;
@@ -110,8 +159,16 @@ define(['underscore','backbone',
             },
 
            setSelected : function(model){
+               if( this.selected != null ){
+                   this.selected.set({
+                       selected : false
+                   });
+                   this.selected = null;
+               }
+
                if(model)
                {
+
                    var selectedObjects = [];
                    var selectedObject = {
                        'type' : 'content',
@@ -144,6 +201,7 @@ define(['underscore','backbone',
 
 
                    model_.selected = selected;
+
 
                }
            },
