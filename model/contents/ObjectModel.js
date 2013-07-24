@@ -6,7 +6,7 @@ define(['jquery','underscore','backbone'],
             type :'object',
             width : '100%',
             height : '100%',
-            background : '#ffffff',
+            background : 'transparent',
             translateX : 0,
             translateY : 0,
             translateZ : 0,
@@ -31,6 +31,7 @@ define(['jquery','underscore','backbone'],
         doCommited : true,
         commitBeforeData : {},
         controller : null,
+        selected : false,
 
         initialize : function()
         {
@@ -52,9 +53,6 @@ define(['jquery','underscore','backbone'],
                 this.set('rotateX',angle.getX());
                 this.set('rotateY',angle.getY());
                 this.set('rotateZ',angle.getZ());
-
-
-
             }
         },
 
@@ -71,12 +69,15 @@ define(['jquery','underscore','backbone'],
 
         isSelected : function()
         {
-            var selected = false;
-            if(this.collection.getSelected()==this)
+            return this.selected;
+        },
+
+        selfRemove : function()
+        {
+            if(this.collection)
             {
-                selected=true;
+                this.collection.remove(this);
             }
-            return selected;
         },
 
         commitToCollection : function(key,value)
@@ -200,9 +201,6 @@ define(['jquery','underscore','backbone'],
             }
         },
 
-        setSelected : function() {
-            this.collection.setSelected(this);
-        },
 
         copyObject : function(obj) {
             var newObj = {};

@@ -22,7 +22,8 @@ define(['jquery','underscore','backbone',
             },
 
             events : {
-               "mousedown" : "objectSelect"
+               "mousedown" : "objectSelect",
+                "mouseup" : "saveSelectRange"
             },
 
             eventBind : function()
@@ -35,11 +36,11 @@ define(['jquery','underscore','backbone',
                 var moveEnable = false;
 
                 var ctrlKey = 17;
-
                 var ctrlDown = false;
 
                 $(document).keydown(function(e)
                 {
+
                     if (e.keyCode == ctrlKey) ctrlDown = true;
 
                 }).keyup(function(e)
@@ -48,7 +49,7 @@ define(['jquery','underscore','backbone',
                 });
 
                 $(this.el).bind('mousedown',function(e){
-                    model_.setSelected();
+
                     moveEnable = true;
                     prevX = e.clientX;
                     prevY = e.clientY;
@@ -57,75 +58,103 @@ define(['jquery','underscore','backbone',
                         model_.controller.lookFacade();
                         model_.controller.zoomFacade(parseInt(model_.get('width')),parseInt(model_.get('height')));
                     }
+
+
+                    e.stopPropagation();
                 })
 
                  $('#workSpace').bind('mousemove',function(e){
 
-                    if(moveEnable && model_.isSelected())
+
+                    if(moveEnable)
                     {
                         var currX = e.clientX;
                         var currY = e.clientY;
 
-                        var scalar1 = currX-prevX;
-                        var scalar2 = currY-prevY;
-
-
-                        if(e.ctrlKey  && e.shiftKey)
+                        for(var i  in this_.model.collection.models)
                         {
-                            var rot3d = model_.controller.getRotation(0,0,scalar2+scalar1);
+                            var model = this_.model.collection.models[i];
 
-                            model_.set({
-                                    'rotateX':rot3d.getX(),
-                                    'rotateY':rot3d.getY(),
-                                    'rotateZ':rot3d.getZ()}
-                            );
+
+                            if(model.isSelected())
+                            {
+
+
+                                var scalar1 = currX-prevX;
+                                var scalar2 = currY-prevY;
+
+
+                                if(e.altKey  && e.shiftKey)
+                                {
+                                    var rot3d = model.controller.getRotation(0,0,scalar2+scalar1);
+
+                                    model.set({
+                                            'rotateX':rot3d.getX(),
+                                            'rotateY':rot3d.getY(),
+                                            'rotateZ':rot3d.getZ()}
+                                    );
+                                }
+                                else if(e.altKey)
+                                {
+                                    var rot3d = model.controller.getRotation(scalar1,scalar2);
+
+                                    model.set({
+                                            'rotateX':rot3d.getX(),
+                                            'rotateY':rot3d.getY(),
+                                            'rotateZ':rot3d.getZ()}
+                                    );
+                                }
+                                else
+                                {
+                                    var pos3d = model.controller.getPosition(scalar1,scalar2);
+
+                                    model.set({
+                                            'translateX':pos3d.getX(),
+                                            'translateY':pos3d.getY(),
+                                            'translateZ':pos3d.getZ()}
+                                    );
+                                }
+
+                            }
                         }
-                        else if(e.ctrlKey)
-                        {
-                            var rot3d = model_.controller.getRotation(scalar1,scalar2);
-
-                            model_.set({
-                                    'rotateX':rot3d.getX(),
-                                    'rotateY':rot3d.getY(),
-                                    'rotateZ':rot3d.getZ()}
-                            );
-                        }
-                        else
-                        {
-                            var pos3d = model_.controller.getPosition(scalar1,scalar2);
-
-                            model_.set({
-                                    'translateX':pos3d.getX(),
-                                    'translateY':pos3d.getY(),
-                                    'translateZ':pos3d.getZ()}
-                            );
-                        }
-
 
                         prevX = currX;
                         prevY = currY;
                     }
+
+
                 }).bind('mouseup',function(e){
-                     moveEnable = false;
 
-                     if(model_.isSelected())
+                     if(moveEnable)
                      {
+                         moveEnable = false;
+                         for(var i  in this_.model.collection.models)
+                         {
+                             var model = this_.model.collection.models[i];
 
-                         model_.commitToCollection({
-                                 'rotateX': model_.get('rotateX'),
-                                 'rotateY': model_.get('rotateY'),
-                                 'rotateZ': model_.get('rotateZ'),
-                                 'translateX': model_.get('translateX'),
-                                 'translateY': model_.get('translateY'),
-                                 'translateZ': model_.get('translateZ')
-                             });
+                             if(model.isSelected())
+                             {
+                                 model.commitToCollection({
+                                     'rotateX': model.get('rotateX'),
+                                     'rotateY': model.get('rotateY'),
+                                     'rotateZ': model.get('rotateZ'),
+                                     'translateX': model.get('translateX'),
+                                     'translateY': model.get('translateY'),
+                                     'translateZ': model.get('translateZ')
+                                 });
+
+                             }
+                         }
+
 
                      }
+
 
                 });
 
 
                 $('#workSpace').bind('mousewheel',function(e){
+
                     if(model_.isSelected())
                     {
                         var pos3d = model_.controller.getDepth(-e.originalEvent.wheelDelta/10);
@@ -136,14 +165,33 @@ define(['jquery','underscore','backbone',
                         );
                     }
                 });
+
             },
 
 
 
             objectSelect : function(e)
             {
-                this.model.setSelected();
+
+                if(e.ctrlKey)
+                {
+                    this.model.collection.addSelected(this.model);
+
+                }
+                else
+                {
+                    this.model.collection.setSelected(this.model);
+
+                }
+
+
                 e.stopPropagation();
+
+            },
+
+            saveSelectRange : function()
+            {
+                window.saveSelectRange();
             },
 
             render : function()
@@ -183,6 +231,7 @@ define(['jquery','underscore','backbone',
 
             cssRenderer : function()
             {
+                var backgroundColor = this.model.get('background');
                 var borderWidth = this.model.get('borderWidth');
                 var borderColor = this.model.get('borderColor');
                 var borderStyle = this.model.get('borderStyle');
@@ -193,7 +242,7 @@ define(['jquery','underscore','backbone',
                 var borderBottomRightRadius = this.model.get('borderBottomRightRadius');
                 var boxShadows = this.model.get('boxShadows');
 
-                var objectWrap = $(this.el)[0];
+                var objectWrap = $(this.el).find('.objectWrap')[0];
 
                 objectWrap.style['borderWidth'] = borderWidth+'px';
 
@@ -203,6 +252,8 @@ define(['jquery','underscore','backbone',
                 objectWrap.style['borderTopRightRadius'] = borderTopRightRadius+'px';
                 objectWrap.style['borderBottomLeftRadius'] = borderBottomLeftRadius+'px';
                 objectWrap.style['borderBottomRightRadius'] = borderBottomRightRadius+'px';
+                objectWrap.style['backgroundColor'] = backgroundColor;
+
 
                 var boxShadowsCss = '';
                 for(i in boxShadows)
@@ -235,7 +286,6 @@ define(['jquery','underscore','backbone',
                 else
                 {
                     matrix3d = this.model.get('matrix3d');
-                    console.log('matrix3d',matrix3d);
                 }
 
 
@@ -243,10 +293,7 @@ define(['jquery','underscore','backbone',
                     position: 'absolute',
                     padding : '0px',
                     margin : '0px',
-                    width : width,
-                    height : height,
                     webkitTransformStyle : 'preserve-3d',
-                    background: this.model.get('background'),
                     webkitTransform: 'matrix3d('+matrix3d+')'
                 });
 
@@ -261,8 +308,6 @@ define(['jquery','underscore','backbone',
                 this.cssRenderer();
 
             }
-
-
     });
 
         return ObjectView;

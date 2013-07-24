@@ -8,37 +8,96 @@ define(['jquery','underscore','backbone',
 
             initialize : function(){
                 ObjectView.prototype.initialize.call(this);
+
+            },
+
+            eventBind : function()
+            {
+                ObjectView.prototype.eventBind.call(this);
+
+                $(this.el).find(".textEditBox").keydown(function(e){
+                        var contenteditable = $(this).attr('contenteditable');
+
+                        if(contenteditable=='true')
+                        {
+                            e.stopPropagation();
+                        }
+
+                }).keypress(function(e){
+                        var contenteditable = $(this).attr('contenteditable');
+
+                        if(contenteditable=='true')
+                        {
+                            e.stopPropagation();
+                        }
+
+                }).keyup(function(e){
+                        var contenteditable = $(this).attr('contenteditable');
+
+                        if(contenteditable=='true')
+                        {
+                            e.stopPropagation();
+                        }
+
+                }).mousemove(function(e){
+                        var contenteditable = $(this).attr('contenteditable');
+
+                        if(contenteditable=='true')
+                        {
+                            return false;
+                        }
+                })
+
             },
 
             render : function()
             {
                 var this_ = this;
 
-                if(ObjectView.prototype.render.call(this)){
-                    var objectWrap = $(this.el).find('.objectWrap');
-                    var editbox = $("<div class='textEditBox' >");
-                    objectWrap.append(editbox);
-                    editbox.html('messagehere');
-                }
+                ObjectView.prototype.render.call(this)
+                var objectWrap = $(this.el).find('.objectWrap');
+                var editbox = null;
 
-                this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
-
-                this.updateView();
-
-                this.editor.bind('textInput',function()
-                {
-                    var width = $(this_.el).find('.textEditBox').css('width');
-                    var height = $(this_.el).find('.textEditBox').css('height');
-
-                    this_.model.set('width',width);
-                    this_.model.set('height',height);
-
-                });
+                console.log('this.viewType',this.viewType);
 
                 if(this.viewType == 'workspace')
                 {
+
+                    editbox = $("<div class='textEditBox' >");
+                    objectWrap.append(editbox);
+                    this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
+                    editbox.html(this_.model.get('content'));
+
                     this.initPosition();
+                    (editbox).trigger('refresh');
+
+
+                    editbox.bind('allEventRefresh',function()
+                    {
+                        var content = $(this_.el).html();
+                        this_.model.set('content',content);
+                    });
+
+                    this.eventBind();
+
                 }
+                else
+                {
+                    editbox = this.model.get('content');
+                    editbox = $(editbox).attr('contentEditable',false);
+                    editbox.removeClass('textEditBox');
+                    $(this.el).find('.objectWrap').append(editbox);
+
+
+                }
+
+
+
+
+
+
+
+                this.updateView();
 
                 return this;
             },
@@ -46,17 +105,11 @@ define(['jquery','underscore','backbone',
             updateView : function()
             {
                 ObjectView.prototype.updateView.call(this);
-                this.refreshSize();
-            },
 
-            refreshSize : function()
-            {
 
-                var width = $(this.el).find('.textEditBox').css('width');
-                var height = $(this.el).find('.textEditBox').css('height');
+                $(this.el).find('.textEditBox').css('width',this.model.get('width'));
+                $(this.el).find('.textEditBox').css('height',this.model.get('height'));
 
-                this.model.set('width',width);
-                this.model.set('height',height);
             }
 
         });

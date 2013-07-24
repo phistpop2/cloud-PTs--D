@@ -417,7 +417,7 @@ define(['jquery','underscore','backbone',
 
                 $('#addTextShadowLayerBtn').click(this.refreshTextShadow);
 
-                $('#rmSlider > *').bind('mousedown',function(e){ e.preventDefault();})
+//                $('#rmSlider > *').bind('mousedown',function(e){ e.preventDefault();})
 
 
                 this.settingStyleValue();

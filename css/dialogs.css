@@ -24,6 +24,12 @@
 
 }
 
+#workListWrap{
+    min-height: 10px;
+    max-height : 200px;
+    overflow-y:auto;
+}
+
 .fieldTitle{
     display: block;
     color: #999;

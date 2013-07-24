@@ -3,21 +3,27 @@ define(['jquery','underscore','backbone',
     'view/dialog/StyleView',
 
     'model/contents/TextModel',
+    'model/contents/ImageModel',
     'model/contents/FrameModel',
     'model/sequence/SequenceModel',
 
+    'text!template/dialog/ImageInsertDialog.html',
     'jquery_knob'],
     function($,_,Backbone,
              TopToolBarTemplate,
              StyleView,
 
              TextModel,
+             ImageModel,
              FrameModel,
-             SequenceModel){
+             SequenceModel,
+
+             ImageInsertDialogTemplate){
 
         var topToolBar = Backbone.View.extend({
             template : TopToolBarTemplate,
 
+            session : null,
             styleView : null,
             contentsCollection : null,
             sequenceCollection : null,
@@ -29,28 +35,192 @@ define(['jquery','underscore','backbone',
             {
                 _.bindAll(this);
 
+                this.session  = this.options.session;
                 this.setting = this.options.setting;
                 this.contentsCollection = this.options.contentsCollection;
                 this.sequenceCollection = this.options.sequenceCollection;
                 this.cameraModule = this.options.cameraModule;
+
                 this.render();
                 this.bindEvents();
                 this.initInsertButtons();
+                this.initTextToolButton();
             },
+
+            initTextToolButton : function()
+            {
+                var this_ = this;
+                $('#boldButton').click(function(){
+                    this_.textToolFunc(function()
+                    {
+                        _.each(window.getSelectMergeRange(),function(item){
+                            var fontWeight = $(item).css('fontWeight');
+
+                            if(fontWeight=='bold')
+                            {
+                                $(item).css('fontWeight','normal');
+                            }
+                            else
+                            {
+                                $(item).css('fontWeight','bold');
+                            }
+                        });
+                    });
+                });
+
+                $('#italicButton').click(function(){
+                    this_.textToolFunc(function()
+                    {
+                        _.each(window.getSelectMergeRange(),function(item){
+                            var fontStyle = $(item).css('fontStyle');
+
+                            if(fontStyle=='italic')
+                            {
+                                $(item).css('fontStyle','normal');
+                            }
+                            else
+                            {
+                                $(item).css('fontStyle','italic');
+                            }
+                        });
+                    });
+                });
+
+                $('#underlineButton').click(function(){
+                    this_.textToolFunc(function()
+                    {
+                        _.each(window.getSelectMergeRange(),function(item){
+                            var textDecoration = $(item).css('textDecoration');
+
+                            if(textDecoration=='underline')
+                            {
+                                $(item).css('textDecoration','none');
+                            }
+                            else
+                            {
+                                $(item).css('textDecoration','underline');
+                            }
+                        });
+                    });
+                });
+
+
+                $('.fontSizeSelectOptions').find('.selectOption').click(function(){
+                    $(this).parent().parent().css('display','none');
+                    var val = $(this).html();
+                    $('#fontSizeButton').find('input.selected').val(val);
+
+                    this_.textToolFunc(function()
+                    {
+                        _.each(window.getSelectMergeRange(),function(item){
+
+                            $(item).css('fontSize',val);
+
+                        });
+                    });
+
+
+                });
+
+                $('.fontFamilySelectOptions').find('.selectOption').click(function(){
+                    $(this).parent().parent().css('display','none');
+                    var val = $(this).html();
+                    $('#fontFamilyButton').find('span.selected').html(val);
+
+                    this_.textToolFunc(function()
+                    {
+                        _.each(window.getSelectMergeRange(),function(item){
+
+                            $(item).css('fontFamily',val);
+                        });
+                    });
+                });
+
+
+                $('.sentenceSortToolTip').find('.icon').click(function()
+                {
+                    if($(this).hasClass('plainSentence'))
+                    {
+                        this_.textToolFunc(function(view)
+                        {
+                            var textEditBox = $(view.el).find('.textEditBox');
+                            $(textEditBox).css({
+                                'textAlign' : 'initial'
+                            });
+                        });
+                    }
+                    else if($(this).hasClass('leftSentence'))
+                    {
+                        this_.textToolFunc(function(view)
+                        {
+                            var textEditBox = $(view.el).find('.textEditBox');
+                            $(textEditBox).css({
+                                'textAlign' : 'left'
+                            });
+                        });
+                    }
+                    else if($(this).hasClass('rightSentence'))
+                    {
+                        this_.textToolFunc(function(view)
+                        {
+                            var textEditBox = $(view.el).find('.textEditBox');
+                            $(textEditBox).css({
+                                'textAlign' : 'right'
+                            });
+                        });
+                    }
+                    else if($(this).hasClass('centerSentence'))
+                    {
+                        this_.textToolFunc(function(view)
+                        {
+                            var textEditBox = $(view.el).find('.textEditBox');
+                            $(textEditBox).css({
+                                'textAlign' : 'center'
+                            });
+                        });
+                    }
+                 });
+            },
+
+            textToolFunc : function(func)
+            {
+                var objects = this.contentsCollection.getSelectedObjects();
+                var view = null;
+
+                if(objects && objects.length>0)
+                {
+                    view = this.contentsCollection.views[objects[0].data];
+
+                    if(view.model.get('type')!='text')
+                    {
+                        return;
+                    }
+                }
+
+                if(view)
+                {
+                    func(view);
+                }
+            },
+
+
 
             bindEvents : function()
             {
                 var this_= this;
-                this.contentsCollection.bind("unSelected",function()
-                {
 
-                    this_.unActiveMenuSelection();
+                this.contentsCollection.bind("changeSelect",function(){
+
+                    if(this.getSelectedObjects())
+                    {
+                        this_.activeMenuSelection();
+                    }
+                    else{
+                        this_.unActiveMenuSelection();
+                    }
                 });
 
-                this.contentsCollection.bind("selected",function(){
 
-                    this_.activeMenuSelection();
-                });
             },
 
             initInsertButtons : function()
@@ -58,8 +228,8 @@ define(['jquery','underscore','backbone',
                 var this_ = this;
                 $('#textInsertButton').click(function(){
                     this_.contentsCollection.add(new TextModel({
-                            width : 0,
-                            height : 0,
+                            width : 400,
+                            height : 200,
 
                             translateX:0,
                             translateY:0,
@@ -67,25 +237,113 @@ define(['jquery','underscore','backbone',
 
                             rotateX:0,
                             rotateY:0,
-                            rotateZ:0
+                            rotateZ:0,
+
+                            content : 'message here'
                         }
                     ));
                 });
 
                 $('#frameInsertButton').click(function(){
+                    this_.contentsCollection.add(new FrameModel({
+                        'borderWidth' : '2',
+                        'borderStyle' : 'dotted',
+                        'width' :  '520px',
+                        'height' : '400px'
+                    }));
+                });
 
+                $('#sequenceInsertButton').click(function()
+                {
+                    var width = $('#workSpace').css('width');
+                    var height = $('#workSpace').css('height');
 
                     this_.sequenceCollection.add(new SequenceModel({
                         'slideBackgroundColor' : this_.setting.get('backgroundColor'),
+                        'width' : width,
+                        'height' : height,
                         'matrix3d' : this_.cameraModule.getCamera().getMatrixQuery(),
+                        'translateX' : this_.cameraModule.getCamera().getLocation().getX(),
+                        'translateY' : this_.cameraModule.getCamera().getLocation().getY(),
                         'quaternion' : this_.cameraModule.getCamera().getQuaternion().clone(),
                         'zoom': this_.cameraModule.getCamera().getLocation().clone()
                     }));
                 });
 
+
+                this.initImageInsertButton();
+
+
             },
 
+            initImageInsertButton : function()
+            {
+                $('#TopToolBar').append(ImageInsertDialogTemplate);
 
+                $('#TopToolBar').find('#imageInsertButton').click(function(e){
+
+                    $('#ImageInsertDialog').lightbox_me({
+                        centered: true
+                    });
+
+                    e.preventDefault();
+                });
+                $('#TopToolBar').find('#doImageInsert').click(this.addImage);
+
+                $('#ImageInsertDialog').find('#closeImageDlgBtn').click(this.closeDialog);
+
+
+                $('#ImageInsertDialog').find('#imageFile').bind('change', this.handleFileSelect);
+            },
+
+            closeDialog : function()
+            {
+                $('.topToolDialog').trigger('close');
+            },
+
+            addImage : function()
+            {
+                var this_ = this;
+
+                if(this.enc)
+                {
+                    this.session.uploadFile(this.enc,this.fileType,function(data){
+                        var src = data.file.webContentLink;
+                        console.log("src",src);
+                        this_.contentsCollection.add(new ImageModel({'src' : src}));
+                        $('#imageUrl').val('');
+                        this_.closeDialog();
+                        this_.enc = null;
+                    });
+
+
+                }
+                var src =   $('#imageUrl').val();
+                this.contentsCollection.add(new ImageModel({'src' : src}));
+                $('#imageUrl').val('');
+
+
+
+            },
+
+            handleFileSelect : function(evt)
+            {
+                var files = evt.target.files; // FileList object
+
+                var file = files[0];
+                var reader = new FileReader();
+
+                var this_ = this;
+                reader.onloadend = function(s)
+                {
+                    this_.enc = btoa(reader.result);
+
+                    this_.fileType = file.type;
+                    console.log("readed");
+                }
+
+                reader.readAsBinaryString(file);
+            },
 
 
             activeFontFamilySelection : function ()
@@ -121,23 +379,19 @@ define(['jquery','underscore','backbone',
                     $(this).val(val+'px');
                 });
 
-                $('.fontFamilySelectOptions').find('.selectOption').click(function(){
-                    $(this).parent().parent().css('display','none');
 
-                    $('#fontFamilyButton').find('span.selected').html($(this).html());
-                });
             },
 
             activeFontSizeSelection : function ()
             {
                 var this_ = this;
-                var val = 8;
+                var val = 20;
                 $('#fontSizeButton').find('input.selected').val('10px');
 
                 for(var i = 0 ; i < 10 ; i++)
                 {
                     var selectOption = $("<li  class='selectOption' value='"+val+"px'>"+val+"px</li>");
-                    val+=4;
+                    val+=10;
                     $('#fontSizeButton').find('ul.topVerticalList').append(selectOption);
                 }
 /////
@@ -173,15 +427,22 @@ define(['jquery','underscore','backbone',
                         val = 0;
                     }
 
-                    $(this).val(val+'px');
+                    val+='px';
+
+                    $(this).val(val);
+
+                    window.selectRangeBackwards();
+                    console.log('selectedrange',window.getSelectRange(),val);
+                    window.getSelectRange().each(function(){
+                        console.log('selectItem',this,val);
+                        $(this).css('fontSize',val);
+
+                    });
+
+
                 });
 
-                $('.fontSizeSelectOptions').find('.selectOption').click(function(){
-                    $(this).parent().parent().css('display','none');
-                    console.log($(this).html());
-                    $('#fontSizeButton').find('input.selected').val($(this).html());
 
-                });
 ////
             },
 
@@ -260,6 +521,7 @@ define(['jquery','underscore','backbone',
                       if($(this).parent().find('div.colorButtonToolTip').css('display') == 'none'){
                           this_.hideAllToolTip();
                           $(this).parent().find('div.colorButtonToolTip').css('display','block');
+                          $(this).parent().find('div.colorButtonToolTip').ColorPicker({flat : true});
                       }
                       else
                       {
@@ -286,15 +548,26 @@ define(['jquery','underscore','backbone',
                     $('.colorButtonToolTip').ColorPicker({
                         flat : true,
                         color : value,
-                        onChange :  function (hsb, hex, rgb) {
+
+                        onSubmit :  function (hsb, hex, rgb) {
                             var model = this_.contentsCollection.getSelected();
 
-                            if(model)
+
+                            var selectRange = window.getSelectRange();
+                            console.log('selectRange',selectRange);
+                            if(selectRange)
                             {
-                                model.set('color','#'+hex);
+                                selectRange.css('color','#'+hex);
+                            }
+                            else if(model)
+                            {
+                                model.commitToCollection('color','#'+hex);
                             }
                         }
                     });
+
+
+
 
                     $('.colorButtonToolTip').ColorPickerSetColor(value);
                 }
@@ -341,7 +614,14 @@ define(['jquery','underscore','backbone',
                         onSubmit :  function (hsb, hex, rgb) {
                             var model = this_.contentsCollection.getSelected();
 
-                            if(model)
+
+                            var selectRange = window.getSelectRange();
+                            console.log('selectRange',selectRange);
+                            if(selectRange)
+                            {
+                                selectRange.css('background','#'+hex);
+                            }
+                            else if(model)
                             {
                                 model.commitToCollection('background','#'+hex);
                             }
@@ -469,6 +749,13 @@ define(['jquery','underscore','backbone',
                         }
                     }
                });
+
+                $('#layoutButton input').each(function(){
+
+                    $(this).bind('change',function(){
+                        window.selectRangeBackwards();
+                    });
+                });
             },
 
             doDataLayoutSelection : function()
@@ -538,6 +825,7 @@ define(['jquery','underscore','backbone',
             {
                 this.isObjectSelected = true;
 
+
                 $('#TopToolBar').find('#styleButton').find('.icon').css('opacity','1.0');
 
                 $('#TopToolBar').find('#layoutButton').find('.icon').css('opacity','1.0');
@@ -552,6 +840,7 @@ define(['jquery','underscore','backbone',
 
             unActiveMenuSelection : function()
             {
+
                 this.isObjectSelected = false;
                 $('#TopToolBar').find('#styleButton').find('.icon').css('opacity','0.3');
                 $('#TopToolBar').find('#layoutButton').find('.icon').css('opacity','0.3');
@@ -563,6 +852,7 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
+                var this_ = this;
                 $('#workSpace').parent().append(this.template);
                 this.activeSentenceSortSelection();
                 this.activeFontFamilySelection();
@@ -572,8 +862,38 @@ define(['jquery','underscore','backbone',
                 this.activeLayoutSelection();
                 this.activeStyleDialogSelection();
 
-                this.unActiveMenuSelection()
+                this.unActiveMenuSelection();
+
+                $('#TopToolBar > *').bind('mousedown',this_.saveSelection);
+
+                $('#TopToolBar > *').bind('mouseup',this_.restoreSelection);
+
+                $('#TopToolBar input').each(function(){
+
+                    $(this).unbind('mousedown',this_.saveSelection);
+                    $(this).unbind('mouseup',this_.restoreSelection);
+                    $(this).bind('mouseup',function(e){
+                        $(this).focus();
+                        e.stopPropagation();
+                    });
+                    $(this).bind('focusout',this_.restoreSelection);
+                }) ;
+            },
+
+            saveSelection : function(){
+                    window.saveSelectRange();
+//                window.selection = window.getSelection().getRangeAt(0);
+            },
+
+            restoreSelection : function()
+            {
+
+                window.selectRangeBackwards();
             }
+
+
+
+
          }) ;
 
         return topToolBar;

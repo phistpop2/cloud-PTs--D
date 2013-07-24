@@ -199,6 +199,10 @@ li#fontSizeButton div.selectOptions{
     background:  url(/img/topToolBar/frame_icon.png) no-repeat center;
 }
 
+#sequenceInsertButton div{
+    background:  url(/img/topToolBar/sequence_icon.png) no-repeat center;
+}
+
 .topIcon{
     display : inline-block;
     width : 30px;

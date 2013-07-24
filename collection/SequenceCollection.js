@@ -36,7 +36,55 @@ define(['underscore','backbone',
            {
                _.bindAll(this);
                this.bind('add',this.addFunc);
+               this.bind('remove',this.removeFunc);
 
+           },
+
+            removeFunc : function(model)
+            {
+                this.views[model.cid].remove(model);
+
+            },
+
+            addSelected : function(model)
+            {
+                this.selected = model;
+
+                var selectedObject = {
+                    'type' : 'sequence',
+                    'data' : this.selected.cid
+                };
+
+                this.selectorController.addSelectedObjects(selectedObject);
+                this.trigger('selected');
+            },
+
+            setSelected : function(model){
+                if(model)
+                {
+                    var selectedObjects = [];
+                    var selectedObject = {
+                        'type' : 'sequence',
+                        'data' : model.cid
+                    };
+                    selectedObjects.push(selectedObject);
+
+                    this.selectorController.setSelectedObjects(selectedObjects);
+                }
+                else
+                {
+                    this.selected = null;
+
+                    this.selectorController.setSelectedObjects(null);
+
+                }
+            },
+
+
+            setSelectController : function(selectController)
+           {
+               this.selectorController = selectController;
+               this.selectorController.addCollection('sequenceCollection',this);
            },
 
            setCameraModule : function(cameraModule_)
@@ -82,7 +130,6 @@ define(['underscore','backbone',
 
 
                 _.each(sequenceViewEls, function(sequenceView){
-
                    var id = $(sequenceView).data('id');
                     sequenceIdArray.push(id);
                 });
@@ -90,6 +137,7 @@ define(['underscore','backbone',
                _.each(sequenceIdArray,function(id){
                     var model = this_.getByCid(id);
                     var properties = this_.copyObject(model.attributes);
+
                     sequenceDatas.push(properties);
                 });
 

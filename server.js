@@ -1,5 +1,6 @@
 var express = require('express');
 var crypto = require('crypto');
+var os = require('os');
 var path = require('path');
 var databaseUrl = "shindoh:1q1q1q@localhost:27017/cloudpresentation"; // "username:password@example.com/mydb"
 var collections = ["presentation","recordHistory"];
@@ -63,8 +64,26 @@ app.post('/onAir',function(req,res){
             });
         }
 
+        var interfaces = os.networkInterfaces();
+        var addresses = [];
+        for (k in interfaces) {
+            for (k2 in interfaces[k]) {
+                var address = interfaces[k][k2];
+                if (address.family == 'IPv4' && !address.internal) {
+                    addresses.push(address.address)
+                }
+            }
+        }
 
-        googl.shorten('http://localhost:16348/presentation/'+presentationKey, function (shortUrl) {
+        var address = 'localhost';
+
+        if(addresses)
+        {
+            address = addresses[0];
+        }
+
+
+        googl.shorten('http://'+address+':16348/presentation/'+presentationKey, function (shortUrl) {
             console.log(shortUrl);
             res.json({'longUrl' : shortUrl.longUrl,'shortUrl' : shortUrl.id});
         });
@@ -116,7 +135,7 @@ app.get('/presentation/:id',function(req,res){
 //            res.json({presentationData : data.data});
             data = data.replace(/\\/gi,'&shin;');
 
-            res.render(__dirname+'/proto_presentation.ejs',{'presentationData':data, 'presentationKey' : presentationKey});
+            res.render(__dirname+'/show.ejs',{'presentationData':data, 'presentationKey' : presentationKey});
         }
     });
 });

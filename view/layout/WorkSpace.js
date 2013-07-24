@@ -47,9 +47,11 @@ define(['jquery','underscore','backbone',
 
                 var camera_ = this.camera;
 
+
                 $(document).keydown(function(e)
                 {
                     if (e.keyCode == ctrlKey) ctrlDown = true;
+
 
                 }).keyup(function(e)
                     {
@@ -59,8 +61,7 @@ define(['jquery','underscore','backbone',
                 $(this.el).bind('mousedown',function(e){
                     prevX = e.clientX;
                     prevY = e.clientY;
-
-
+                    console.log('workspace');
                     this_.contentsCollection.setSelected();
                     if(e.altKey){
                         zooming = true;
@@ -76,7 +77,7 @@ define(['jquery','underscore','backbone',
 
                     }else
                         moveEnable = true;
-                    console.debug(e.clientX, e.clientY, e.pageX, e.pageY);
+
                 })
 
 
@@ -130,7 +131,7 @@ define(['jquery','underscore','backbone',
                             'top': newY,
                             'left': newX-wBias
                         });
-                        console.debug('zoom', newX, newY, prevX, prevY);
+
                     }
                 }).bind('mouseup',function(e){
                         selection.remove();
@@ -141,7 +142,7 @@ define(['jquery','underscore','backbone',
 
 
                 $('#workSpace').bind('mousewheel',function(e){
-                    if(!this_.contentsCollection.getSelected())
+                    if(!this_.contentsCollection.getSelectedObjects())
                     {
                         var scalar = e.originalEvent.wheelDelta/10;
                         camera_.setPosition(0,0,scalar);
@@ -187,37 +188,38 @@ define(['jquery','underscore','backbone',
 
            render : function()
            {
-               $('#mainCanvasLayout').css('background',this.setting.get('backgroundColor'));
+               var color = this.setting.get('backgroundColor');
+               var rgb = this.hexToRgb(color);
 
-               for(var i = 0 ; i < 2;  i++)
-               {
-                   var rotateX =  Math.floor(Math.random() * 359) + 1;
-                   var rotateY =  Math.floor(Math.random() * 359) + 1;
-                   var rotateZ =  Math.floor(Math.random() * 359) + 1;
+               var r_ = Math.abs(rgb.r+57)%255;
+               var g_ = Math.abs(rgb.g+57)%255;
+               var b_ = Math.abs(rgb.b+57)%255;
 
-                   var textModel1 = new TextModel({
-                       width : 100,
-                       height : 100,
+               var secondColor = this.rgbToHex(r_,g_,b_);
 
-                       translateX:100 + (500*i),
+               var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%);'
+               console.log('background',background);
+               $('#mainCanvasLayout').css('background',background);
+           },
 
-                       translateY:-100,
-                       translateZ:0,
+           componentToHex : function(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+           },
 
-                       rotateX:0,
-                       rotateY:0,
-                       rotateZ:0
-                   });
+           rgbToHex : function(r, g, b) {
+                return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+           },
 
+            hexToRgb : function(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
 
-
-                   this.contentsCollection.add(textModel1);
-               }
-
-
-
-
-           }
         }) ;
 
 

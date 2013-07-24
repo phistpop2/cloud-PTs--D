@@ -31,30 +31,134 @@ define(['underscore','backbone',
            {
                _.bindAll(this);
                this.bind('add',this.addFunc);
+               this.bind('remove',this.removeFunc);
 
            },
+
+
+            setSelectController : function(selectController)
+            {
+                this.selectorController = selectController;
+                this.selectorController.addCollection('contentsCollection',this);
+            },
 
            setCameraModule : function(cameraModule_)
            {
                this.cameraModule = cameraModule_;
            },
 
+           addSelected : function(model)
+           {
+
+               var selectedObject = {
+                   'type' : 'content',
+                   'data' : model.cid
+               };
+
+               this.selectorController.addSelectedObjects(selectedObject);
+
+               var selectedObjects = this.selectorController.getSelectedObjects();
+               for(var i in this.models)
+               {
+                   var selected = false;
+                   var model_=    this.models[i];
+
+                   for(var j in selectedObjects)
+                   {
+
+                       if( (selectedObjects[j].type=='content')&&
+                           (selectedObjects[j].data==model_.cid)){
+
+                            selected = true;
+                       }
+                   }
+
+
+                   model_.selected = selected;
+               }
+
+               this.trigger('selected');
+           },
+
+            getSelectedLastObject : function()
+            {
+                var selectedObject = null;
+                var selectedObjects = this.selectorController.getSelectedObjects();
+
+                if(selectedObjects && selectedObjects.length>0)
+                {
+                    selectedObject = selectedObjects[selectedObjects.length-1];
+
+                    if(selectedObject.type!='content')
+                    {
+                        selectedObject = null;
+                    }
+                    else
+                    {
+                        selectedObject = this.getByCid(selectedObject.data);
+
+                    }
+                }
+
+                return   selectedObject;
+            },
+
+            getSelectedObjects : function()
+            {
+
+                return this.selectorController.getSelectedObjects();
+            },
+
            setSelected : function(model){
                if(model)
                {
-                   this.selected = model;
-                   this.trigger('selected');
+                   var selectedObjects = [];
+                   var selectedObject = {
+                       'type' : 'content',
+                       'data' : model.cid
+                   };
+                   selectedObjects.push(selectedObject);
+
+                   this.selectorController.setSelectedObjects(selectedObjects);
                }
                else
                {
-                   this.selected = null;
-                   this.trigger('unSelected');
+
+                  this.selectorController.setSelectedObjects(null);
+               }
+
+               var selectedObjects = this.selectorController.getSelectedObjects();
+
+               for(var i in this.models)
+               {
+                   var selected = false;
+                   var model_ = this.models[i];
+                   for(var j in selectedObjects)
+                   {
+
+                       if( (selectedObjects[j].type=='content')&&
+                           (selectedObjects[j].data==model_.cid)){
+                           selected = true;
+                       }
+                   }
+
+
+                   model_.selected = selected;
+
                }
            },
 
            getSelected : function()
            {
-                return this.selected;
+                var selected = this.getSelectedObjects();
+
+                if(selected)
+                {
+                    selected = selected[selected.length-1];
+                    selected = this.getByCid(selected.data);
+                }
+
+                return selected;
            },
 
            addFunc : function(model)
@@ -87,9 +191,17 @@ define(['underscore','backbone',
 
            },
 
+            removeFunc : function(model)
+            {
+                this.views[model.cid].remove(model);
+
+            },
+
+
            addToHistory : function(historyData)
            {
                 this.history.push(historyData);
+           //     this.setSelected();
            },
 
            redo : function()

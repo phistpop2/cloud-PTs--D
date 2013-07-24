@@ -7,7 +7,16 @@ define(['jquery','underscore','backbone',
           {
               ObjectModel.prototype.initialize.call(this);
               this.set('type','text');
+          },
 
+          set : function()
+          {
+              ObjectModel.prototype.set.apply(this,arguments);
+              if(this.collection && this.collection.views[this.cid])
+              {
+                  var content = $((this.collection.views[this.cid]).el).find('.objectWrap').html();
+                  this.attributes.content = content;
+              }
           }
 
     });

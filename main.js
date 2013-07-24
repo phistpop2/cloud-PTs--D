@@ -62,7 +62,7 @@ require.config({
       'jquery_editable' : ['jquery'],
       'jquery_lightbox' : ['jquery'],
       'jquery_sidelayer' : ['jquery'],
-      'jquery_sortable' : ['jquery'],
+      'jquery_sortable' : ['jquery','jquery_ui'],
       'jquery_bpopup' : ['jquery'],
       'jquery_jmenu' : ['jquery_ui'],
       'jlayout_flexgrid' : ['jquery_ui'],

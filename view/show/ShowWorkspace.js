@@ -12,12 +12,22 @@ define(['jquery','underscore','backbone',
 
             currentShowPage : 0,
 
+            fixWorkspace : null,
+
+            prevWorkspace : null,
+            prevWorld : null,
+
+            currentWorkspace : null,
+            currentWorld : null,
+
+
             initialize : function()
             {
                 _.bindAll(this);
                 this.showCollection = this.options.showCollection;
                 this.cameraModule = this.options.cameraModule;
                 this.camera = this.cameraModule.getCamera();
+
 
                 this.render();
 
@@ -50,7 +60,6 @@ define(['jquery','underscore','backbone',
             {
                 var pageSize = this.showCollection.models.length;
 
-
                 this.currentShowPage++;
 
                 if(this.currentShowPage > pageSize-1)
@@ -77,9 +86,26 @@ define(['jquery','underscore','backbone',
 
             show : function(page)
             {
+                var cameraModule = this.cameraModule;
                 var showModel = this.showCollection.models[page];
                 var matrix3d = showModel.get('matrix3d');
+                var slideWidth = parseFloat(showModel.get('width'));
+                var slideHeight = parseFloat(showModel.get('height'));
                 var background = showModel.get('slideBackgroundColor');
+
+
+                var color = background;
+                var rgb = this.hexToRgb(color);
+
+                var r_ = Math.abs(rgb.r+57)%255;
+                var g_ = Math.abs(rgb.g+57)%255;
+                var b_ = Math.abs(rgb.b+57)%255;
+
+                var secondColor = this.rgbToHex(r_,g_,b_);
+
+                var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%)'
+
+
                 var slideChangeStyle = showModel.get('slideChangeStyle');
 
                 var moveDuration = showModel.get('moveDuration');
@@ -87,24 +113,33 @@ define(['jquery','underscore','backbone',
                 var slideBackgroundAction = showModel.get('slideBackgroundAction');
                 var world = $('#showWorkspace').find('#world');
 
+
+
                 if(slideChangeStyle=='default')
                 {
+                    this.fixWorkspace.hide();
+
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
                         transitionDuration:  moveDuration+"ms",
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
+
+                //    this.resize();
+
+
                 }
                 else        //fixed style
                 {
+                    var this_ = this;
                     $('#showWorkspace').hide();
-                    $('.fixWorkspace').each(function(){
-                        $(this).remove();
-                    });
+                    this.fixWorkspace.show();
 
-                    var prevWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
-                    prevWorkspace.css('transitionDuration',moveDuration+"ms");
+                    this.fixWorkspace.addClass(slideChangeStyle);
+                    this.prevWorkspace.css('transitionDuration',moveDuration+"ms");
+
+                    this.prevWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
@@ -112,26 +147,28 @@ define(['jquery','underscore','backbone',
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
-                    var currentWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
-                    currentWorkspace.addClass('future');
-                    currentWorkspace.css('transitionDuration',moveDuration+"ms");
+                    console.log("-webkit-transform",$(world).css('-webkit-transform'));
+                    this.currentWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
-                    var fixWorkspace = $('<div class=fixWorkspace></div>').append("<div class='fixWorld "+slideChangeStyle+"'></div>");
-                    fixWorkspace.find('.fixWorld').append(prevWorkspace);
-                    fixWorkspace.find('.fixWorld').append(currentWorkspace);
+                    this.currentWorkspace.css('transitionDuration',moveDuration+"ms");
 
-                    $(fixWorkspace).insertBefore('#showWorkspace');
-                    $('#showWorkspace').hide();
+                    this.prevWorkspace.addClass('past');
+                    this.currentWorkspace.removeClass('future');
 
-                    prevWorkspace.addClass('past');
-                    currentWorkspace.removeClass('future');
+                    $(this.currentWorkspace).bind('webkitTransitionEnd',function(){
+
+                        this_.prevWorkspace.css('transitionDuration','');
+                        this_.currentWorkspace.css('transitionDuration','');
+
+                        this_.fixWorkspace.removeClass(slideChangeStyle);
+                        this_.prevWorkspace.removeClass('past');
+                        this_.prevWorkspace.removeClass('future');
+                        this_.currentWorkspace.removeClass('past');
+                        this_.currentWorkspace.addClass('future');
 
 
-                    $(currentWorkspace).bind('webkitTransitionEnd',function(){
 
-                        $('.fixWorkspace').each(function(){
-                            $(this).remove();
-                        });
+                        this_.fixWorkspace.hide();
                         $('#showWorkspace').show();
                     });
                 }
@@ -224,9 +261,8 @@ define(['jquery','underscore','backbone',
                     });
                     newDiv.insertBefore('#showWorkspace');
 
-                    $('#mainLayout').css({
-                        background : background
-                    });
+                    $('#mainLayout').css('background',background);
+
                 }
 
 
@@ -234,28 +270,115 @@ define(['jquery','underscore','backbone',
 
             resize : function()
             {
+                console.log('resize');
                 var this_ = this;
-                var scaleW = window.innerWidth / parseInt($(this_.el).css('width'));
-                var scaleH = window.innerHeight / parseInt($(this_.el).css('height'));
+                var showModel = this.showCollection.models[this.currentShowPage];
+                var slideWidth = parseFloat(showModel.get('width'));
+                var slideHeight = parseFloat(showModel.get('height'));
 
+                var originAspect = slideWidth/slideHeight;
+                var currentAspect = window.innerWidth / window.innerHeight;
+                var newHeight = 0, newWidth = 0;
+
+                console.log('aspacet',originAspect,currentAspect);
+                if(originAspect > currentAspect)
+                {
+                    newWidth = slideWidth;
+                    newHeight = slideWidth/currentAspect;
+                }
+                else
+                {
+                    newWidth = slideHeight*currentAspect;
+                    newHeight = slideHeight
+                }
+
+                $('#showWorkspace').css({
+                    'width' : newWidth,
+                    'height' : newHeight
+                });
+
+                var scaleW = window.innerWidth / newWidth;//parseInt($(this_.el).css('width'));
+                var scaleH = window.innerHeight / newHeight;//parseInt($(this_.el).css('height'));
+
+
+                console.log('new',newWidth,newHeight);
                 var scale = scaleW;
 
                 if(scaleH < scaleW)  {
                     scale = scaleH;
                 }
 
-                $(this_.el).css({
+
+                $('#showWorkspace').css({
                     '-webkit-transform' : 'scale('+scale+')',
                     '-webkit-transform-origin' : '0% 0%'
                 });
 
 
+                var workspaceWidth = slideWidth*scale;
+                var workspaceHeight = slideHeight*scale;
+                var marginLeft =   parseFloat((window.innerWidth-workspaceWidth)/2);
+                var marginTop =   parseFloat((window.innerHeight-workspaceHeight)/2);
+
+                var cameraModule = this.cameraModule;
+
+
+                var matrix3d = showModel.get('matrix3d');
+
+
+                var left = parseFloat((parseInt($('#showWorkspace').css('width')) - 1024)/2);
+                var top = parseFloat((parseInt($('#showWorkspace').css('height')) - 768)/2);
+
+
+
+                console.log('matrix3d',matrix3d);
+                matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+                console.log('matrix3d',matrix3d);
+
+                var world = $('#showWorkspace').find('#world');
+                world.css({
+                    webkitTransform: 'matrix3d('+matrix3d+')',
+                    transitionDuration: '200ms',
+                    '-webkit-animation-timing-function' : 'linear'
+                });
 
             },
 
             render : function()
             {
+                var world = $('#showWorkspace').find('#world');
+
+                this.prevWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
+                this.prevWorld = $(this.prevWorkspace).find('#world');
+
+                this.currentWorkspace = $("<div class='fixInnerWorkspace'></div>").append(world.clone());
+                this.currentWorkspace.addClass('future');
+                this.currentWorld = $(this.currentWorkspace).find('#world');
+
+                this.fixWorkspace =  $('<div class=fixWorkspace></div>').append("<div class='fixWorld'></div>");
+                this.fixWorkspace.find('.fixWorld').append(this.prevWorkspace);
+                this.fixWorkspace.find('.fixWorld').append(this.currentWorkspace);
+
+                $(this.fixWorkspace).insertBefore('#showWorkspace');
                 this.resize();
+            },
+
+            componentToHex : function(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+            },
+
+            rgbToHex : function(r, g, b) {
+                return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+            },
+
+            hexToRgb : function(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
             }
         }) ;
 

@@ -10,6 +10,7 @@ define(['jquery','underscore','backbone',
     function($,_,Backbone,
              SequenceDialogView,
              ObjectView,TextView,ImageView,VideoView,FrameView){
+
         var sequenceView = Backbone.View.extend({
 
             cameraModule : null,
@@ -27,6 +28,12 @@ define(['jquery','underscore','backbone',
                 this.eventBind();
             },
 
+
+            events : {
+                "mousedown" : "objectSelect",
+                "remove" : "objectRemove"
+            },
+
             eventBind : function()
             {
                 var sequenceCollection = this.sequenceCollection;
@@ -37,11 +44,32 @@ define(['jquery','underscore','backbone',
                         'model' : this_.model,
                         'sequenceCollection' : sequenceCollection});
                 });
+
                 $(this.el).click(function(){
-                    console.debug( 'click', this.cameraModule );
+                    console.log("this_.model.get('quaternion')",this_.model.get('quaternion'));
                     this_.cameraModule.getCamera().lookFacade( this_.model.get('quaternion') );
                     this_.cameraModule.getCamera().zoomFacade( this_.model.get('zoom') );
                 });
+
+
+            },
+
+            objectSelect : function(e)
+            {
+
+                if(e.ctrlKey)
+                {
+                    this.model.collection.addSelected(this.model);
+                }
+                else
+                {
+                    this.model.collection.setSelected(this.model);
+                }
+            },
+
+            objectRemove : function()
+            {
+                $(this.el).parent().remove();
             },
 
             render : function()
@@ -50,11 +78,14 @@ define(['jquery','underscore','backbone',
                 li.append($(this.el));
 
                 $(this.el).append("<div class='sequence_view' data-id='"+this.model.cid+"'><div class='sequence_view_world'></div></div>");
+
+                var scale = 0.18;
                 $(this.el).css({
-                    'margin' : '0px',
+
                     'padding' : '0px',
                     '-webkit-transform-origin' : '0% 0%',
-                    '-webkit-transform': 'scale(0.18)'
+                    '-webkit-transform': 'scale('+scale+')'
+
                 });
 
                 $('#sequenceArrayContainer').append(li);
@@ -94,7 +125,69 @@ define(['jquery','underscore','backbone',
 
                 this.model.set('models',modelIdArray);
 
+                var wrapWidth = parseFloat($(li).css('width'));
+                var wrapHeight = parseFloat($(li).css('height'));
+
+                var contentWidth = parseFloat(this.model.get('width'));
+                var contentHeight = parseFloat(this.model.get('height'));
+
+                var marginLeft = (wrapWidth-contentWidth*scale)/2;
+                var marginTop = (wrapHeight-contentHeight*scale)/2;
+
+                console.log('wrapSize',wrapWidth,wrapHeight);
+                console.log('margin',marginLeft,marginTop)
+
+
+                $(this.el).css({
+                    'width' : contentWidth,
+                    'height' : contentHeight,
+                    'marginLeft' : marginLeft,
+                    'marginTop' : marginTop
+                });
+
+                this.updateView();
+
                 return this;
+            },
+
+
+
+            updateView : function()
+            {
+
+                var color = this.model.get('slideBackgroundColor');
+                var rgb = this.hexToRgb(color);
+
+                var r_ = Math.abs(rgb.r+57)%255;
+                var g_ = Math.abs(rgb.g+57)%255;
+                var b_ = Math.abs(rgb.b+57)%255;
+
+                var secondColor = this.rgbToHex(r_,g_,b_);
+
+                var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%)'
+                console.log('updateView',background);
+                $(this.el).find('.sequence_view').css({
+                    'background' : background
+                });
+
+            },
+
+            componentToHex : function(c) {
+                var hex = c.toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+            },
+
+            rgbToHex : function(r, g, b) {
+                return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
+            },
+
+            hexToRgb : function(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
             }
 
 

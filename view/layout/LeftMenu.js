@@ -44,7 +44,7 @@ define(['jquery','underscore','backbone',
                 var sequenceArrayContainerHeight = (height - (parseInt($('#lmSettingButton').css('height'))))-230
                 $('#sequenceArrayContainer').css('height',sequenceArrayContainerHeight+'px');
 
-                $('#sequenceArrayContainer').sortable();
+                $('#sequenceArrayContainer').multisortable();
 
                 $('#lmSaveButton').click(this.saveCurrentWork);
                 $('#lmSaveButton').bind('mousedown',function(e){e.preventDefault();})
@@ -113,17 +113,62 @@ define(['jquery','underscore','backbone',
                 var presentationJson =  [];
                 var this_ = this;
 
+
+                var showData = this.sequenceCollection.extractCollectionToJson();
+/**/
+                var presentationJsonStr = JSON.stringify(showData);
+                localStorage.setItem('showData',presentationJsonStr);
+
+                var account = this.session.userInfo.email;
+                var slideId = this.session.currentWorkFile.id;
+
+                var data = {
+                    'slideData' : presentationJsonStr,
+                    'account' : account,
+                    'slideId' :  slideId
+                }
+
+                $.ajax({
+                    'type' : "POST",
+                    'url' : '/onAir',
+                    'data' : JSON.stringify(data),
+                    'dataType' : "json",
+                    'contentType' : "application/json; charset=utf-8",
+                    'success' : this.popupStartDialog,
+                    'failure' : function(err){console.log(err)}
+                });
+
+
+            },
+
+
+
+            popupStartDialog : function(data)
+            {
+                var presentationUrl = data.shortUrl;
+                var shortUrl = data.shortUrl;
+                var this_ = this;
+
+                $('#presentationDialog').lightbox_me({
+                    centered: true,
+                    closeClick : true
+                });
+
+                $('#shortUrl').html(data.shortUrl);
+
+                $('#cancelPresentationBtn').click(function(){
+                    $('#presentationDialog').trigger('close');
+                });
+
+                $('#startPresentationBtn').click(function(){
+                    this_.startPresentation(presentationUrl);
+                });
+
                 var params = [
                     'height='+screen.height,
                     'width='+screen.width,
                     'fullscreen=yes'
                 ].join(',');
-
-                var showData = this.sequenceCollection.extractCollectionToJson();
-
-                var showDataJson = JSON.stringify(showData);
-                localStorage.setItem('showData',showDataJson);
-
 
                 var popup = window.open('/show.html', 'popup_window', params);
                 popup.moveTo(0,0);
