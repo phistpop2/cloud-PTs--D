@@ -13,12 +13,15 @@ define(['jquery','underscore','backbone',
           {
               ObjectModel.prototype.set.apply(this,arguments);
 
+
+
               if(this.collection && this.collection.views[this.cid])
               {
-                  var content = $((this.collection.views[this.cid]).el).find('.objectWrap').html();
-                  this.attributes.content = content;
+                      var  content = $((this.collection.views[this.cid]).el).find('.objectWrap').html();
+                      this.attributes.content = content;
               }
           }
+
 
     });
 

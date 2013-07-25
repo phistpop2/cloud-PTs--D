@@ -9,43 +9,74 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
-                if(ObjectView.prototype.render.call(this)){
-                    var img = new Image();
+                ObjectView.prototype.render.call(this);
 
-                    var url = this.model.get('src');
-                    var objectWrap = $(this.el).find('.objectWrap');
+                var this_ = this;
+                var img = new Image();
 
-                    var model = this.model;
+                var url = this.model.get('src');
+                var objectWrap = $(this.el).find('.objectWrap');
 
-                    img.onload = function(){
-                        var item = $('<div>');
-                        var width = this.width;
-                        var height = this.height;
+                var model = this.model;
 
-                        var backgroundImageProp = "url("+url+")";
+                img.onload = function(){
+                    var item = $('<div>');
 
-                        item.css({
-                            'position' : 'absolute',
-                            'background' : 'transparent',
-                            'background-image': backgroundImageProp,
-                            'background-size' : '100% 100%',
-                            'height': '100%',
-                            'width': '100%'
-                        });
+                    var width = this.width;
+                    var height = this.height;
 
-                        objectWrap.css({
-                            'width': width,
-                            'height':  height
-                        });
+                    var backgroundImageProp = "url("+url+")";
 
-                        model.set('width',width);
-                        model.set('height',height);
 
-                        objectWrap.append(item);
+                    if(this_.viewType=='workspace')
+                    {
+                        var workspaceWidth = parseInt($('#workSpace').css('width'));
+                        workspaceWidth = parseFloat(workspaceWidth/3);
+
+                        var workspaceHeight = parseInt($('#workSpace').css('height'));
+                        workspaceHeight = parseFloat(workspaceHeight/3);
+
+                        if( (width > workspaceWidth) || (height > workspaceHeight) )
+                        {
+                            width = workspaceWidth;
+                            height = workspaceHeight;
+                        }
+
+                        console.log('size',workspaceHeight,workspaceWidth,height,width);
+
+                        model.attributes.width = width;
+                        model.attributes.height = height;
+                    }
+                    else
+                    {
+                        width = model.get('width');
+                        height = model.get('height');
                     }
 
-                    img.src = url;
+                    objectWrap.css({
+                        'width': width,
+                        'height':  height
+                    });
+
+                    item.css({
+                        'position' : 'absolute',
+                        'background' : 'transparent',
+                        'background-image': backgroundImageProp,
+                        'background-size' : '100% 100%',
+                        'height': '100%',
+                        'width': '100%'
+                    });
+
+                    objectWrap.append(item);
+
+
+                    this_.initPosition();
+                    this_.updateView();
+
+
                 }
+
+                img.src = url;
 
                 return this;
             }

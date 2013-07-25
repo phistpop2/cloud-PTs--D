@@ -66,6 +66,10 @@ define(['jquery','underscore','backbone',
 
             },
 
+            moveCenterPosition : function()
+            {
+
+            },
 
 
             objectSelect : function(e)
@@ -74,12 +78,10 @@ define(['jquery','underscore','backbone',
                 if(e.ctrlKey)
                 {
                     this.model.addSelectedToCollection(this.model);
-
                 }
                 else
                 {
                     this.model.setSelected();
-
                 }
 
 
@@ -98,12 +100,10 @@ define(['jquery','underscore','backbone',
                 $(this.world).append($(this.el));
                 $(this.el).append('<div class=objectWrap></div>');
 
-                this.updateView();
-
                 if(this.viewType == 'workspace')
                 {
                     this.eventBind();
-                    this.initPosition();
+//                    this.initPosition();
 
                     this.controlBox = ControlBox( this.model, $(this.el) );
                     $(this.el).append( this.controlBox.getBox() );
@@ -111,27 +111,52 @@ define(['jquery','underscore','backbone',
 
                     this.model.setSelected();
                 }
-
+                else
+                {
+                    this.updateView();
+                }
 
                 return this;
             },
 
             initPosition: function(){
-
+                                console.log('init');
                 var w = parseInt( this.model.get('width') );
                 var h = parseInt( this.model.get('height') );
+
 
                 var angle = this.model.controller.getFacadeAngle();
                 var pos = this.model.controller.getFacadePosition();
 
-                this.model.set({
-                    'rotateX': angle.getX(),
-                    'rotateY': angle.getY(),
-                    'rotateZ': angle.getZ(),
-                    'translateX': pos.getX()-w/2,
-                    'translateY': pos.getY()+h/2,
-                    'translateZ': pos.getZ()
-                });
+                this.model.attributes.rotateX=  angle.getX();
+                this.model.attributes.rotateY=  angle.getY();
+                this.model.attributes.rotateZ=  angle.getZ();
+
+                this.model.attributes.translateX=  pos.getX()-w/2;
+                this.model.attributes.translateY=  pos.getY()+h/2;
+                this.model.attributes.translateZ=  pos.getZ();
+
+                console.log('size',w,h);
+                console.log('translate in init',this.model.attributes.translateX,this.model.attributes.translateY);
+
+
+
+
+                if(this.model.get('copyData'))
+                {
+
+                    console.log('copyData model',this.model,this.model.attributes.rotateXBias);
+//                    this.model.attributes.rotateX+=  this.model.attributes.rotateXBias;
+//                    this.model.attributes.rotateY+=   this.model.attributes.rotateYBias;
+//                    this.model.attributes.rotateZ+=   this.model.attributes.rotateZBias;
+
+//                    this.model.attributes.translateX+=   this.model.attributes.translateXBias;
+//                    this.model.attributes.translateY+=  this.model.attributes.translateYBias;
+//                    this.model.attributes.translateZ+=  this.model.attributes.translateZBias;
+
+
+                    this.model.set('copyData', true);
+                }
 
             },
 
@@ -147,6 +172,8 @@ define(['jquery','underscore','backbone',
                 var borderBottomRightRadius = this.model.get('borderBottomRightRadius');
                 var borderBottomRightRadius = this.model.get('borderBottomRightRadius');
                 var boxShadows = this.model.get('boxShadows');
+
+
 
                 var objectWrap = $(this.el).find('.objectWrap')[0];
 
@@ -174,6 +201,7 @@ define(['jquery','underscore','backbone',
 
             updateView : function()
             {
+
                 var top = this.model.get('top');
                 var left = this.model.get('left');
 
@@ -183,11 +211,13 @@ define(['jquery','underscore','backbone',
 
                 if(this.viewType=='workspace')
                 {
-                    this.model.controller.setRotation(this.model.get('rotateX'),this.model.get('rotateY'),this.model.get('rotateZ'));
+                    this.model.controller.setRotation(this.model.get('rotateX'),this.model.get('rotateY'),this.model.get('rotateZ'))
+
                     this.model.controller.setPosition(this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
 
+                    console.log('asdv',this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
                     matrix3d = this.model.controller.getMatrixQuery();
-                    this.model.set('matrix3d',matrix3d);
+                    this.model.attributes.matrix3d = matrix3d;
 
                     if( this.controlBox && !this.model.get('selected') ){
                         this.controlBox.disable();
@@ -217,7 +247,7 @@ define(['jquery','underscore','backbone',
                     "margin" : '0px'
                 });
 
-
+                 console.log('matrix3d',matrix3d);
                 this.cssRenderer();
 
 
@@ -1397,7 +1427,7 @@ RotationButton = function(options){
     var axisXEast = $("<div class='rotationButton'></div>");
 
     var length = 20;
-    var slice = 30;
+    var slice = 10;
     var gap = options.gap;
 
 

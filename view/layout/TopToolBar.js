@@ -9,6 +9,7 @@ define(['jquery','underscore','backbone',
 
     'text!template/dialog/ImageInsertDialog.html',
     'jquery_knob'],
+
     function($,_,Backbone,
              TopToolBarTemplate,
              StyleView,
@@ -223,6 +224,7 @@ define(['jquery','underscore','backbone',
                 });
 
 
+
             },
 
             initInsertButtons : function()
@@ -247,11 +249,16 @@ define(['jquery','underscore','backbone',
                 });
 
                 $('#frameInsertButton').click(function(){
+
+                    var padding = 60;
+                    var width = (parseInt($('#workSpace').css('width'))-padding-200) + 'px';
+                    var height = (parseInt($('#workSpace').css('height'))-padding) + 'px';
+
                     this_.contentsCollection.add(new FrameModel({
                         'borderWidth' : '2',
                         'borderStyle' : 'dotted',
-                        'width' :  '520px',
-                        'height' : '400px'
+                        'width' :  width,
+                        'height' : height
                     }));
                 });
 
@@ -459,6 +466,7 @@ define(['jquery','underscore','backbone',
                     $(this).children('div.selected').click(function(){
                         if($(this).parent().children('div.selectOptions').css('display') == 'none'){
                             this_.hideAllToolTip();
+
                             $(this).parent().children('div.selectOptions').css('display','block');
 
                         }
@@ -658,6 +666,7 @@ define(['jquery','underscore','backbone',
                     })
                 }
 
+                this.hideStyleDialog();
             },
 
             activeLayoutSelection : function()
@@ -816,6 +825,7 @@ define(['jquery','underscore','backbone',
                         }
                         else
                         {
+                            this_.hideAllToolTip();
                             styleView_.open();
                         }
                     }
