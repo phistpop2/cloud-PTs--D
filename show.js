@@ -69,6 +69,7 @@ define(
             this.showData = JSON.parse(localStorage.getItem('showData'));
 
             this.showCollection = new ShowCollection();
+            this.showCollection.setCameraModule(this.cameraModule);
             this.showCollection.setShowData(this.showData);
 
         },

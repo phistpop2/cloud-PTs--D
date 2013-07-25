@@ -235,44 +235,59 @@ define(
                 {
                     var clipboard = localStorage.getItem('clipboard');
 
-                    try{
-                        clipboard = JSON.parse(clipboard);
+                    console.log("clipboard",clipboard);
 
-                        for(var i in clipboard)
+                        clipboard = JSON.parse(clipboard);
+                            console.log('clipboard',clipboard);
+
+                        for(var i=0 ; i < clipboard.length ; i++)
                         {
                             var modelAttributes = clipboard[i].data;
                             var model = null;
-
+                                                 console.log('modelAttributes',modelAttributes);
                             if(clipboard[i].type == 'content')
                             {
 
+                                modelAttributes.rotateX = 0;
+                                modelAttributes.rotateY = 0;
+                                modelAttributes.rotateZ = 0;
+
+                                modelAttributes.translateX = 0;
+                                modelAttributes.translateY = 0;
+                                modelAttributes.translateZ = 0;
+
+
                                 if(modelAttributes.type=='text')
                                 {
+                                    modelAttributes.copyData = modelAttributes.content;
+
                                     model = new TextModel(modelAttributes);
+                                    console.log('asdhono');
                                 }
                                 else if(modelAttributes.type=='image')
                                 {
+                                    modelAttributes.copyData = true;
                                     model = new ImageModel(modelAttributes);
                                 }
                                 else if(modelAttributes.type=='frame')
                                 {
+                                    modelAttributes.copyData = true;
                                     model = new FrameModel(modelAttributes);
                                 }
 
                                 this_.contentsCollection.add(model);
+
                             }
                             else if(clipboard[i].type == 'sequence')
                             {
                                 model = new SequenceModel(modelAttributes);
                                 this_.sequenceCollection.add(model);
                             }
+
+
                         }
 
-                    }
-                    catch(e)
-                    {
 
-                    }
 
 
                     return false;
@@ -303,6 +318,19 @@ define(
                                    var clipData = {};
                                    clipData.type = 'content';
                                    clipData.data = this_.copyObject(model_.attributes);
+
+                                   var angle = model_.controller.getRotateBiasToCurrentWorld();
+                                   var pos = model_.controller.getTranslateBiasToCurrentWorld(clipData.data.width,clipData.data.height);
+
+                                   clipData.data.rotateXBias = clipData.data.rotateX - angle.x;
+                                   clipData.data.rotateYBias = angle.y - clipData.data.rotateY;
+                                   clipData.data.rotateZBias = clipData.data.rotateZ - angle.z;
+
+                                   clipData.data.translateXBias = pos.x - clipData.data.translateX;
+                                   clipData.data.translateYBias = pos.y - clipData.data.translateY;
+                                   clipData.data.translateZBias = pos.z - clipData.data.translateZ;
+
+                                   console.log('clipData.data',clipData.data,angle,pos)
 
                                    clipboard.push(clipData);
 

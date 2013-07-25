@@ -160,9 +160,8 @@ define(['underscore','backbone',
 
            setSelected : function(model){
                if( this.selected != null ){
-                   this.selected.set({
-                       selected : false
-                   });
+                   this.selected.attributes.selected = false;
+
                    this.selected = null;
                }
 
@@ -223,6 +222,7 @@ define(['underscore','backbone',
            {
 
                var world = $('#workSpace').find('#world');
+
                model.initController(this.cameraModule.getCamera());
 
                if(model.get('type') == 'text')
@@ -246,6 +246,7 @@ define(['underscore','backbone',
                    this.views[model.cid] = new ObjectView({model: model,id:'view_'+model.cid, 'cameraModule' : this.cameraModule, 'world' : world}).render();
                }
 
+               model.setSelected();
 
            },
 

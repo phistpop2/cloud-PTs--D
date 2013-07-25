@@ -34,6 +34,11 @@ define(['underscore','backbone',
 
            },
 
+            setCameraModule : function(cameraModule)
+            {
+                this.cameraModule = cameraModule;
+            },
+
            setShowData : function(showData)
            {
                this.showData = showData;
@@ -75,13 +80,15 @@ define(['underscore','backbone',
                     }
                    model.cid = model.cid;
 
+
+                   model.initController(this_.cameraModule.getCamera());
                    if(model.get('type') == 'text')
                    {
-                       this_.contentViews[model.cid] = new TextView({model: model,id:'view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world, 'viewType' : 'show' }).render();
+                       this_.contentViews[model.cid] = new TextView({model: model,id:'view_'+model.cid,'cameraModule' : this_.cameraModule, 'world' : world, 'viewType' : 'show' }).render();
                    }
                    else if(model.get('type') == 'image')
                    {
-                       this_.contentViews[model.cid] = new ImageView({model: model,id:'view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world, 'viewType' : 'show' }).render();
+                       this_.contentViews[model.cid] = new ImageView({model: model,id:'view_'+model.cid,'cameraModule' : this_.cameraModule, 'world' : world, 'viewType' : 'show' }).render();
                    }
                    else if(model.get('type') == 'video')
                    {
@@ -90,11 +97,11 @@ define(['underscore','backbone',
                    else if(model.get('type') == 'frame')
                    {
 
-                       this_.contentViews[model.cid] = new FrameView({model: model,id:'view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world, 'viewType' : 'show' }).render();
+                       this_.contentViews[model.cid] = new FrameView({model: model,id:'view_'+model.cid,'cameraModule' : this_.cameraModule, 'world' : world, 'viewType' : 'show' }).render();
                    }
                    else
                    {
-                       this_.contentViews[model.cid] = new ObjectView({model: model,id:'view_'+model.cid, 'cameraModule' : this.cameraModule, 'world' : world, 'viewType' : 'show'}).render();
+                       this_.contentViews[model.cid] = new ObjectView({model: model,id:'view_'+model.cid, 'cameraModule' : this_.cameraModule, 'world' : world, 'viewType' : 'show'}).render();
                    }
                });
 

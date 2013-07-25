@@ -52,6 +52,7 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
+
                 var this_ = this;
 
                 ObjectView.prototype.render.call(this)
@@ -60,23 +61,35 @@ define(['jquery','underscore','backbone',
 
                 console.log('this.viewType',this.viewType);
 
+
+
                 if(this.viewType == 'workspace')
                 {
+                    var copyData = this.model.get('copyData');
 
-                    editbox = $("<div class='textEditBox' >");
-                    objectWrap.append(editbox);
-                    this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
-                    editbox.html(this_.model.get('content'));
+                    if(copyData)
+                    {
+                        editbox = $(copyData);
+                        $(this.el).find('.objectWrap').html(editbox);
+                    }
+                    else
+                    {
+                        editbox = $("<div class='textEditBox' >");
+                        objectWrap.append(editbox);
+                        this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
+                        editbox.html(this_.model.get('content'));
+
+                        (editbox).trigger('refresh');
+
+                        $(this.el).find('.objectWrap').append(editbox);
+                        $(this.el).find('.lcWord').each(function(){
+                            $(this).css({
+                                'fontSize' : '40px'
+                            })
+                        });
+                    }
 
 
-                    (editbox).trigger('refresh');
-
-                    $(this.el).find('.objectWrap').append(editbox);
-                    $(this.el).find('.lcWord').each(function(){
-                        $(this).css({
-                            'fontSize' : '40px'
-                        })
-                    });
 
                     editbox.bind('allEventRefresh',function()
                     {
@@ -84,13 +97,12 @@ define(['jquery','underscore','backbone',
                         this_.model.set('content',content);
                     });
 
-
-
                     this.eventBind();
 
                     var content = $(this.el).find('.objectWrap').html();
                     this.model.attributes.content = content;
 
+                    this.initPosition();
                 }
                 else
                 {
@@ -107,18 +119,10 @@ define(['jquery','underscore','backbone',
 
 
 
-
                 this.updateView();
 
                 return this;
-            },
-
-            updateView : function()
-            {
-                ObjectView.prototype.updateView.call(this);
-
             }
-
 
 
         });
