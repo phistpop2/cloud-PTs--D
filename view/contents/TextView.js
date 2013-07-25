@@ -68,7 +68,7 @@ define(['jquery','underscore','backbone',
                     this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
                     editbox.html(this_.model.get('content'));
 
-                    this.initPosition();
+
                     (editbox).trigger('refresh');
 
                     $(this.el).find('.objectWrap').append(editbox);

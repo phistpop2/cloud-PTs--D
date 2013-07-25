@@ -51,12 +51,7 @@ define(['jquery','underscore','backbone'],
             if(!this.controller)
             {
                 this.controller = new ObjectController(camera);
-                this.controller.showFacade();
-                var angle = this.controller.getRotation(0,0,0);
 
-                this.set('rotateX',angle.getX());
-                this.set('rotateY',angle.getY());
-                this.set('rotateZ',angle.getZ());
             }
         },
 

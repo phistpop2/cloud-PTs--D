@@ -108,6 +108,7 @@ define(['jquery','underscore','backbone',
                     this.cameraModule.getCamera().moveFor();
                 }
 
+                this.initPosition();
                 return this;
             },
 
@@ -117,7 +118,7 @@ define(['jquery','underscore','backbone',
                 var h = parseInt( this.model.get('height') );
 
                 var angle = this.model.controller.getFacadeAngle();
-                var pos = this.model.controller.getFacadePosition( w, h );
+                var pos = this.model.controller.getFacadePosition();
 
                 this.model.set({
                     'rotateX': angle.getX(),
