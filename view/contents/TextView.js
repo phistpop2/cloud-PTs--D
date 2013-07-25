@@ -114,9 +114,11 @@ define(['jquery','underscore','backbone',
             {
                 ObjectView.prototype.updateView.call(this);
 
+
+                $(this.el).find('.textEditBox').css('width',this.model.get('width'));
+                $(this.el).find('.textEditBox').css('height',this.model.get('height'));
+
             }
-
-
 
         });
 

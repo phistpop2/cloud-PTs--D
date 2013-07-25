@@ -209,7 +209,6 @@ define(['jquery','underscore','backbone',
             {
                 var this_= this;
 
-
                 this.contentsCollection.bind("changeSelect",function(){
 
                     if(this.getSelectedObjects())
@@ -219,7 +218,6 @@ define(['jquery','underscore','backbone',
                     else{
                         this_.unActiveMenuSelection();
                     }
-
                 });
 
 
@@ -260,9 +258,6 @@ define(['jquery','underscore','backbone',
                     var width = $('#workSpace').css('width');
                     var height = $('#workSpace').css('height');
 
-                    console.log("this_.cameraModule.getCamera().getQuaternion().clone()",this_.cameraModule.getCamera().getQuaternion().clone());
-
-
                     this_.sequenceCollection.add(new SequenceModel({
                         'slideBackgroundColor' : this_.setting.get('backgroundColor'),
                         'width' : width,
@@ -270,9 +265,8 @@ define(['jquery','underscore','backbone',
                         'matrix3d' : this_.cameraModule.getCamera().getMatrixQuery(),
                         'translateX' : this_.cameraModule.getCamera().getLocation().getX(),
                         'translateY' : this_.cameraModule.getCamera().getLocation().getY(),
-
-                        'quaternion' : this_.cameraModule.getCamera().getQuaternionObject(),
-                        'zoom' : this_.cameraModule.getCamera().getZoomObject()
+                        'quaternion' : this_.cameraModule.getCamera().getQuaternion().clone(),
+                        'zoom': this_.cameraModule.getCamera().getLocation().clone()
                     }));
                 });
 
@@ -633,6 +627,8 @@ define(['jquery','underscore','backbone',
                             }
                         }
                     });
+
+
                     $('.objectBackgroundColorButtonToolTip').ColorPickerSetColor(value);
                 }
             },

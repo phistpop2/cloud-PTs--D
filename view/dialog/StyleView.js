@@ -121,6 +121,7 @@ define(['jquery','underscore','backbone',
                     var input = $(this).prev().find('input');
                     var slider = $(this);
 
+
                     $(this).slider({
                         'max' : max,
                         'min' : min,

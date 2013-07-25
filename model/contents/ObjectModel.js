@@ -71,26 +71,9 @@ define(['jquery','underscore','backbone'],
             }
         },
 
-        setSelected : function()
-        {
-            this.set('selected',true);
-            this.collection.setSelected(this);
-        },
-
-        setUnSelected : function()
-        {
-            this.set('selected',false);
-        },
-
-        addSelectedToCollection : function()
-        {
-            this.set('selected',true);
-            this.collection.addSelected(this);
-        },
-
         isSelected : function()
         {
-            return this.get('selected');
+            return this.selected;
         },
 
         selfRemove : function()

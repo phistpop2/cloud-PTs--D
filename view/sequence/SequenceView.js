@@ -17,8 +17,6 @@ define(['jquery','underscore','backbone',
             contentsCollection : null,
             sequenceCollection : null,
             views : [],
-            li : null,
-            indexView : null,
 
             initialize : function()
             {
@@ -27,8 +25,7 @@ define(['jquery','underscore','backbone',
                 this.cameraModule = this.options.cameraModule;
                 this.contentsCollection = this.options.contentsCollection;
                 this.sequenceCollection = this.options.sequenceCollection;
-                this.model.bind('change',this.updateView,this);
-
+                this.eventBind();
             },
 
 
@@ -42,23 +39,16 @@ define(['jquery','underscore','backbone',
                 var sequenceCollection = this.sequenceCollection;
                 var this_ = this;
 
-                $(this.li).dblclick(function(){
+                $(this.el).dblclick(function(){
                     new SequenceDialogView({
                         'model' : this_.model,
                         'sequenceCollection' : sequenceCollection});
+                });
 
-                }).mousedown(function(e){
-
-                    if( !e.ctrlKey ){
-                        var qo = this_.model.get('quaternion');
-                        var zo = this_.model.get('zoom');
-                        this_.cameraModule.getCamera().lookFacade( quaternion( qo.x, qo.y, qo.z, qo.w) );
-                        this_.cameraModule.getCamera().zoomFacade( vector3( zo.x, zo.y, zo.z) );
-
-                        //flush multi selected model
-                        this_.sequenceCollection.setSelected( this_.model );
-                    }
-
+                $(this.el).click(function(){
+                    console.log("this_.model.get('quaternion')",this_.model.get('quaternion'));
+                    this_.cameraModule.getCamera().lookFacade( this_.model.get('quaternion') );
+                    this_.cameraModule.getCamera().zoomFacade( this_.model.get('zoom') );
                 });
 
 
@@ -84,34 +74,8 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
-                var index = this.sequenceCollection .length;
-                this.model.set({
-                    'slideNumber': index
-                });
-
-                this.li = $("<li id = " +this.model.cid+ "></li>");
-                var indexView = $("<p class='number_view'>"+index+"</p>");
-                console.debug( 'render', indexView )
-
-                this.li.append( indexView );
-                this.li.append( $(this.el) );
-
-
-                this.li.css({
-                    padding: '0px',
-                    margin: '2px',
-                    background : 'rgba(255,255,255,0.1)',
-                    webkitBorderRadius : '3px'
-                })
-                indexView.css({
-                    position: 'relative',
-                    top : '8px',
-                    left : '8px',
-                    margin : '0px',
-                    padding : '0px',
-                    color: '#ffffff'
-                });
-
+                var li = $("<li></li>");
+                li.append($(this.el));
 
                 $(this.el).append("<div class='sequence_view' data-id='"+this.model.cid+"'><div class='sequence_view_world'></div></div>");
 
@@ -121,10 +85,11 @@ define(['jquery','underscore','backbone',
                     'padding' : '0px',
                     '-webkit-transform-origin' : '0% 0%',
                     '-webkit-transform': 'scale('+scale+')'
+
                 });
 
-                $('#sequenceArrayContainer').append(this.li);
-                $(this.li).css('height','128px');
+                $('#sequenceArrayContainer').append(li);
+                $(li).css('height','140px');
 
                 var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
                 var models = this.contentsCollection.models;
@@ -161,8 +126,8 @@ define(['jquery','underscore','backbone',
 
                 this.model.set('models',modelIdArray);
 
-                var wrapWidth = parseFloat($(this.li).css('width'));
-                var wrapHeight = parseFloat($(this.li).css('height'));
+                var wrapWidth = parseFloat($(li).css('width'));
+                var wrapHeight = parseFloat($(li).css('height'));
 
                 var contentWidth = parseFloat(this.model.get('width'));
                 var contentHeight = parseFloat(this.model.get('height'));
@@ -182,9 +147,10 @@ define(['jquery','underscore','backbone',
                 });
 
                 this.updateView();
-                this.eventBind();
+
                 return this;
             },
+
 
 
             updateView : function()
@@ -205,22 +171,6 @@ define(['jquery','underscore','backbone',
                     'background' : background
                 });
 
-
-                if( this.li )
-                    $(this.li).find('.number_view').text( this.model.get('slideNumber') );
-
-                if( this.model.get('selected') ){
-                    console.debug( this.model.get('activeColor'));
-                    $(this.li).css({
-                        background : this.model.get('activeColor')
-                    });
-
-                }else{
-                    $(this.li).css({
-                        background : this.model.get('inactiveColor')
-                    });
-
-                }
             },
 
             componentToHex : function(c) {
@@ -239,9 +189,7 @@ define(['jquery','underscore','backbone',
                     g: parseInt(result[2], 16),
                     b: parseInt(result[3], 16)
                 } : null;
-
             }
-
 
 
 

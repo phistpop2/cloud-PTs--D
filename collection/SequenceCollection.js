@@ -39,40 +39,8 @@ define(['underscore','backbone',
                _.bindAll(this);
                this.bind('add',this.addFunc);
                this.bind('remove',this.removeFunc);
-               this.eventBind();
+
            },
-
-            eventBind : function()
-            {
-                var this_ = this;
-                this.bind('changeSelect',function(){
-
-                    for(var i in this_.models)
-                    {
-                        var model = this_.models[i];
-                        if(model.isSelected())
-                        {
-                            model.set('selected',false);
-                        }
-                    }
-
-                    var selectedObjects = this_.selectorController.getSelectedObjects();
-                    console.log('selectedObjects',selectedObjects);
-                    for(var i in selectedObjects)
-                    {
-                        var selectedObject = selectedObjects[i];
-
-                        if(selectedObject.type=='sequence')
-                        {
-                            var model = this_.getByCid(selectedObject.data);
-                            model.set('selected',true);
-                        }
-                    }
-
-
-                });
-
-            },
 
             removeFunc : function(model)
             {
@@ -94,13 +62,6 @@ define(['underscore','backbone',
             },
 
             setSelected : function(model){
-                if( this.selected != null ){
-                    this.selected.set({
-                        selected : false
-                    });
-                    this.selected = null;
-                }
-
                 if(model)
                 {
                     var selectedObjects = [];
@@ -117,27 +78,6 @@ define(['underscore','backbone',
                     this.selected = null;
 
                     this.selectorController.setSelectedObjects(null);
-
-                }
-
-                var selectedObjects = this.selectorController.getSelectedObjects();
-
-                for(var i in this.models)
-                {
-                    var selected = false;
-                    var model_ = this.models[i];
-                    for(var j in selectedObjects)
-                    {
-
-                        if( (selectedObjects[j].type=='sequence')&&
-                            (selectedObjects[j].data==model_.cid)){
-                            selected = true;
-                        }
-                    }
-
-
-                    model_.selected = selected;
-
 
                 }
             },
@@ -175,7 +115,31 @@ define(['underscore','backbone',
                                                             'cameraModule' : this.cameraModule}).render();
 
            },
-
+           setSelected : function(model){
+               if( this.selected ){
+                   this.selected.set({
+                       selected : false
+                   });
+                   this.selected = null;
+               }
+               if( model ){
+                   this.selected = model;
+                   this.selected.set({
+                      selected : true
+                   });
+               }
+               /*
+                if(model)
+                {
+                    this.selected = model;
+                    this.trigger('selected');
+                }
+                else
+                {
+                    this.selected = null;
+                    this.trigger('unSelected');
+                }*/
+           },
 
            addToHistory : function(historyData)
            {
