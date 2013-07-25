@@ -45,6 +45,7 @@ define(['jquery','underscore','backbone',
                 var ctrlDown = false;
 
                 var camera_ = this.camera;
+                var fov = 20;
 
 
                 $(document).keydown(function(e)
@@ -142,10 +143,20 @@ define(['jquery','underscore','backbone',
 
 
                 $('#workSpace').bind('mousewheel',function(e){
+
                     if(!this_.contentsCollection.getSelectedObjects())
                     {
+                        if( e.originalEvent.wheelDelta > 0 ){
+                            fov++;
+                        }else{
+                            fov--;
+
+                        }
+                        this_.cameraModule.getCamera().setFov( fov );
+                        /*
                         var scalar = e.originalEvent.wheelDelta/10;
                         camera_.setPosition(0,0,scalar);
+                        */
                     }
 
                 });

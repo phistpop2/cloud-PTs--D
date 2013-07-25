@@ -37,6 +37,7 @@ define(['jquery','underscore','backbone',
 
                 var ctrlKey = 17;
                 var ctrlDown = false;
+                var fov  = 20;
 
                 $(document).keydown(function(e)
                 {
@@ -51,6 +52,9 @@ define(['jquery','underscore','backbone',
 
 
                 $('#workSpace').bind('mousewheel',function(e){
+
+
+
 
                     if(model_.isSelected())
                     {
@@ -219,6 +223,8 @@ define(['jquery','underscore','backbone',
 
 
                 this.cssRenderer();
+
+                console.debug( '#############', this.model.controller.getScreenXY( this.el ) );
 
 
 
@@ -1397,7 +1403,7 @@ RotationButton = function(options){
     var axisXEast = $("<div class='rotationButton'></div>");
 
     var length = 20;
-    var slice = 30;
+    var slice = 6;
     var gap = options.gap;
 
 
