@@ -176,13 +176,20 @@ define(['jquery','underscore','backbone',
                 var height = this.model.get('height');
                 var matrix3d = 0;
 
-                if(this.viewType!='show')
+                if(this.viewType=='workspace')
                 {
                     this.model.controller.setRotation(this.model.get('rotateX'),this.model.get('rotateY'),this.model.get('rotateZ'));
                     this.model.controller.setPosition(this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
 
                     matrix3d = this.model.controller.getMatrixQuery();
                     this.model.set('matrix3d',matrix3d);
+
+                    if( this.controlBox && !this.model.get('selected') ){
+                        this.controlBox.disable();
+                    }else if(this.model.get('selected')){
+                        this.controlBox.refresh();
+                    }
+
                 }
                 else
                 {
@@ -208,11 +215,6 @@ define(['jquery','underscore','backbone',
 
                 this.cssRenderer();
 
-                if( this.controlBox && !this.model.get('selected') ){
-                    this.controlBox.disable();
-                }else if(this.model.get('selected')){
-                    this.controlBox.refresh();
-                }
 
 
 

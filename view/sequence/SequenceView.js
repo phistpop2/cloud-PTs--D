@@ -134,6 +134,7 @@ define(['jquery','underscore','backbone',
                     webkitTransform: 'matrix3d('+this.model.get('matrix3d')+')'
                 });
 
+
                 for(var i = 0 ; i < models.length ; i++)
                 {
                     var model = models[i];

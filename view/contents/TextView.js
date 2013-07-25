@@ -71,12 +71,20 @@ define(['jquery','underscore','backbone',
                     this.initPosition();
                     (editbox).trigger('refresh');
 
+                    $(this.el).find('.objectWrap').append(editbox);
+                    $(this.el).find('.lcWord').each(function(){
+                        $(this).css({
+                            'fontSize' : '40px'
+                        })
+                    });
 
                     editbox.bind('allEventRefresh',function()
                     {
                         var content = $(this_.el).html();
                         this_.model.set('content',content);
                     });
+
+
 
                     this.eventBind();
 
@@ -86,7 +94,7 @@ define(['jquery','underscore','backbone',
                     editbox = this.model.get('content');
                     editbox = $(editbox).attr('contentEditable',false);
                     editbox.removeClass('textEditBox');
-                    $(this.el).find('.objectWrap').append(editbox);
+                    objectWrap.html(editbox);
 
 
                 }
