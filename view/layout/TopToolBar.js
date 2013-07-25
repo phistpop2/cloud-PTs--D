@@ -260,9 +260,6 @@ define(['jquery','underscore','backbone',
                     var width = $('#workSpace').css('width');
                     var height = $('#workSpace').css('height');
 
-                    console.log("this_.cameraModule.getCamera().getQuaternion().clone()",this_.cameraModule.getCamera().getQuaternion().clone());
-
-
                     this_.sequenceCollection.add(new SequenceModel({
                         'slideBackgroundColor' : this_.setting.get('backgroundColor'),
                         'width' : width,

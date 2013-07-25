@@ -12,6 +12,7 @@ define(['jquery','underscore','backbone',
           set : function()
           {
               ObjectModel.prototype.set.apply(this,arguments);
+
               if(this.collection && this.collection.views[this.cid])
               {
                   var content = $((this.collection.views[this.cid]).el).find('.objectWrap').html();

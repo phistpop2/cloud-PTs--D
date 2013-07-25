@@ -103,12 +103,16 @@ define(['jquery','underscore','backbone',
                 if(this.viewType == 'workspace')
                 {
                     this.eventBind();
+                    this.initPosition();
+
                     this.controlBox = ControlBox( this.model, $(this.el) );
                     $(this.el).append( this.controlBox.getBox() );
                     this.cameraModule.getCamera().moveFor();
+
+                    this.model.setSelected();
                 }
 
-                this.initPosition();
+
                 return this;
             },
 

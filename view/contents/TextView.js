@@ -88,6 +88,9 @@ define(['jquery','underscore','backbone',
 
                     this.eventBind();
 
+                    var content = $(this.el).find('.objectWrap').html();
+                    this.model.attributes.content = content;
+
                 }
                 else
                 {
