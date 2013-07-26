@@ -19,7 +19,9 @@ define(['jquery','underscore','backbone'],
 
             selected: false,
             activeColor : 'rgba(204,255,204,0.8)',
-            inactiveColor : 'rgba(255,255,255,0.1)'
+            inactiveColor : 'rgba(255,255,255,0.1)',
+
+
         },
 
 
@@ -28,9 +30,9 @@ define(['jquery','underscore','backbone'],
         initialize : function()
         {
             _.bindAll(this);
-            if(!this.get('models'))
+            if(!this.get('contents'))
             {
-                this.set('models',new Array());
+                this.set('contents',new Array());
             }
 
         },

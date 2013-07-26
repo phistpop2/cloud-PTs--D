@@ -200,7 +200,7 @@ define(['jquery','underscore','backbone',
                 var secondColor = this.rgbToHex(r_,g_,b_);
 
                 var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%)'
-                console.log('updateView',background);
+
                 $(this.el).find('.sequence_view').css({
                     'background' : background
                 });
