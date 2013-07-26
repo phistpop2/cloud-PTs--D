@@ -319,18 +319,21 @@ define(
                                    clipData.type = 'content';
                                    clipData.data = this_.copyObject(model_.attributes);
 
-                                   var angle = model_.controller.getRotateBiasToCurrentWorld();
-                                   var pos = model_.controller.getTranslateBiasToCurrentWorld(clipData.data.width,clipData.data.height);
+                                   var srcVector = vector3(clipData.data.translateX, clipData.data.translateY, clipData.data.translateZ);
 
-                                   clipData.data.rotateXBias = clipData.data.rotateX - angle.x;
-                                   clipData.data.rotateYBias = angle.y - clipData.data.rotateY;
-                                   clipData.data.rotateZBias = clipData.data.rotateZ - angle.z;
+                                   model_.controller.getAbsoluteXY(srcVector,clipData.data.width,clipData.data.height);
+                                   var angle = model_.controller.getRotateQuatToCurrentWorld();
+                                   var pos = model_.controller.getTranslateBiasToCurrentWorld(srcVector, clipData.data.width,clipData.data.height);
+                                   model_.controller.getCetnerPosition(clipData.data.width,clipData.data.height);
 
-                                   clipData.data.translateXBias = pos.x - clipData.data.translateX;
-                                   clipData.data.translateYBias = pos.y - clipData.data.translateY;
-                                   clipData.data.translateZBias = pos.z - clipData.data.translateZ;
+                                   clipData.data.rotateXBias = angle.x;
+                                   clipData.data.rotateYBias = angle.y;
+                                   clipData.data.rotateZBias = angle.z;
+                                   clipData.data.rotateWBias = angle.w;
 
-                                   console.log('clipData.data',clipData.data,angle,pos)
+                                   clipData.data.translateXBias = pos.x;
+                                   clipData.data.translateYBias = pos.y;
+                                   clipData.data.translateZBias = pos.z;
 
                                    clipboard.push(clipData);
 

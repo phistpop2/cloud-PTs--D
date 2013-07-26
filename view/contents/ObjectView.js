@@ -107,7 +107,7 @@ define(['jquery','underscore','backbone',
 
                     this.controlBox = ControlBox( this.model, $(this.el) );
                     $(this.el).append( this.controlBox.getBox() );
-                    this.cameraModule.getCamera().moveFor();
+                    this.cameraModule.getCamera().shot();
 
                     this.model.setSelected();
                 }
@@ -120,40 +120,39 @@ define(['jquery','underscore','backbone',
             },
 
             initPosition: function(){
-                                console.log('init');
                 var w = parseInt( this.model.get('width') );
                 var h = parseInt( this.model.get('height') );
 
 
                 var angle = this.model.controller.getFacadeAngle();
-                var pos = this.model.controller.getFacadePosition();
+                var pos = this.model.controller.setFacadePosition( parseInt( $('#workSpace').width() )/2, -parseInt( $('#workSpace').height())/2, w, h );
 
                 this.model.attributes.rotateX=  angle.getX();
                 this.model.attributes.rotateY=  angle.getY();
                 this.model.attributes.rotateZ=  angle.getZ();
 
-                this.model.attributes.translateX=  pos.getX()-w/2;
-                this.model.attributes.translateY=  pos.getY()+h/2;
+                this.model.attributes.translateX=  pos.getX();
+                this.model.attributes.translateY=  pos.getY();
                 this.model.attributes.translateZ=  pos.getZ();
 
-                console.log('size',w,h);
-                console.log('translate in init',this.model.attributes.translateX,this.model.attributes.translateY);
 
 
 
 
                 if(this.model.get('copyData'))
                 {
+                    this.model.controller.setRotation(this.model.attributes.rotateX,this.model.attributes.rotateY,this.model.attributes.rotateZ);
+                    this.model.controller.setPosition(this.model.attributes.translateX,this.model.attributes.translateY,this.model.attributes.translateZ);
 
-                    console.log('copyData model',this.model,this.model.attributes.rotateXBias);
-//                    this.model.attributes.rotateX+=  this.model.attributes.rotateXBias;
-//                    this.model.attributes.rotateY+=   this.model.attributes.rotateYBias;
-//                    this.model.attributes.rotateZ+=   this.model.attributes.rotateZBias;
+                    var angle = this.model.controller.rotateBias(quaternion(this.model.attributes.rotateXBias, this.model.attributes.rotateYBias, this.model.attributes.rotateZBias, this.model.attributes.rotateWBias));
+                    var pos = this.model.controller.translateBias( this.model.attributes.translateXBias, this.model.attributes.translateYBias, this.model.attributes.translateZBias );
 
-//                    this.model.attributes.translateX+=   this.model.attributes.translateXBias;
-//                    this.model.attributes.translateY+=  this.model.attributes.translateYBias;
-//                    this.model.attributes.translateZ+=  this.model.attributes.translateZBias;
-
+                    this.model.attributes.rotateX = angle.getX();
+                    this.model.attributes.rotateY = angle.getY();
+                    this.model.attributes.rotateZ = angle.getZ();
+                    this.model.attributes.translateX =  pos.getX();
+                    this.model.attributes.translateY =  pos.getY();
+                    this.model.attributes.translateZ =  pos.getZ();
 
                     this.model.set('copyData', true);
                 }
@@ -212,8 +211,8 @@ define(['jquery','underscore','backbone',
                 if(this.viewType=='workspace')
                 {
                     this.model.controller.setRotation(this.model.get('rotateX'),this.model.get('rotateY'),this.model.get('rotateZ'))
-
                     this.model.controller.setPosition(this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
+
 
                     console.log('asdv',this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
                     matrix3d = this.model.controller.getMatrixQuery();
@@ -383,7 +382,7 @@ ControlBox = function( target, tt ){
 
                     break;
                 case 1: //rotateX
-                    var rot3d = target.controller.getRotation(0,prevY-currY);
+                    var rot3d = target.controller.rotateX(prevY-currY);
                     target.set({
                         'rotateX':rot3d.getX(),
                         'rotateY':rot3d.getY(),
@@ -391,7 +390,7 @@ ControlBox = function( target, tt ){
                     });
                     break;
                 case 2: //rotateY
-                    var rot3d = target.controller.getRotation(prevX-currX,0);
+                    var rot3d = target.controller.rotateY(prevX-currX);
                     target.set({
                         'rotateX':rot3d.getX(),
                         'rotateY':rot3d.getY(),
@@ -399,7 +398,7 @@ ControlBox = function( target, tt ){
                     });
                     break;
                 case 3: //rotateZ
-                    var rot3d = target.controller.getRotation(0,0,-(prevX-currX+prevY-currY)/2);
+                    var rot3d = target.controller.rotateZ(-(prevX-currX+prevY-currY)/2);
                     target.set({
                         'rotateX':rot3d.getX(),
                         'rotateY':rot3d.getY(),

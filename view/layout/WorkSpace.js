@@ -146,17 +146,18 @@ define(['jquery','underscore','backbone',
 
                     if(!this_.contentsCollection.getSelectedObjects())
                     {
+                        /*
                         if( e.originalEvent.wheelDelta > 0 ){
                             fov++;
                         }else{
                             fov--;
 
                         }
-                        this_.cameraModule.getCamera().setFov( fov );
-                        /*
+                        this_.cameraModule.getCamera().setFov( fov );*/
+
                         var scalar = e.originalEvent.wheelDelta/10;
                         camera_.setPosition(0,0,scalar);
-                        */
+
                     }
 
                 });
