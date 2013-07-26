@@ -429,7 +429,9 @@ define(['jquery','underscore','backbone',
                     $(this).css('display','none');
                 });
 
+
                 $('#fontSizeButton').find('input.selected').bind('change',function(){
+
                    var val = parseInt($(this).val());
 
                     if(!val)
@@ -442,13 +444,17 @@ define(['jquery','underscore','backbone',
                     $(this).val(val);
 
                     window.selectRangeBackwards();
-                    console.log('selectedrange',window.getSelectRange(),val);
-                    window.getSelectRange().each(function(){
-                        console.log('selectItem',this,val);
-                        $(this).css('fontSize',val);
 
-                    });
 
+                    var selectRange = window.getSelectMergeRange();
+
+                    if(selectRange)
+                    {
+                        _.each(selectRange,function(select){
+                            $(this).css('fontSize',val);
+                        });
+
+                    }
 
                 });
 
@@ -564,11 +570,14 @@ define(['jquery','underscore','backbone',
                             var model = this_.contentsCollection.getSelected();
 
 
-                            var selectRange = window.getSelectRange();
-                            console.log('selectRange',selectRange);
+                            var selectRange = window.getSelectMergeRange();
+
                             if(selectRange)
                             {
-                                selectRange.css('color','#'+hex);
+                                _.each(selectRange,function(select){
+                                    $(select).css('color','#'+hex);
+                                });
+
                             }
                             else if(model)
                             {
@@ -625,12 +634,14 @@ define(['jquery','underscore','backbone',
                         onSubmit :  function (hsb, hex, rgb) {
                             var model = this_.contentsCollection.getSelected();
 
+                            var selectRange = window.getSelectMergeRange();
 
-                            var selectRange = window.getSelectRange();
-                            console.log('selectRange',selectRange);
-                            if(selectRange)
+                            if(selectRange.length>0)
                             {
-                                selectRange.css('background','#'+hex);
+                                _.each(selectRange,function(select){
+                                    $(select).css('background','#'+hex);
+                                });
+
                             }
                             else if(model)
                             {

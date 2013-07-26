@@ -39,7 +39,24 @@ define(['jquery','underscore','backbone',
             eventBind : function()
             {
                 var this_ = this;
+                var pageKeyNumber = '';
+
                 $(window).resize(this.resize);
+
+                $(window).click(function(){
+                    this_.nextPage();
+                });
+
+                $(window).mousewheel(function(e,delta){
+                   if(delta>0)
+                   {
+                        this_.nextPage();
+                   }
+                   else
+                   {
+                       this_.prevPage();
+                   }
+                });
 
                 $(window).keydown(function(e){
                     var rightKey = 39, leftKey = 37
@@ -53,7 +70,32 @@ define(['jquery','underscore','backbone',
                     {
                         this_.prevPage();
                     }
-                });
+
+                }).keyup(function(e){
+                        console.log(e);
+
+                        if( (e.keyCode >= 48) && (e.keyCode <= 57) ){
+                            pageKeyNumber += ((e.keyCode - 48)+'');
+                        }
+                        else if(e.keyCode == 13)        //wnrwe
+                        {
+                            pageKeyNumber = parseInt(pageKeyNumber);
+                            console.log('pageKeyNumber',pageKeyNumber);
+                            if((pageKeyNumber+'') != 'NaN')
+                            {
+                                var pageSize = this_.showCollection.models.length;
+                                pageKeyNumber--;
+                                if(pageKeyNumber < 0)
+                                {
+                                    pageKeyNumber = 0;
+                                }
+                                this_.currentShowPage = pageKeyNumber%pageSize;
+                                this_.show(this_.currentShowPage);
+                                pageKeyNumber = '';
+                            }
+                        }
+
+                    });
             },
 
             nextPage : function()

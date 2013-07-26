@@ -151,7 +151,7 @@ define(['jquery','underscore','backbone',
                 });
 
                 $('#workSpace').on('keydown',function(e){
-
+/*
                     switch( e.keyCode ){
                         case 81:    //forward(q)
                             camera_.moveFor();
@@ -172,6 +172,8 @@ define(['jquery','underscore','backbone',
                             camera_.moveRight();
                             break;
                     }
+
+                    */
                 });
             },
 

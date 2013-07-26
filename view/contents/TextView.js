@@ -13,6 +13,8 @@ define(['jquery','underscore','backbone',
 
             eventBind : function()
             {
+                var this_ = this;
+                var vKey = 86;
                 ObjectView.prototype.eventBind.call(this);
 
                 $(this.el).find(".textEditBox").keydown(function(e){
@@ -39,6 +41,12 @@ define(['jquery','underscore','backbone',
                             e.stopPropagation();
                         }
 
+                }).click(function(){
+                        $(this).attr('contenteditable',true);
+
+                }).focusout(function(){
+                        $(this).attr('contenteditable',false);
+
                 }).mousemove(function(e){
                         var contenteditable = $(this).attr('contenteditable');
 
@@ -48,6 +56,35 @@ define(['jquery','underscore','backbone',
                         }
                 })
 
+
+
+                $(this.el).find(".textEditBox").bind('paste',function(e)
+                {
+                    e = e.originalEvent;
+                    var pastedText = undefined;
+                    if (e.clipboardData && e.clipboardData.getData) {
+                        pastedText = e.clipboardData.getData('text/plain');
+                    }
+
+
+
+                    var targetEl = null;
+
+                    if(window.getSelection())
+                    {
+                        targetEl = window.getSelection().anchorNode.parentElement
+                    }
+
+                    if(targetEl)
+                    {
+                        $(targetEl).append(pastedText);
+                        ($(this_.el).find(".textEditBox")).trigger('refresh');
+                    }
+
+                    console.log("pastedText",pastedText);
+
+                    return false;
+                });
             },
 
             render : function()
@@ -122,6 +159,23 @@ define(['jquery','underscore','backbone',
                 this.updateView();
 
                 return this;
+            },
+
+            setCaretPosition :function(ctrl, pos)
+            {
+
+                if(ctrl.setSelectionRange)
+                {
+                    ctrl.focus();
+                    ctrl.setSelectionRange(pos,pos);
+                }
+                else if (ctrl.createTextRange) {
+                    var range = ctrl.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
             }
 
 

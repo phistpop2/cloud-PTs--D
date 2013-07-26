@@ -60,6 +60,10 @@ define(
             this.cameraModule = new CameraModule({viewPort : $('#showWorkspace')});
             this.initCollections();
             this.initShowWorkspace();
+
+            var shortUrl = localStorage.getItem('presentationUrl');
+                  console.log('shortUrl',shortUrl);
+            $('#showUrlWrap').html(shortUrl);
         },
 
 

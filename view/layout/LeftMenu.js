@@ -158,7 +158,9 @@ define(['jquery','underscore','backbone',
 
             popupStartDialog : function(data)
             {
+                alert('check');
                 var presentationUrl = data.shortUrl;
+                localStorage.setItem('presentationUrl',presentationUrl);
                 var shortUrl = data.shortUrl;
                 var this_ = this;
 
@@ -190,7 +192,8 @@ define(['jquery','underscore','backbone',
             startPresentation : function(data)
             {
                 var presentationUrl = data.shortUrl;
-                console.log(presentationUrl);
+                localStorage.setItem('presentationUrl',presentationUrl);
+                console.log("presentationUrl",presentationUrl);
 
                 window.open(presentationUrl);
             },

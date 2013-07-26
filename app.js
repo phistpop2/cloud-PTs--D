@@ -195,21 +195,11 @@ define(
             var shiftDown = false;
             var ctrlKey = 17,shiftKey = 16, zKey = 90, vKey = 86;
 
-            $(document).keydown(function(e){
+            $(document).keyup(function(e){
                 if(e.keyCode==8){   //backspace
-                    e.preventDefault();
-                }
-            }).keypress(function(e){
-                    if(e.keyCode==8){   //backspace
-                        e.preventDefault();
-                    }
-            }).keyup(function(e){
-                if(e.keyCode==8){   //backspace
-                    e.preventDefault();
+                    return false;
                 }
             });
-
-
 
             $(document).keydown(function(e)
             {
@@ -221,7 +211,7 @@ define(
                     if (e.keyCode == shiftKey) shiftDown = false;
             });
 
-            $(document).keydown(function(e)
+            $('#workspace').keydown(function(e)
             {
                 if (ctrlDown && shiftDown && e.keyCode == zKey){
                     this_.contentsCollection.redo();

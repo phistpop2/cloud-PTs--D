@@ -48,22 +48,6 @@ app.post('/onAir',function(req,res){
 
     db.presentation.find({slideId : slideId},function(err,datas){
 
-        if(datas.length == 0)
-        {
-            db.presentation.save(insertData,function(err,inserted){
-                if( err || !inserted ) console.log("presentation not inserted");
-                else console.log('presentation inserted');
-            });
-        }
-        else
-        {
-            presentationKey = datas[0].presentationKey;
-            db.presentation.update({slideId : slideId},{$set : updateData},function(err,inserted){
-                if( err || !inserted ) console.log("presentation not updated");
-                else console.log('presentation updated');
-            });
-        }
-
         var interfaces = os.networkInterfaces();
         var addresses = [];
         for (k in interfaces) {
@@ -85,6 +69,49 @@ app.post('/onAir',function(req,res){
 
         googl.shorten('http://'+address+':16348/presentation/'+presentationKey, function (shortUrl) {
             console.log(shortUrl);
+            insertData.shortUrl = shortUrl;
+            if(datas.length == 0)
+            {
+                db.presentation.save(insertData,function(err,inserted){
+                    if( err || !inserted ) console.log("presentation not inserted");
+                    else console.log('presentation inserted');
+                });
+            }
+            else
+            {
+                presentationKey = datas[0].presentationKey;
+                db.presentation.update({slideId : slideId},{$set : updateData},function(err,inserted){
+                    if( err || !inserted ) console.log("presentation not updated");
+                    else console.log('presentation updated');
+                });
+            }
+        });
+
+        googl.setKey('AIzaSyAmh-d5UMFqedPDYARw2EaZYBE8OGmeKEA');
+
+
+
+        var interfaces = os.networkInterfaces();
+        var addresses = [];
+        for (k in interfaces) {
+            for (k2 in interfaces[k]) {
+                var address = interfaces[k][k2];
+                if (address.family == 'IPv4' && !address.internal) {
+                    addresses.push(address.address)
+                }
+            }
+        }
+
+        var address = 'localhost';
+
+        if(addresses)
+        {
+            address = addresses[0];
+        }
+
+
+        googl.shorten('http://'+address+':16348/presentation/'+presentationKey, function (shortUrl) {
+
             res.json({'longUrl' : shortUrl.longUrl,'shortUrl' : shortUrl.id});
         });
 
@@ -132,10 +159,14 @@ app.get('/presentation/:id',function(req,res){
         else
         {
             var data = datas[0].data;
+            var shortUrl = datas[0].shortUrl;
+            console.log('sindoh');
+            console.log('shortUrl : '+shortUrl);
+
 //            res.json({presentationData : data.data});
             data = data.replace(/\\/gi,'&shin;');
 
-            res.render(__dirname+'/show.ejs',{'presentationData':data, 'presentationKey' : presentationKey});
+            res.render(__dirname+'/show.ejs',{'presentationData':data,'presentationUrl' : shortUrl, 'presentationKey' : presentationKey});
         }
     });
 });

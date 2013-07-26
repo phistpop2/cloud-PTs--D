@@ -25,9 +25,11 @@
 
              var presentationData = '<%=presentationData%>';
              var presentationKey = '<%=presentationKey%>';
+             var presentationUrl = '<%=presentationUrl%>';
 
              presentationData = presentationData.replace(/&shin;/gi,'\\').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&quot;/gi,'"');
              localStorage.setItem('showData',presentationData);
+             localStorage.setItem('presentationUrl',presentationUrl);
 
              require(['show'],function(App){
                   App.initialize();
