@@ -16,8 +16,7 @@
 #styleDialog .dialog_content{
     position: relative;
     left: -50%;
-    width : 300px;
-    height : 440px;
+
     padding : 4px;
     background : #222;
     border-radius: 4px;
@@ -25,15 +24,15 @@
 
 .dialog_content .left_panel{
 
-    width : 300px;
 
 }
 .style_control_panel{
     margin-top : 10px;
+    margin-left : 20px;
 }
 
 .left_panel .style_control_panel{
-    height : 400px;
+
     overflow-y: auto;
 }
 
@@ -252,7 +251,7 @@
 
 #slide_style_control .dialog_content{
     position: relative;
-    width : 300px;
+
     padding : 4px;
     background : #222;
     border-radius: 4px;

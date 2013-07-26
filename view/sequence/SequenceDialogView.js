@@ -1,5 +1,7 @@
 define(['jquery','underscore','backbone',
           'text!template/dialog/SequenceDialog.html',
+        'text!template/dialog/SlideStylePanel.html',
+        'text!template/dialog/SlideContentsPanel.html',
         'view/contents/ObjectView',
         'view/contents/TextView',
         'view/contents/ImageView',
@@ -8,7 +10,7 @@ define(['jquery','underscore','backbone',
 
         'ObjectController'],
     function($,_,Backbone,
-                SequenceDialogTemplate){
+                SequenceDialogTemplate,SlideStylePanel,SlideContentsPanel){
         var sequenceDialogView = Backbone.View.extend({
 
             sequenceCollection : null,
@@ -30,15 +32,52 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
-                var model_ = this.model;
-                $('#slide_style_control').html($(SequenceDialogTemplate).find('.dialog_content'));
+
                 var this_ = this;
+
+
+                $('#slide_style_control #style_selector').bind('change',function(){
+                    this_.activePanel()
+                });
+
+                this.activePanel();
+                return this;
+            },
+
+            activePanel : function()
+            {
+                var this_ = this;
+                var value = $('#slide_style_control #style_selector').val();
+                        console.log('value',value);
+                if(value=='slide_style')
+                {
+                    this_.activeSlideStylePanel();
+
+                }
+                else if(value=='slide_contents')
+                {
+                    this_.activeSlideContentsPanel();
+                }
 
                 $('#slide_style_control').bPopup({
                     easing: 'easeOutBack',
                     speed: 300,
                     transition: 'slideDown'
                 });
+
+                $('#slide_style_control').trigger('resize');
+            },
+
+            activeSlideStylePanel : function()
+            {
+                 $('#slide_style_control .dialog_content').css({
+                     'width' : 300
+                 });
+
+                $('#slide_style_control #styleControlPanel').html(SlideStylePanel);
+
+                var model_ = this.model;
+                var this_ = this;
 
                 $('#slide_style_control').find('.style_slider').each(function()
                 {
@@ -173,10 +212,18 @@ define(['jquery','underscore','backbone',
                     this_.close();
                 });
 
-                return this;
+            },
+
+            activeSlideContentsPanel : function()
+            {
+
+                $('#slide_style_control .dialog_content').css({
+                    'width' : 800
+                });
+
+
+                $('#styleControlPanel').html(SlideContentsPanel);
             }
-
-
 
 
 
