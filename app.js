@@ -117,6 +117,8 @@ define(
 
         setupWork : function(event)
         {
+            var workData = JSON.parse(event.workData);
+
             this.cameraModule = new CameraModule({viewPort : $('#workSpace')});
             this.selectorController = new SelectController();
 
@@ -134,6 +136,8 @@ define(
             window.getSelectMergeRange = this.getSelectMergeRange;
             window.selectRangeBackwards = this.selectRangeBackwards;
             window.saveSelectRange = this.saveSelectRange;;
+
+            this.workDataSetup(workData);
 
         },
 
@@ -566,6 +570,46 @@ define(
 
             console.log('selectRangeBackwards');
 
+        },
+
+        workDataSetup : function(workData)
+        {
+            var contentDatas = workData.contentDatas;
+            var sequenceDatas = workData.sequenceDatas;
+
+            for(var i in contentDatas)
+            {
+                var contentData = contentDatas[i];
+                contentData.load = true;
+
+                var model = null;
+
+               if(contentData.type=='text')
+                {
+                    model = new TextModel(contentData);
+                    model.cid = contentData.cid;
+                }
+                else if(contentData.type=='image')
+               {
+                   model = new ImageModel(contentData);
+                   model.cid = contentData.cid;
+               }
+                else if(contentData.type=='frame')
+               {
+                   model = new FrameModel(contentData);
+                   model.cid = contentData.cid;
+               }
+
+                this.contentsCollection.add(model);
+            }
+
+            for(var i in sequenceDatas)
+            {
+                var sequenceData = sequenceDatas[i];
+
+                var model = new SequenceModel(sequenceData)
+                this.sequenceCollection.add(model);
+            }
         }
     });
 

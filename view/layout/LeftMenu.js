@@ -99,7 +99,8 @@ define(['jquery','underscore','backbone',
 
             saveCurrentWork : function(e)
             {
-                var saveDatas = this.collection.extractCurrentWorkToJSON();
+                var saveDatas = this.sequenceCollection.extractCollectionToJson();
+                console.log("saveDatas",saveDatas);
                 this.session.saveToGoogleDrive(saveDatas);
             },
 
@@ -151,14 +152,13 @@ define(['jquery','underscore','backbone',
                     'failure' : function(err){console.log(err)}
                 });
 
-
             },
 
 
 
             popupStartDialog : function(data)
             {
-                alert('check');
+
                 var presentationUrl = data.shortUrl;
                 localStorage.setItem('presentationUrl',presentationUrl);
                 var shortUrl = data.shortUrl;

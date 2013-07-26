@@ -30,7 +30,16 @@ define(['jquery','underscore','backbone',
                 });
 
 
-                this.initPosition();
+                var load = this.model.get('load');
+                if(load)
+                {
+                    this_.model.attributes.load=false;
+                }
+                else
+                {
+                    this_.initPosition();
+                }
+
                 this.updateView();
 
 

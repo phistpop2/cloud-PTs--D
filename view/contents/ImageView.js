@@ -70,7 +70,16 @@ define(['jquery','underscore','backbone',
                     objectWrap.append(item);
 
 
-                    this_.initPosition();
+                    var load = this_.model.get('load');
+                    if(load)
+                    {
+                        this_.model.attributes.load=false;
+                    }
+                    else
+                    {
+                        this_.initPosition();
+                    }
+
                     this_.updateView();
 
 
