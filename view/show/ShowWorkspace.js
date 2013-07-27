@@ -48,14 +48,14 @@ define(['jquery','underscore','backbone',
                 });
 
                 $(window).mousewheel(function(e,delta){
-                   if(delta>0)
-                   {
+                    if(delta>0)
+                    {
                         this_.nextPage();
-                   }
-                   else
-                   {
-                       this_.prevPage();
-                   }
+                    }
+                    else
+                    {
+                        this_.prevPage();
+                    }
                 });
 
                 $(window).keydown(function(e){
@@ -72,7 +72,6 @@ define(['jquery','underscore','backbone',
                     }
 
                 }).keyup(function(e){
-                        console.log(e);
 
                         if( (e.keyCode >= 48) && (e.keyCode <= 57) ){
                             pageKeyNumber += ((e.keyCode - 48)+'');
@@ -80,7 +79,7 @@ define(['jquery','underscore','backbone',
                         else if(e.keyCode == 13)        //wnrwe
                         {
                             pageKeyNumber = parseInt(pageKeyNumber);
-                            console.log('pageKeyNumber',pageKeyNumber);
+
                             if((pageKeyNumber+'') != 'NaN')
                             {
                                 var pageSize = this_.showCollection.models.length;
@@ -126,15 +125,55 @@ define(['jquery','underscore','backbone',
                 this.show(this.currentShowPage);
             },
 
+            contentVisibility : function(page)
+            {
+
+                var showModel = this.showCollection.models[page];
+                var slideContents = showModel.get('contents')
+                var moveDuration = showModel.get('moveDuration');
+
+
+                console.log('slideContents',slideContents);
+                for(var cid in this.showCollection.contentViews)
+                {
+                    var view = this.showCollection.contentViews[cid];
+
+                    $(view.el).css({
+                        transitionDuration:  moveDuration+"ms"
+                    });
+
+                    $(view.el).removeClass('visible');
+                    $(view.el).addClass('gone');
+                }
+
+                for(var i  in slideContents)
+                {
+                    var cid = slideContents[i];
+
+                    var view = this.showCollection.contentViews[cid];
+
+                    if(view)
+                    {
+                        $(view.el).removeClass('gone');
+                        $(view.el).addClass('visible');
+                    }
+                }
+
+
+            },
+
             show : function(page)
             {
+                this.contentVisibility(page);
+
                 var cameraModule = this.cameraModule;
                 var showModel = this.showCollection.models[page];
                 var matrix3d = showModel.get('matrix3d');
                 var slideWidth = parseFloat(showModel.get('width'));
                 var slideHeight = parseFloat(showModel.get('height'));
-                var background = showModel.get('slideBackgroundColor');
 
+
+                var background = showModel.get('slideBackgroundColor');
 
                 var color = background;
                 var rgb = this.hexToRgb(color);
@@ -155,11 +194,12 @@ define(['jquery','underscore','backbone',
                 var slideBackgroundAction = showModel.get('slideBackgroundAction');
                 var world = $('#showWorkspace').find('#world');
 
-
                 var left = parseFloat(($('#showWorkspace').width()- slideWidth)/2);
                 var top = parseFloat(($('#showWorkspace').height() - slideHeight)/2);
 
                 matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+
+
 
                 if(slideChangeStyle=='default')
                 {
@@ -172,17 +212,21 @@ define(['jquery','underscore','backbone',
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
+                    this.resize();
+
+
                 }
                 else        //fixed style
                 {
                     var this_ = this;
-                    $('#showWorkspace').hide();
-                    this.fixWorkspace.show();
+                    $('#showWorkspace').fadeTo(0, 0.1);
+                    this.fixWorkspace.fadeTo(0, 1.0);
 
                     this.fixWorkspace.addClass(slideChangeStyle);
                     this.prevWorkspace.css('transitionDuration',moveDuration+"ms");
 
                     this.prevWorld.css('webkitTransform',world[0].style['-webkit-transform']);
+
 
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
@@ -209,12 +253,9 @@ define(['jquery','underscore','backbone',
                         this_.currentWorkspace.removeClass('past');
                         this_.currentWorkspace.addClass('future');
 
-
-
-                        this_.fixWorkspace.hide();
-                        $('#showWorkspace').show();
+                        this_.fixWorkspace.fadeTo(0, 0.1);
+                        $('#showWorkspace').fadeTo(0, 1.0);
                     });
-
 
                 }
 
@@ -315,8 +356,6 @@ define(['jquery','underscore','backbone',
 
             resize : function()
             {
-                console.log('resize');
-                var this_ = this;
                 var showModel = this.showCollection.models[this.currentShowPage];
                 var slideWidth = parseFloat(showModel.get('width'));
                 var slideHeight = parseFloat(showModel.get('height'));
@@ -325,7 +364,6 @@ define(['jquery','underscore','backbone',
                 var currentAspect = window.innerWidth / window.innerHeight;
                 var newHeight = 0, newWidth = 0;
 
-                console.log('aspacet',originAspect,currentAspect);
                 if(originAspect > currentAspect)
                 {
                     newWidth = slideWidth;
@@ -376,6 +414,70 @@ define(['jquery','underscore','backbone',
                     '-webkit-animation-timing-function' : 'linear'
                 });
 
+            },
+
+            getCurrentMatrix : function()
+            {
+                console.log('resize');
+                var this_ = this;
+                var showModel = this.showCollection.models[this.currentShowPage];
+                var slideWidth = parseFloat(showModel.get('width'));
+                var slideHeight = parseFloat(showModel.get('height'));
+
+                var originAspect = slideWidth/slideHeight;
+                var currentAspect = window.innerWidth / window.innerHeight;
+                var newHeight = 0, newWidth = 0;
+
+                console.log('aspacet',originAspect,currentAspect);
+                if(originAspect > currentAspect)
+                {
+                    newWidth = slideWidth;
+                    newHeight = slideWidth/currentAspect;
+                }
+                else
+                {
+                    newWidth = slideHeight*currentAspect;
+                    newHeight = slideHeight
+                }
+
+                $(' #showWorkspace, .fixInnerWorkspace').css({
+                    'width' : newWidth,
+                    'height' : newHeight
+                });
+
+                var scaleW = window.innerWidth / newWidth;//parseInt($(this_.el).css('width'));
+                var scaleH = window.innerHeight / newHeight;//parseInt($(this_.el).css('height'));
+
+
+                console.log('new',newWidth,newHeight);
+                var scale = scaleW;
+
+                if(scaleH < scaleW)  {
+                    scale = scaleH;
+                }
+
+
+                $('#showWorkspace, .fixInnerWorkspace').css({
+                    '-webkit-transform' : 'scale('+scale+')',
+                    '-webkit-transform-origin' : '0% 0%'
+                });
+
+
+                var workspaceWidth = slideWidth*scale;
+                var workspaceHeight = slideHeight*scale;
+
+                var cameraModule = this.cameraModule;
+
+
+                var matrix3d = showModel.get('matrix3d');
+
+
+                var left = parseFloat((window.innerWidth - slideWidth)/2);
+                var top = parseFloat((window.innerHeight - slideHeight)/2);
+
+                matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+
+                return matrix3d;
             },
 
             render : function()

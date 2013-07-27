@@ -142,5 +142,5 @@ html, body {
 }
 
 .gone{
-
+    opacity: 0.0;
 }
