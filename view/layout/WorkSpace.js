@@ -53,6 +53,7 @@ define(['jquery','underscore','backbone',
 
                    width-=200;
                     $('#mainCanvasLayout #workSpace').css({'width':width});
+                    this_.cameraModule.resize();
                     console.log('workSpace width',width);
                 });
 
@@ -75,6 +76,8 @@ define(['jquery','underscore','backbone',
                         this_.contentsCollection.setSelected();
                         zooming = true;
                         zoomer.init(prevX, prevY);
+                    }else if(e.shiftKey){
+
                     }else{
                         this_.contentsCollection.setSelected();
                         moveEnable = true;
@@ -84,7 +87,7 @@ define(['jquery','underscore','backbone',
 
 
                 $('#workSpace').bind('mousemove',function(e){
-                    if(moveEnable)
+                    if(moveEnable || e.shiftKey )
                     {
                         var currX = e.clientX;
                         var currY = e.clientY;
@@ -152,17 +155,8 @@ define(['jquery','underscore','backbone',
 
                 $('#workSpace').bind('mousewheel',function(e){
 
-                    if(!this_.contentsCollection.getSelectedObjects())
+                    if(e.shiftKey || !this_.contentsCollection.getSelectedObjects())
                     {
-                        /*
-                        if( e.originalEvent.wheelDelta > 0 ){
-                            fov++;
-                        }else{
-                            fov--;
-
-                        }
-                        this_.cameraModule.getCamera().setFov( fov );*/
-
                         var scalar = e.originalEvent.wheelDelta/10;
                         camera_.setPosition(0,0,scalar);
 
@@ -247,12 +241,16 @@ define(['jquery','underscore','backbone',
                 } : null;
             }
 
-        }) ;
+        });
+
+
+
+
 
 
 
         return workSpace;
-    }) ;
+});
 
 Zoomer = function( _camera ){
     var selection = $('<div>').addClass('selection-box');
@@ -260,7 +258,7 @@ Zoomer = function( _camera ){
     var innerPillar = new Array();
     var camera = _camera;
     var controller = new ObjectController( _camera );
-    var wBias = 200;
+    var wBias = 0;
     var size= 2048;
     var tick = 0;
     var d = new Date();

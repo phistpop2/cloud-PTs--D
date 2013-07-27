@@ -147,7 +147,6 @@ define(
                 'backgroundColor' : '#1c1e20'
             });
 
-
         },
 
         initLeftMenu : function()
@@ -168,7 +167,6 @@ define(
             this.sequenceCollection.setCameraModule(this.cameraModule);
             this.sequenceCollection.setContentsCollection(this.contentsCollection);
             this.sequenceCollection.setSelectController(this.selectorController);
-
         },
 
         initWorkspace : function()
@@ -178,6 +176,7 @@ define(
                 "contentsCollection" : this.contentsCollection,
                 'cameraModule' : this.cameraModule
             });
+            this.cameraModule.getCamera().setCenterPosition()
 
         },
 
@@ -226,6 +225,8 @@ define(
                 else if (ctrlDown && e.keyCode == zKey){
                     this_.contentsCollection.undo();
                     return false;
+                }else if( shiftDown ){
+                    return true;
                 }
                 else if(ctrlDown && e.keyCode == vKey)    //ctrl+v
                 {
@@ -582,6 +583,7 @@ define(
         {
             var contentDatas = workData.contentDatas;
             var sequenceDatas = workData.sequenceDatas;
+            var fresh = true;
 
             for(var i in contentDatas)
             {
@@ -607,15 +609,61 @@ define(
                }
 
                 this.contentsCollection.add(model);
+                fresh = false;
             }
-
             for(var i in sequenceDatas)
             {
                 var sequenceData = sequenceDatas[i];
 
                 var model = new SequenceModel(sequenceData)
                 this.sequenceCollection.add(model);
+                fresh = false;
             }
+            if( fresh ){
+                this.insertIntroBox();
+
+            }
+        },
+        insertIntroBox : function(){
+            var mainTitle = new TextModel({
+                width : 700,
+                height : 100,
+
+                translateX:0,
+                translateY:0,
+                translateZ:0,
+
+                rotateX:0,
+                rotateY:0,
+                rotateZ:0,
+                mainTitle:true,
+
+                content : 'Cloud Presentation'
+            });
+            var subTitle = new TextModel({
+                width : 200,
+                height : 80,
+
+                translateX:0,
+                translateY:0,
+                translateZ:0,
+
+                rotateX:0,
+                rotateY:0,
+                rotateZ:0,
+                subTitle:true,
+
+                content : 'ssm'
+            });
+            this.contentsCollection.add( subTitle );
+            this.contentsCollection.add( mainTitle );
+            var height = parseInt( $('#workSpace').height() );
+            subTitle.set({
+                translateY : height * -0.2
+            });
+            mainTitle.set({
+                translateY : height * 0.2
+            });
         }
     });
 

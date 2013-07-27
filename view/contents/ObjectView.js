@@ -1,5 +1,5 @@
 define(['jquery','underscore','backbone',
-        'ObjectController'],
+    'ObjectController'],
     function($,_,Backbone){
         var ObjectView = Backbone.View.extend({
 
@@ -22,7 +22,7 @@ define(['jquery','underscore','backbone',
             },
 
             events : {
-               "mousedown" : "objectSelect",
+                "mousedown" : "objectSelect",
                 "mouseup" : "saveSelectRange"
             },
 
@@ -40,19 +40,17 @@ define(['jquery','underscore','backbone',
 
                 $(document).keydown(function(e)
                 {
-
                     if (e.keyCode == ctrlKey) ctrlDown = true;
 
                 }).keyup(function(e)
-                {
-                    if (e.keyCode == ctrlKey) ctrlDown = false;
-                });
+                    {
+                        if (e.keyCode == ctrlKey) ctrlDown = false;
+                    });
 
 
 
                 $('#workSpace').bind('mousewheel',function(e){
-
-                    if(model_.isSelected())
+                    if(!e.shiftKey && model_.isSelected())
                     {
                         var pos3d = model_.controller.getDepth(-e.originalEvent.wheelDelta/10);
                         model_.set({
@@ -68,10 +66,13 @@ define(['jquery','underscore','backbone',
 
             objectSelect : function(e)
             {
-
+                console.debug('objectSelect')
                 if(e.ctrlKey)
                 {
                     this.model.addSelectedToCollection(this.model);
+                }else if(e.shiftKey){
+                    this.model.controller.lookFacade();
+                    this.model.controller.zoomFacade(parseInt(this.model.get('width')),parseInt(this.model.get('height')));
                 }
                 else
                 {
@@ -208,7 +209,6 @@ define(['jquery','underscore','backbone',
                     this.model.controller.setPosition(this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
 
 
-                    console.log('asdv',this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
                     matrix3d = this.model.controller.getMatrixQuery();
                     this.model.attributes.matrix3d = matrix3d;
 
@@ -234,20 +234,18 @@ define(['jquery','underscore','backbone',
                 });
 
                 $(this.el).find('.objectWrap').css({
-                   "width" : width,
+                    "width" : width,
                     "height" : height,
                     "padding" : '0px',
                     "margin" : '0px'
                 });
-
-                 console.log('matrix3d',matrix3d);
                 this.cssRenderer();
 
 
 
 
             }
-    });
+        });
 
         return ObjectView;
 
@@ -281,6 +279,13 @@ ControlBox = function( target, tt ){
     var originRotationY = 0;
     var originAspect = 1;
     var transTime = 0;
+    var originQuatern = quaternion(0,0,0,0);
+    var originVector = vector3(0,0,0);
+    var currRotationX = 0;
+    var currRotationY = 0;
+    var xReverse = false;
+    var yReverse = false;
+    var currAngle = vector3(0,0,0);
 
 
     function setJob( _job, x,y ){
@@ -296,43 +301,48 @@ ControlBox = function( target, tt ){
         originRotationX = target.get('rotateX');
         originRotationY = target.get('rotateY');
         originAspect = width/height;
+        currRotationX = originRotationX;
+        currRotationY = originRotationY;
+        currAngle = target.controller.getAngle().clone();
+
+        xReverse = false;
+        yReverse = false;
+
 
 
         console.debug( 'job', job)
-        switch( _job ){
-            case JOB['RESIZE_N']:
-                target.controller.lookFacade();
-                target.controller.zoomResizeFacade( width, height, x, y, gap, 0, transTime );
-                break;
-            case JOB['RESIZE_S']:
-                target.controller.lookFacade();
-                target.controller.zoomResizeFacade( width, height, x, y, gap, 1, transTime );
-                break;
-            case JOB['RESIZE_W']:
-                target.controller.lookFacade();
-                target.controller.zoomResizeFacade( width, height, x, y, gap, 2, transTime );
-                break;
-            case JOB['RESIZE_E']:
-                target.controller.lookFacade();
-                target.controller.zoomResizeFacade( width, height, x, y, gap, 3, transTime );
-                break;
-            case JOB['RESIZE_NW']:
-                target.controller.lookFacade();
-                target.controller.zoomResizeFacade( width, height, x, y, gap, 4, transTime );
-                break;
-            case JOB['RESIZE_NE']:
-                target.controller.lookFacade();
-                target.controller.zoomResizeFacade( width, height, x, y, gap, 5, transTime );
-                break;
-            case JOB['RESIZE_SW']:
-                target.controller.lookFacade();
-                target.controller.zoomResizeFacade( width, height, x, y, gap, 6, transTime );
-                break;
-            case JOB['RESIZE_SE']:
-                target.controller.lookFacade();
-                target.controller.zoomResizeFacade( width, height, x, y, gap, 7, transTime );
-                break;
+        if( job > 3 ){
+            originQuatern = target.controller.lookFacade();
+            originVector = target.controller.getParent().getLocation().clone();
+            target.controller.zoomResizeFacade( width, height, x, y, gap, job-4, transTime );
         }
+        /*
+         switch( _job ){
+         case JOB['RESIZE_N']:
+         target.controller.zoomResizeFacade( width, height, x, y, gap, 0, transTime );
+         break;
+         case JOB['RESIZE_S']:
+         target.controller.zoomResizeFacade( width, height, x, y, gap, 1, transTime );
+         break;
+         case JOB['RESIZE_W']:
+         target.controller.zoomResizeFacade( width, height, x, y, gap, 2, transTime );
+         break;
+         case JOB['RESIZE_E']:
+         target.controller.zoomResizeFacade( width, height, x, y, gap, 3, transTime );
+         break;
+         case JOB['RESIZE_NW']:
+         target.controller.zoomResizeFacade( width, height, x, y, gap, 4, transTime );
+         break;
+         case JOB['RESIZE_NE']:
+         target.controller.zoomResizeFacade( width, height, x, y, gap, 5, transTime );
+         break;
+         case JOB['RESIZE_SW']:
+         target.controller.zoomResizeFacade( width, height, x, y, gap, 6, transTime );
+         break;
+         case JOB['RESIZE_SE']:
+         target.controller.zoomResizeFacade( width, height, x, y, gap, 7, transTime );
+         break;
+         }                 */
 
     }
     function length( x0, y0, x1, y1){
@@ -363,9 +373,19 @@ ControlBox = function( target, tt ){
 
             var scalar1 = currX-prevX;
             var scalar2 = currY-prevY;
+            if( job > JOB['ROTATE_Z'] ){
+                var pos3d = vector3(0,0,0);
+                var currW = originWidth;
+                var currH = originHeight;
+                var newX = currX;
+                var newY = currY;
+            }
 
             switch( job ){
                 case 0:   //move
+                    console.debug( 'move')
+                    if( e.shiftKey )
+                        break;
                     var pos3d = target.controller.getPosition(scalar1,scalar2);
 
                     target.set({
@@ -401,108 +421,67 @@ ControlBox = function( target, tt ){
                     break;
                 case 4: //resize n
                     if( originHeight + srcY-currY >= 0  ){
-                        var pos3d = target.controller.getResizePosition(originPos, 0,currY-srcY );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            height : originHeight + srcY-currY,
-                            rotateX : originRotationX
-                        });
-                        target.controller.zoomResizeFacade( width, originHeight + srcY-currY, srcX, currY, gap, 0 );
+                        reverseX( false );
+                        pos3d = target.controller.getResizePosition(originPos, 0,currY-srcY );
+                        newX = srcX;
+                        newY = currY;
                     }else{
-                        var pos3d = target.controller.getResizePosition(originPos, 0,originHeight );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            height : Math.abs(originHeight + srcY-currY),
-                            rotateX : originRotationX+180
-                        });
-                        target.controller.zoomResizeFacade( width, Math.abs(originHeight + srcY-currY), srcX, srcY+originHeight, gap, 0 );
-
+                        reverseX( true );
+                        pos3d = target.controller.getResizePosition(originPos, 0,originHeight );
+                        newX = srcX;
+                        newY = srcY+originHeight;
                     }
+                    currH = Math.abs(originHeight + srcY-currY);
                     break;
                 case 5: //resize s
                     if( originHeight + currY-srcY >= 0  ){
-                        var pos3d = target.controller.getResizePosition(originPos, 0,0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            height : originHeight + currY-srcY,
-                            rotateX : originRotationX
-                        });
-                        target.controller.zoomResizeFacade( width, originHeight + currY-srcY, srcX, currY, gap, 1 );
+                        reverseX( false );
+                        pos3d = target.controller.getResizePosition(originPos, 0,0 );
+                        newX = srcX;
+                        newY = currY;
                     }else{
-                        var pos3d = target.controller.getResizePosition(originPos, 0, originHeight+currY-srcY );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            height : Math.abs(originHeight + currY-srcY),
-                            rotateX : originRotationX+180
-                        });
-                        target.controller.zoomResizeFacade( width, Math.abs( originHeight + currY-srcY), srcX,srcY-originHeight, gap, 1 );
+                        reverseX( true );
+                        pos3d = target.controller.getResizePosition(originPos, 0, originHeight+currY-srcY );
+                        newX = srcX;
+                        newY = srcY-originHeight;
                     }
+                    currH = Math.abs(originHeight + currY-srcY);
                     break;
                 case 6: //resize w
                     if( originWidth + srcX - currX >= 0  ){
-                        var pos3d = target.controller.getResizePosition(originPos, currX-srcX,0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : originWidth + srcX - currX,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( originWidth + srcX - currX, height, currX, srcY, gap, 2 );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, currX-srcX,0 );
+                        newX = currX;
+                        newY = srcY;
                     }else{
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth,0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : Math.abs(originWidth + srcX - currX),
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( Math.abs(originWidth + srcX - currX), height, srcX+originWidth, srcY, gap, 2 );
-
+                        reverseY( true );
+                        pos3d = target.controller.getResizePosition(originPos, originWidth,0 );
+                        newX = srcX+originWidth;
+                        newY = srcY;
                     }
+                    currW =  Math.abs(originWidth + srcX - currX);
                     break;
                 case 7: //resize e
                     if( originWidth + currX - srcX >= 0  ){
-                        var pos3d = target.controller.getResizePosition(originPos, 0,0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : originWidth + currX - srcX,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( originWidth + currX - srcX, height, currX, srcY, gap, 3 );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, 0,0 );
+                        newX = currX;
+                        newY = srcY;
                     }else{
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth+currX-srcX,0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : Math.abs(originWidth + currX - srcX),
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( Math.abs(originWidth + currX - srcX), height, srcX-originWidth, srcY, gap, 3 );
-
+                        reverseY( true );
+                        pos3d = target.controller.getResizePosition(originPos, originWidth+currX-srcX,0 );
+                        newX = srcX-originWidth;
+                        newY = srcY;
                     }
+                    currW = Math.abs(originWidth + currX - srcX)
                     break;
                 case 8: //resize nw
+                    var newW = Math.abs(originWidth + srcX-currX);
+                    var newH = Math.abs(originHeight + srcY-currY);
+                    var newX = currX;
+                    var newY = currY;
 
                     if( originHeight + srcY-currY >= 0 && originWidth + srcX - currX >= 0  ){
-                        var newW =  originWidth + srcX-currX;
-                        var newH = originHeight + srcY-currY;
-                        var newX = currX;
-                        var newY = currY;
-
-
                         if( e.shiftKey ){
                             var aspect = newW/newH;
                             if( originAspect > aspect ){
@@ -510,29 +489,17 @@ ControlBox = function( target, tt ){
                                 newX = newX - (tempW-newW);
                                 newW = tempW;
                             }else{
-
                                 var tempH = newW/originAspect;
                                 newY = newY - (tempH-newH);
                                 newH = tempH;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth-newW, originHeight-newH );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 4 );
+                        reverseX( false );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, originWidth-newW, originHeight-newH );
                     }else if(originWidth + srcX - currX >= 0){
-                        var newW =  originWidth + srcX-currX;
-                        var newH = Math.abs(originHeight + srcY-currY);
-                        var newX = currX;
-                        var newY = srcY+originHeight;
-
+                        newX = currX;
+                        newY = srcY+originHeight;
 
                         if( e.shiftKey ){
                             var aspect = newW/newH;
@@ -545,23 +512,12 @@ ControlBox = function( target, tt ){
                                 newH = newW/originAspect;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth-newW,originHeight );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX+180,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 4 );
+                        reverseX( true );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, originWidth-newW,originHeight );
                     }else if(originHeight + srcY-currY >= 0){
-                        var newW = Math.abs(originWidth + srcX - currX);
-                        var newH = originHeight + srcY-currY;
-                        var newX = srcX+originWidth;
-                        var newY = currY;
-
+                        newX = srcX+originWidth;
+                        newY = currY;
 
                         if( e.shiftKey ){
                             var aspect = newW/newH;
@@ -574,24 +530,12 @@ ControlBox = function( target, tt ){
                                 newH = tempH;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth, originHeight-newH );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX,
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 4 );
-
+                        reverseX(false);
+                        reverseY(true);
+                        pos3d = target.controller.getResizePosition(originPos, originWidth, originHeight-newH );
                     }else{
-                        var newW = Math.abs(originWidth + srcX - currX);
-                        var newH = Math.abs(originHeight + srcY-currY);
-                        var newX = srcX+originWidth;
-                        var newY = srcY+originHeight;
-
+                        newX = srcX+originWidth;
+                        newY = srcY+originHeight;
 
                         if( e.shiftKey ){
                             var aspect = newW/newH;
@@ -601,25 +545,19 @@ ControlBox = function( target, tt ){
                                 newH = newW/originAspect;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth,originHeight );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX+180,
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 4 );
+                        reverseX( true );
+                        reverseY( true );
+                        pos3d = target.controller.getResizePosition(originPos, originWidth,originHeight );
                     }
+                    currW = newW;
+                    currH = newH;
                     break;
                 case 9: //resize ne
                     if(originHeight + srcY-currY >= 0 && originWidth + currX - srcX >= 0){
-                        var newW = originWidth + currX-srcX;
-                        var newH = originHeight + srcY-currY;
-                        var newX = currX;
-                        var newY = currY;
+                        newW = originWidth + currX-srcX;
+                        newH = originHeight + srcY-currY;
+                        newX = currX;
+                        newY = currY;
 
 
                         if( e.shiftKey ){
@@ -635,23 +573,14 @@ ControlBox = function( target, tt ){
                                 newH = tempH;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, 0,originHeight-newH );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 5 );
-
+                        reverseX( false );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, 0,originHeight-newH );
                     }else if(originWidth + currX - srcX >= 0){
-                        var newW = originWidth + currX-srcX;
-                        var newH = Math.abs(originHeight + srcY-currY);
-                        var newX = currX;
-                        var newY = srcY+originHeight;
+                        newW = originWidth + currX-srcX;
+                        newH = Math.abs(originHeight + srcY-currY);
+                        newX = currX;
+                        newY = srcY+originHeight;
 
 
                         if( e.shiftKey ){
@@ -664,23 +593,14 @@ ControlBox = function( target, tt ){
                                 newH = newW/originAspect;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, 0,originHeight );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX+180,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 5 );
-
+                        reverseX( true );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, 0,originHeight );
                     }else if(originHeight + srcY-currY >= 0){
-                        var newW = originWidth + currX - srcX;
-                        var newH = Math.abs(originHeight + srcY-currY);
-                        var newX = srcX-originWidth;
-                        var newY = currY;
+                        newW = Math.abs(originWidth + currX - srcX);
+                        newH = originHeight + srcY-currY;
+                        newX = srcX-originWidth;
+                        newY = currY;
 
 
                         if( e.shiftKey ){
@@ -693,22 +613,17 @@ ControlBox = function( target, tt ){
                                 newH = tempH;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, -newW,originHeight-newH  );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX,
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 5 );
+
+                        reverseX( false );
+                        reverseY( true );
+                        pos3d = target.controller.getResizePosition(originPos, -newW, originHeight-newH  );
                     }else{
-                        var newW = Math.abs(originWidth + currX - srcX);
-                        var newH = Math.abs(originHeight + srcY-currY);
-                        var newX = srcX-originWidth;
-                        var newY = srcY+originHeight;
+                        newW = Math.abs(originWidth + currX - srcX);
+                        newH = Math.abs(originHeight + srcY-currY);
+                        newX = srcX-originWidth;
+                        newY = srcY+originHeight;
+
+
 
 
                         if( e.shiftKey ){
@@ -719,26 +634,19 @@ ControlBox = function( target, tt ){
                                 newH = newW/originAspect;
                             }
                         }
-
-                        var pos3d = target.controller.getResizePosition(originPos, -newW, originHeight );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX+180,
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 5 );
+                        reverseX( true );
+                        reverseY( true );
+                        pos3d = target.controller.getResizePosition(originPos, -newW, originHeight );
                     }
+                    currW = newW;
+                    currH = newH;
                     break;
                 case 10: //resize sw
                     if(originHeight + currY-srcY >= 0 && originWidth + srcX - currX >= 0){
-                        var newW = originWidth + srcX - currX;
-                        var newH = originHeight + currY-srcY;
-                        var newX = currX;
-                        var newY = currY;
+                        newW = originWidth + srcX - currX;
+                        newH = originHeight + currY-srcY;
+                        newX = currX;
+                        newY = currY;
 
 
                         if( e.shiftKey ){
@@ -754,23 +662,15 @@ ControlBox = function( target, tt ){
                                 newH = tempH;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth-newW, 0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 6 );
+                        reverseX( false );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, originWidth-newW, 0 );
 
                     }else if(originWidth + srcX - currX >= 0){
-                        var newW = originWidth + srcX - currX;
-                        var newH = Math.abs(originHeight + currY-srcY);
-                        var newX = currX;
-                        var newY = srcY-originHeight;
+                        newW = originWidth + srcX - currX;
+                        newH = Math.abs(originHeight + currY-srcY);
+                        newX = currX;
+                        newY = srcY-originHeight;
 
 
                         if( e.shiftKey ){
@@ -783,23 +683,15 @@ ControlBox = function( target, tt ){
                                 newH = newW/originAspect;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth-newW, -newH);
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX+180,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 6 );
 
+                        reverseX( true );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, originWidth-newW, -newH);
                     }else if(originHeight + currY-srcY >= 0){
-                        var newW = Math.abs(originWidth + srcX - currX);
-                        var newH = originHeight + currY-srcY;
-                        var newX = srcX+originWidth;
-                        var newY = currY;
+                        newW = Math.abs(originWidth + srcX - currX);
+                        newH = originHeight + currY-srcY;
+                        newX = srcX+originWidth;
+                        newY = currY;
 
 
                         if( e.shiftKey ){
@@ -812,23 +704,16 @@ ControlBox = function( target, tt ){
                                 newH = tempH;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, originWidth,0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX,
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 6 );
+                        reverseX( false );
+                        reverseY( true );
+                        pos3d = target.controller.getResizePosition(originPos, originWidth,0 );
+
 
                     }else{
-                        var newW = Math.abs(originWidth + srcX-currX);
-                        var newH = Math.abs(originHeight + currY-srcY);
-                        var newX = srcX+originWidth;
-                        var newY = srcY-originHeight;
+                        newW = Math.abs(originWidth + srcX-currX);
+                        newH = Math.abs(originHeight + currY-srcY);
+                        newX = srcX+originWidth;
+                        newY = srcY-originHeight;
 
 
                         if( e.shiftKey ){
@@ -839,26 +724,19 @@ ControlBox = function( target, tt ){
                                 newH = newW/originAspect;
                             }
                         }
+                        reverseX( true );
+                        reverseY( true );
                         var pos3d = target.controller.getResizePosition(originPos, originWidth, -newH);
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX+180,
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 6 );
-
                     }
+                    currW = newW;
+                    currH = newH;
                     break;
                 case 11: //resize se
                     if( originHeight + currY-srcY >= 0 && originWidth + currX - srcX >= 0 ){
-                        var newW =  originWidth + currX - srcX;
-                        var newH = originHeight + currY-srcY;
-                        var newX = currX;
-                        var newY = currY;
+                        newW =  originWidth + currX - srcX;
+                        newH = originHeight + currY-srcY;
+                        newX = currX;
+                        newY = currY;
 
 
                         if( e.shiftKey ){
@@ -874,23 +752,14 @@ ControlBox = function( target, tt ){
                                 newH = tempH;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, 0,0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 7 );
+                        reverseX( false );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, 0,0 );
                     }else if( originWidth + currX - srcX >= 0 ){
-
-                        var newW =  originWidth + currX - srcX;
-                        var newH = Math.abs(originHeight + currY-srcY);
-                        var newX = currX;
-                        var newY = srcY-originHeight;
+                        newW =  originWidth + currX - srcX;
+                        newH = Math.abs(originHeight + currY-srcY);
+                        newX = currX;
+                        newY = srcY-originHeight;
 
                         if( e.shiftKey ){
                             var aspect = newW/newH;
@@ -902,22 +771,14 @@ ControlBox = function( target, tt ){
                                 newH = newW/originAspect;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, 0, -newH );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX+180 ,
-                            rotateY : originRotationY
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX,newY, gap, 7 );
+                        reverseX( true );
+                        reverseY( false );
+                        pos3d = target.controller.getResizePosition(originPos, 0, -newH );
                     }else if( originHeight + currY-srcY >= 0 ){
-                        var newW = Math.abs(originWidth + currX - srcX);
-                        var newH =  originHeight + currY-srcY;
-                        var newX =  srcX-originWidth;
-                        var newY = currY;
+                        newW = Math.abs(originWidth + currX - srcX);
+                        newH =  originHeight + currY-srcY;
+                        newX =  srcX-originWidth;
+                        newY = currY;
 
                         if( e.shiftKey ){
                             var aspect = newW/newH;
@@ -929,22 +790,15 @@ ControlBox = function( target, tt ){
                                 newH = tempH;
                             }
                         }
-                        var pos3d = target.controller.getResizePosition(originPos, -newW,0 );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX,
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade( newW, newH, newX, newY, gap, 7 );
+                        reverseX( false );
+                        reverseY( true );
+                        pos3d = target.controller.getResizePosition(originPos, -newW,0 );
+
                     }else{
-                        var newW = Math.abs(originWidth + currX - srcX);
-                        var newH = Math.abs(originHeight + currY-srcY);
-                        var newX =  srcX-originWidth;
-                        var newY = srcY-originHeight;
+                        newW = Math.abs(originWidth + currX - srcX);
+                        newH = Math.abs(originHeight + currY-srcY);
+                        newX =  srcX-originWidth;
+                        newY = srcY-originHeight;
 
                         if( e.shiftKey ){
                             var aspect = newW/newH;
@@ -954,26 +808,31 @@ ControlBox = function( target, tt ){
                                 newH = newW/originAspect;
                             }
                         }
+                        reverseX( true );
+                        reverseY( true );
                         var pos3d = target.controller.getResizePosition(originPos, -newW, -newH );
-                        target.set({
-                            'translateX':pos3d.getX(),
-                            'translateY':pos3d.getY(),
-                            'translateZ':pos3d.getZ(),
-                            width : newW,
-                            height : newH,
-                            rotateX : originRotationX+180,
-                            rotateY : originRotationY+180
-                        });
-                        target.controller.zoomResizeFacade(newW, newH, newX, newY, gap, 7 );
                     }
+                    currW = newW;
+                    currH = newH;
                     break;
+            }
+
+            if( job > JOB['ROTATE_Z'] ){
+                target.set({
+                    'translateX':pos3d.getX(),
+                    'translateY':pos3d.getY(),
+                    'translateZ':pos3d.getZ(),
+                    width : currW,
+                    height : currH
+                });
+                target.controller.zoomResizeFacade( currW, currH, newX, newY, gap, job-4 );
             }
             prevX = currX;
             prevY = currY;
         }
     }).bind('mouseup',function(e){
-            moveEnable = false;
-            if( target.isSelected())
+
+            if( target.isSelected() )
             {
                 target.commitToCollection({
                     'rotateX': target.get('rotateX'),
@@ -983,8 +842,39 @@ ControlBox = function( target, tt ){
                     'translateY': target.get('translateY'),
                     'translateZ': target.get('translateZ')
                 });
+                if( job > 3  ){
+                    target.controller.zoomOut( originQuatern, originVector );
+                }
             }
+            moveEnable = false;
+            job = 0;
         });
+
+    function reverseX( curr ){
+        if( curr != xReverse ){
+        console.debug( 'reverseX')
+            xReverse = curr;
+            currAngle = target.controller.rotateX( 180 );
+            target.set({
+                rotateX : currAngle.getX(),
+                rotateY : currAngle.getY(),
+                rotateZ : currAngle.getZ()
+            });
+        }
+    }
+    function reverseY( curr ){
+        if( curr != yReverse ){
+        console.debug( 'reverseY')
+            yReverse = curr;
+            currAngle = target.controller.rotateY( 180 );
+            target.set({
+                rotateX : currAngle.getX(),
+                rotateY : currAngle.getY(),
+                rotateZ : currAngle.getZ()
+            });
+        }
+    }
+
 
 
     //move button
