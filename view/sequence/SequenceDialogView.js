@@ -326,15 +326,15 @@ define(['jquery','underscore','backbone',
                         var contents = this_.model.get('contents');
                         var doContain = true;
 
-                            console.log(contents);
+                        console.log(contents);
 
-                        for(var i = 0  ; i < contents.length ; i++)
+
+                        for(var i in contents)
                         {
-
-                            if(contents[i] == cid)
+                            if(i == cid)
                             {
                                 this_.doInactiveContent(cid);
-                                contents.splice(i,1);
+                                contents = _.without(contents,cid);
                                 doContain = false;
                                 break;
                             }
@@ -342,7 +342,7 @@ define(['jquery','underscore','backbone',
 
                         if(doContain)
                         {
-                            contents.push(cid);
+                            contents[cid] = this_.model.collection.getContentsCollection().getByCid(cid);
                             this_.doActiveContent(cid);
                         }
 

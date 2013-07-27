@@ -103,6 +103,25 @@ define(['jquery','underscore','backbone',
                 $(this.el).parent().remove();
             },
 
+            objectCapture : function(){
+                var contents = this.model.get('contents');
+
+                for(var i in this.model.collection.getContentsCollection().models)
+                {
+                    var model = this.model.collection.getContentsCollection().models[i];
+                    if(model.isCurrentScreen())
+                    {
+                        console.log('currentScreen',model)
+                        contents[model.cid]=model;
+                    }
+                }
+
+                this.model.set('contents',contents);
+
+                this.refresh();
+            },
+
+
             refresh : function()
             {
                 var newViews = new Array();
@@ -117,21 +136,12 @@ define(['jquery','underscore','backbone',
 
                 var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
 
-                var modelIdArray = new Array();
+                var contents = this.model.get('contents');
 
-                var modelCids = this.model.get('contents');
-
-                for(var i in modelCids)
+                for(var i in contents)
                 {
-                    var modelCid = modelCids[i];
-
-                    var model = this.contentsCollection.getByCid(modelCid);
-                    modelIdArray.push(model);
-                }
-
-                for(var i = 0 ; i < modelIdArray.length ; i++)
-                {
-                    var model = modelIdArray[i];
+                    console.log('cid',i);
+                    var model = this.contentsCollection.getByCid(i);
 
                     if(model.get('type') == 'text')
                     {
@@ -155,6 +165,7 @@ define(['jquery','underscore','backbone',
             render : function()
             {
                 var index = this.sequenceCollection .length;
+
                 this.model.set({
                     'slideNumber': index
                 });
@@ -254,8 +265,13 @@ define(['jquery','underscore','backbone',
                 world.css({
                     webkitTransform: 'matrix3d('+matrix3d+')'
                 });
+
+
                 this.updateView();
                 this.eventBind();
+
+                this.objectCapture();
+
                 return this;
             },
 
