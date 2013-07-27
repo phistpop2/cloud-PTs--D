@@ -72,9 +72,9 @@ define(['jquery','underscore','backbone',
                         var contentsArray = this_.model.get('contents');
                         for(var i in contentsArray)
                         {
-                            if(contentsArray[i] == model.cid)
+                            if(i == model.cid)
                             {
-                                contentsArray.splice(i,1);
+                                delete contentsArray[i];
                                 console.log('contentsArray',contentsArray);
                             }
                         }
@@ -115,6 +115,8 @@ define(['jquery','underscore','backbone',
                         contents[model.cid]=model;
                     }
                 }
+
+
 
                 this.model.set('contents',contents);
 

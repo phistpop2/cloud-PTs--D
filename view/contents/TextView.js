@@ -70,33 +70,6 @@ define(['jquery','underscore','backbone',
 
 
 
-                $(this.el).find(".textEditBox").bind('paste',function(e)
-                {
-                    e = e.originalEvent;
-                    var pastedText = undefined;
-                    if (e.clipboardData && e.clipboardData.getData) {
-                        pastedText = e.clipboardData.getData('text/plain');
-                    }
-
-
-
-                    var targetEl = null;
-
-                    if(window.getSelection())
-                    {
-                        targetEl = window.getSelection().anchorNode.parentElement
-                    }
-
-                    if(targetEl)
-                    {
-                        $(targetEl).append(pastedText);
-                        ($(this_.el).find(".textEditBox")).trigger('refresh');
-                    }
-
-                    console.log("pastedText",pastedText);
-
-                    return false;
-                });
             },
 
             contentRefresh : function()
@@ -180,30 +153,6 @@ define(['jquery','underscore','backbone',
                         this.model.attributes.content = content;
 
                         this.initPosition();
-                    }
-
-                    if( this.model.attributes.mainTitle ){
-                        console.debug( 'main!!');
-                        $(this.el).find('.lcWord').each(function(){
-                            $(this).css({
-                                'fontSize' : '80px',
-                                color : '#ffffff'
-                            })
-                        });
-                        $(editbox).css({
-                            'textAlign' : 'center'
-                        });
-                    }else if(this.model.attributes.subTitle){
-                        console.debug( 'sub!!');
-                        $(this.el).find('.lcWord').each(function(){
-                            $(this).css({
-                                'fontSize' : '50px',
-                                color : '#999999'
-                            })
-                        });
-                        $(editbox).css({
-                            'textAlign' : 'center'
-                        });
                     }
 
 

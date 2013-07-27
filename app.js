@@ -615,7 +615,21 @@ define(
             {
                 var sequenceData = sequenceDatas[i];
 
+                console.log('sequenceData',sequenceData);
+
+                var contents = new Array();
+                for(var i = 0 ; i < sequenceData,contents.length ; i++)
+                {
+                    contents.push(sequenceData,contents[i]);
+                }
+
+                sequenceData.contents =contents;
+
+                console.log('sequenceData_',sequenceData);
+
                 var model = new SequenceModel(sequenceData)
+
+                console.log('sequcenModel',model);
                 this.sequenceCollection.add(model);
                 fresh = false;
             }
