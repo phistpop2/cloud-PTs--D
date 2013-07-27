@@ -360,8 +360,8 @@ define(['jquery','underscore','backbone',
                 });
 
 
-                var workspaceWidth = slideWidth*scale;
-                var workspaceHeight = slideHeight*scale;
+                var workspaceWidth = window.innerWidth*scale;
+                var workspaceHeight = window.innerHeight*scale;
 
                 var cameraModule = this.cameraModule;
 
@@ -369,8 +369,8 @@ define(['jquery','underscore','backbone',
                 var matrix3d = showModel.get('matrix3d');
 
 
-                var left = parseFloat( (parseInt(window.innerWidth) - slideWidth)/2);
-                var top = parseFloat( (parseInt(window.innerHeight) - slideHeight)/2);
+                var left = parseFloat( (workspaceWidth - slideWidth)/2);
+                var top = parseFloat( (workspaceHeight - slideHeight)/2);
                 console.debug( 'WWWWWWWWWWW',window.innerWidth, window.innerHeight, slideWidth, slideHeight );
 
 
