@@ -231,27 +231,27 @@
 
 
                 /*var caretRow = $(window.getSelection().anchorNode);
-                 var caretColumn = getCaretPosition(window.getSelection().anchorNode);
+                var caretColumn = getCaretPosition(window.getSelection().anchorNode);
 
-                 if(!$(caretRow.hasClass('clSentence')) )
-                 {
-                 caretRow = caretRow.parent();
-                 }
-                 if(caretRow.hasClass('clSentence'))
-                 {
-                 caretRow = $(el).find('.clSentence').index(caretRow);
-                 }
-                 else
-                 {
-                 caretRow = 0;
-                 }
+                if(!$(caretRow.hasClass('clSentence')) )
+                {
+                    caretRow = caretRow.parent();
+                }
+                if(caretRow.hasClass('clSentence'))
+                {
+                    caretRow = $(el).find('.clSentence').index(caretRow);
+                }
+                else
+                {
+                    caretRow = 0;
+                }
 
-                 var caretSentenceEl = $(el).find('.clSentence').eq(caretRow);
+                var caretSentenceEl = $(el).find('.clSentence').eq(caretRow);
 
 
-                 caretColumn = caretColumn>0 ? caretColumn-1 : caretColumn;
-                 console.log('caretRow caretColumn',caretRow,caretColumn);
-                 */
+                caretColumn = caretColumn>0 ? caretColumn-1 : caretColumn;
+                                                                console.log('caretRow caretColumn',caretRow,caretColumn);
+*/
 //                console.log('caretEl',caretEl);
 
 
