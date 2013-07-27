@@ -43,7 +43,6 @@ define(['jquery','underscore','backbone'],
             if( !this.get('boxShadows') ){
                 this.set({boxShadows: new Array()});
             }
-
         },
 
         initController : function(camera)

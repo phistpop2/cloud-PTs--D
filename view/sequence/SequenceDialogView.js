@@ -358,7 +358,7 @@ define(['jquery','underscore','backbone',
                 $('#previewWorldWrap div[id^="view"]').each(function(){
 
                     $(this).css({
-                        transitionDuration:  "400ms"
+                        transitionDuration:  "250ms"
                     });
 
                     $(this).bind('mouseover',function(){
@@ -393,6 +393,9 @@ define(['jquery','underscore','backbone',
                         }
 
                         this_.model.set('contents',contents);
+
+                            console.log('this.sequenceCollection',this_.sequenceCollection);
+                        this_.sequenceCollection.views[this_.model.cid].refresh();
                     });
                 })
 

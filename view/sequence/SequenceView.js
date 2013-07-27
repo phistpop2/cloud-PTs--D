@@ -28,9 +28,7 @@ define(['jquery','underscore','backbone',
                 this.contentsCollection = this.options.contentsCollection;
                 this.sequenceCollection = this.options.sequenceCollection;
                 this.model.bind('change',this.updateView,this);
-
             },
-
 
             events : {
                 "mousedown" : "objectSelect",
@@ -39,6 +37,8 @@ define(['jquery','underscore','backbone',
 
             eventBind : function()
             {
+
+
                 var sequenceCollection = this.sequenceCollection;
                 var this_ = this;
 
@@ -62,6 +62,27 @@ define(['jquery','underscore','backbone',
                 });
 
 
+                this.contentsCollection.bind('remove',function(model){
+
+                    if(this_.views && this_.views[model.cid])
+                    {
+                        this_.views[model.cid].remove(model);
+                        console.log('this_.views',this_.views,model.cid);
+
+                        var contentsArray = this_.model.get('contents');
+                        for(var i in contentsArray)
+                        {
+                            if(contentsArray[i] == model.cid)
+                            {
+                                contentsArray.splice(i,1);
+                                console.log('contentsArray',contentsArray);
+                            }
+                        }
+                        this_.model.set('contents',contentsArray);
+                        this_.updateView();
+                    }
+
+                });
             },
 
             objectSelect : function(e)
@@ -80,6 +101,55 @@ define(['jquery','underscore','backbone',
             objectRemove : function()
             {
                 $(this.el).parent().remove();
+            },
+
+            refresh : function()
+            {
+                var newViews = new Array();
+
+                for(var i in this.views)
+                {
+                    $(this.views[i].el).remove();
+                }
+
+                this.views = newViews;
+
+
+                var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
+
+                var modelIdArray = new Array();
+
+                var modelCids = this.model.get('contents');
+
+                for(var i in modelCids)
+                {
+                    var modelCid = modelCids[i];
+
+                    var model = this.contentsCollection.getByCid(modelCid);
+                    modelIdArray.push(model);
+                }
+
+                for(var i = 0 ; i < modelIdArray.length ; i++)
+                {
+                    var model = modelIdArray[i];
+
+                    if(model.get('type') == 'text')
+                    {
+                        this.views[model.cid] = new TextView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
+                    }
+                    else if(model.get('type') == 'image')
+                    {
+                        this.views[model.cid] = new ImageView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
+                    }
+                    else if(model.get('type') == 'frame')
+                    {
+                        this.views[model.cid] = new FrameView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
+                    }
+                    else
+                    {
+                        this.views[model.cid] = new ObjectView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid, 'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence'}).render();
+                    }
+                }
             },
 
             render : function()
@@ -127,39 +197,12 @@ define(['jquery','underscore','backbone',
                 $(this.li).css('height','128px');
 
                 var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
-                var models = this.contentsCollection.models;
-                var modelIdArray = this.model.get('models');
 
                 world.css({
                     webkitTransform: 'matrix3d('+this.model.get('matrix3d')+')'
                 });
 
-
-                for(var i = 0 ; i < models.length ; i++)
-                {
-                    var model = models[i];
-
-                    if(model.get('type') == 'text')
-                    {
-                        this.views[model.cid] = new TextView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
-                    }
-                    else if(model.get('type') == 'image')
-                    {
-                        this.views[model.cid] = new ImageView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
-                    }
-                    else if(model.get('type') == 'frame')
-                    {
-                        this.views[model.cid] = new FrameView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
-                    }
-                    else
-                    {
-                        this.views[model.cid] = new ObjectView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid, 'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence'}).render();
-                    }
-
-                    modelIdArray.push(model.cid);
-                }
-
-                this.model.set('models',modelIdArray);
+                this.refresh();
 
                 var wrapWidth = parseFloat($(this.li).css('width'));
                 var wrapHeight = parseFloat($(this.li).css('height'));
@@ -169,10 +212,6 @@ define(['jquery','underscore','backbone',
 
                 var marginLeft = (wrapWidth-contentWidth*scale)/2;
                 var marginTop = (wrapHeight-contentHeight*scale)/2;
-
-                console.log('wrapSize',wrapWidth,wrapHeight);
-                console.log('margin',marginLeft,marginTop)
-
 
                 $(this.el).css({
                     'width' : contentWidth,
@@ -221,6 +260,7 @@ define(['jquery','underscore','backbone',
                     });
 
                 }
+
             },
 
             componentToHex : function(c) {
