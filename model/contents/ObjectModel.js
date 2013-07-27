@@ -65,6 +65,13 @@ define(['jquery','underscore','backbone'],
             }
         },
 
+        isCurrentScreen : function()
+        {
+            var width = parseInt(this.get('width'));
+            var height = parseInt(this.get('height'));
+            return this.controller.isCurrentScreen(width,height);
+        },
+
         setSelected : function()
         {
             this.attributes.selected = true;
