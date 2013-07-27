@@ -72,7 +72,6 @@ define(['jquery','underscore','backbone',
                     }
 
                 }).keyup(function(e){
-                        console.log(e);
 
                         if( (e.keyCode >= 48) && (e.keyCode <= 57) ){
                             pageKeyNumber += ((e.keyCode - 48)+'');
@@ -80,7 +79,7 @@ define(['jquery','underscore','backbone',
                         else if(e.keyCode == 13)        //wnrwe
                         {
                             pageKeyNumber = parseInt(pageKeyNumber);
-                            console.log('pageKeyNumber',pageKeyNumber);
+
                             if((pageKeyNumber+'') != 'NaN')
                             {
                                 var pageSize = this_.showCollection.models.length;
@@ -159,12 +158,14 @@ define(['jquery','underscore','backbone',
                 var left = parseFloat((window.innerWidth - slideWidth)/2);
                 var top = parseFloat((window.innerHeight - slideHeight)/2);
 
-                matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+                slideChangeStyle = 'default';
+
 
                 if(slideChangeStyle=='default')
                 {
                     this.fixWorkspace.hide();
 
+                    matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
 
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
@@ -172,16 +173,14 @@ define(['jquery','underscore','backbone',
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
-
-
-
-                //    this.resize();
+                   this.resize();
 
 
                 }
                 else        //fixed style
                 {
                     var this_ = this;
+
                     $('#showWorkspace').hide();
                     this.fixWorkspace.show();
 
@@ -190,22 +189,23 @@ define(['jquery','underscore','backbone',
 
                     this.prevWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
+             //       matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
                         transitionDuration:  "0ms",
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
-                    console.log("-webkit-transform",$(world).css('-webkit-transform'));
-                    this.currentWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
                     this.currentWorkspace.css('transitionDuration',moveDuration+"ms");
+                    this.currentWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
                     this.prevWorkspace.addClass('past');
                     this.currentWorkspace.removeClass('future');
 
                     $(this.currentWorkspace).bind('webkitTransitionEnd',function(){
-
+                               console.log('webkitTransitionEnd');
                         this_.prevWorkspace.css('transitionDuration','');
                         this_.currentWorkspace.css('transitionDuration','');
 
@@ -214,8 +214,6 @@ define(['jquery','underscore','backbone',
                         this_.prevWorkspace.removeClass('future');
                         this_.currentWorkspace.removeClass('past');
                         this_.currentWorkspace.addClass('future');
-
-
 
                         this_.fixWorkspace.hide();
                         $('#showWorkspace').show();
@@ -371,14 +369,10 @@ define(['jquery','underscore','backbone',
 
                 var cameraModule = this.cameraModule;
 
-
                 var matrix3d = showModel.get('matrix3d');
-
 
                 var left = parseFloat((window.innerWidth - slideWidth)/2);
                 var top = parseFloat((window.innerHeight - slideHeight)/2);
-
-
 
                 console.log('matrix3d',matrix3d);
                 matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
@@ -387,11 +381,74 @@ define(['jquery','underscore','backbone',
 
                 var world = $('#showWorkspace').find('#world');
                 world.css({
-                    webkitTransform: 'matrix3d('+matrix3d+')',
-                    transitionDuration: '200ms',
-                    '-webkit-animation-timing-function' : 'linear'
+                    webkitTransform: 'matrix3d('+matrix3d+')'
+
                 });
 
+            },
+
+            getCurrentMatrix : function()
+            {
+                console.log('resize');
+                var this_ = this;
+                var showModel = this.showCollection.models[this.currentShowPage];
+                var slideWidth = parseFloat(showModel.get('width'));
+                var slideHeight = parseFloat(showModel.get('height'));
+
+                var originAspect = slideWidth/slideHeight;
+                var currentAspect = window.innerWidth / window.innerHeight;
+                var newHeight = 0, newWidth = 0;
+
+                console.log('aspacet',originAspect,currentAspect);
+                if(originAspect > currentAspect)
+                {
+                    newWidth = slideWidth;
+                    newHeight = slideWidth/currentAspect;
+                }
+                else
+                {
+                    newWidth = slideHeight*currentAspect;
+                    newHeight = slideHeight
+                }
+
+                $(' #showWorkspace, .fixInnerWorkspace').css({
+                    'width' : newWidth,
+                    'height' : newHeight
+                });
+
+                var scaleW = window.innerWidth / newWidth;//parseInt($(this_.el).css('width'));
+                var scaleH = window.innerHeight / newHeight;//parseInt($(this_.el).css('height'));
+
+
+                console.log('new',newWidth,newHeight);
+                var scale = scaleW;
+
+                if(scaleH < scaleW)  {
+                    scale = scaleH;
+                }
+
+
+                $('#showWorkspace, .fixInnerWorkspace').css({
+                    '-webkit-transform' : 'scale('+scale+')',
+                    '-webkit-transform-origin' : '0% 0%'
+                });
+
+
+                var workspaceWidth = slideWidth*scale;
+                var workspaceHeight = slideHeight*scale;
+
+                var cameraModule = this.cameraModule;
+
+
+                var matrix3d = showModel.get('matrix3d');
+
+
+                var left = parseFloat((window.innerWidth - slideWidth)/2);
+                var top = parseFloat((window.innerHeight - slideHeight)/2);
+
+                matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+
+                return matrix3d;
             },
 
             render : function()
