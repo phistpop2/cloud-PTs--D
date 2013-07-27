@@ -48,6 +48,14 @@ define(['jquery','underscore','backbone',
                 var fov = 20;
 
 
+                $(window).bind('resize',function(){
+                   var width =  parseInt(window.innerWidth);
+
+                   width-=200;
+                    $('#mainCanvasLayout #workSpace').css({'width':width});
+                    console.log('workSpace width',width);
+                });
+
                 $(document).keydown(function(e)
                 {
                     if (e.keyCode == ctrlKey) ctrlDown = true;
@@ -202,6 +210,11 @@ define(['jquery','underscore','backbone',
 
            render : function()
            {
+               var width =  parseInt(window.innerWidth);
+
+               width-=200;
+               $('#mainCanvasLayout #workSpace').css({'width':width});
+
                var color = this.setting.get('backgroundColor');
                var rgb = this.hexToRgb(color);
 
@@ -211,9 +224,9 @@ define(['jquery','underscore','backbone',
 
                var secondColor = this.rgbToHex(r_,g_,b_);
 
-               var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%);'
+               var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%)'
                console.log('background',background);
-               $('#mainCanvasLayout').css('background',background);
+               $('#mainCanvasLayout #workSpace').css('background',background);
            },
 
            componentToHex : function(c) {

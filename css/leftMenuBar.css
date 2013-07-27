@@ -167,15 +167,24 @@
     padding : 4px;
 }
 
-#sequenceArrayContainer{
-    list-style:none;
+#sequenceArrayContainerOuter{
     margin : 0px;
     padding : 0px;
     margin-top : 20px;
     padding-top : 10px;
     padding-bottom : 10px;
-    overflow-y: auto;
+    overflow: hidden;
     height : 400px;
+}
+
+
+#sequenceArrayContainer{
+    margin : 0px;
+    padding : 0px;
+    list-style:none;
+    overflow: scroll;
+    width : 217px;
+
 }
 
 #sequenceArrayContainer li{
@@ -208,4 +217,9 @@
     height: 0;
     width: 0;
     -webkit-transform-style: preserve-3d;
+}
+
+.number_view{
+   position: relative;
+    z-index: 10
 }

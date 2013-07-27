@@ -160,66 +160,100 @@ define(['jquery','underscore','backbone',
                 });
 
                 this.li = $("<li id = " +this.model.cid+ "></li>");
-                var indexView = $("<p class='number_view'>"+index+"</p>");
-                console.debug( 'render', indexView )
-
-                this.li.append( indexView );
-                this.li.append( $(this.el) );
-
+                var indexView = $("<div class='number_view'>"+index+"</div>");
 
                 this.li.css({
+
                     padding: '0px',
                     margin: '2px',
                     background : 'rgba(255,255,255,0.1)',
                     webkitBorderRadius : '3px'
                 })
                 indexView.css({
-                    position: 'relative',
-                    top : '8px',
-                    left : '8px',
-                    margin : '0px',
-                    padding : '0px',
+
+                    top : '0px',
+                    left : '0px',
                     color: '#ffffff'
                 });
 
 
+                this.li.append( indexView );
+                this.li.append( $(this.el) );
+
+
                 $(this.el).append("<div class='sequence_view' data-id='"+this.model.cid+"'><div class='sequence_view_world'></div></div>");
 
-                var scale = 0.18;
-                $(this.el).css({
-
-                    'padding' : '0px',
-                    '-webkit-transform-origin' : '0% 0%',
-                    '-webkit-transform': 'scale('+scale+')'
-                });
 
                 $('#sequenceArrayContainer').append(this.li);
-                $(this.li).css('height','128px');
+                $(this.li).css('height','150px');
 
                 var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
 
-                world.css({
-                    webkitTransform: 'matrix3d('+this.model.get('matrix3d')+')'
-                });
+
 
                 this.refresh();
 
-                var wrapWidth = parseFloat($(this.li).css('width'));
-                var wrapHeight = parseFloat($(this.li).css('height'));
+                var wrapWidth = 200;
+                var wrapHeight = 150;
+
+                console.log('wrapSize',wrapWidth,wrapHeight);
 
                 var contentWidth = parseFloat(this.model.get('width'));
                 var contentHeight = parseFloat(this.model.get('height'));
 
-                var marginLeft = (wrapWidth-contentWidth*scale)/2;
-                var marginTop = (wrapHeight-contentHeight*scale)/2;
+                var contentAspect = contentWidth / contentHeight;
+                var wrapAspect = wrapWidth / wrapHeight;
+                var newHeight = 0, newWidth = 0;
+
+                console.log('aspacet',contentAspect,wrapAspect);
+
+
+
+                if(contentAspect > wrapAspect)
+                {
+                    newWidth = contentWidth;
+                    newHeight = contentWidth/wrapAspect;
+                }
+                else
+                {
+                    newWidth = contentHeight*wrapAspect;
+                    newHeight = contentHeight
+                }
+
+                var scaleW = wrapWidth / newWidth;//parseInt($(this_.el).css('width'));
+                var scaleH = wrapHeight / newHeight;//parseInt($(this_.el).css('height'));
+
+                console.log('scale',scaleW,scaleH);
+
+                var scale = scaleW;
+
+                if(scaleH < scaleW)  {
+                    scale = scaleH;
+                }
+
 
                 $(this.el).css({
-                    'width' : contentWidth,
-                    'height' : contentHeight,
-                    'marginLeft' : marginLeft,
-                    'marginTop' : marginTop
+                    'position' : 'relative',
+                    'padding' : '0px',
+                    'width' : newWidth,
+                    'height' : newHeight,
+                    'top' : '-16px',
+                    '-webkit-transform-origin' : '0% 0%',
+                    '-webkit-transform': 'scale('+scale+')'
                 });
 
+                var matrix3d = this.model.get('matrix3d');
+
+                var left = parseFloat((contentWidth - newWidth )/2);
+                var top = parseFloat((contentHeight - newHeight)/2);
+
+                console.debug( 'left top', left, top)
+
+                matrix3d = this.cameraModule.getCamera().getRevisedMatrixQuery(left,-top,matrix3d);
+
+                world.css({
+                    webkitTransform: 'matrix3d('+matrix3d+')'
+                });
                 this.updateView();
                 this.eventBind();
                 return this;

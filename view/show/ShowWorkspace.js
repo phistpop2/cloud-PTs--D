@@ -156,16 +156,23 @@ define(['jquery','underscore','backbone',
                 var world = $('#showWorkspace').find('#world');
 
 
+                var left = parseFloat((window.innerWidth - slideWidth)/2);
+                var top = parseFloat((window.innerHeight - slideHeight)/2);
+
+                matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
 
                 if(slideChangeStyle=='default')
                 {
                     this.fixWorkspace.hide();
+
 
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
                         transitionDuration:  moveDuration+"ms",
                         '-webkit-animation-timing-function' : 'linear'
                     });
+
+
 
 
                 //    this.resize();
@@ -213,6 +220,8 @@ define(['jquery','underscore','backbone',
                         this_.fixWorkspace.hide();
                         $('#showWorkspace').show();
                     });
+
+
                 }
 
 
@@ -359,8 +368,6 @@ define(['jquery','underscore','backbone',
 
                 var workspaceWidth = slideWidth*scale;
                 var workspaceHeight = slideHeight*scale;
-                var marginLeft =   parseFloat((window.innerWidth-workspaceWidth)/2);
-                var marginTop =   parseFloat((window.innerHeight-workspaceHeight)/2);
 
                 var cameraModule = this.cameraModule;
 
@@ -368,14 +375,15 @@ define(['jquery','underscore','backbone',
                 var matrix3d = showModel.get('matrix3d');
 
 
-                var left = parseFloat((parseInt($('#showWorkspace').css('width')) - 1024)/2);
-                var top = parseFloat((parseInt($('#showWorkspace').css('height')) - 768)/2);
+                var left = parseFloat((window.innerWidth - slideWidth)/2);
+                var top = parseFloat((window.innerHeight - slideHeight)/2);
 
 
 
                 console.log('matrix3d',matrix3d);
                 matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
                 console.log('matrix3d',matrix3d);
+                console.log('left top',left,top);
 
                 var world = $('#showWorkspace').find('#world');
                 world.css({

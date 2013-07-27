@@ -18,8 +18,9 @@ define(['jquery','underscore','backbone',
                 ObjectView.prototype.eventBind.call(this);
 
                 $(this.el).find(".textEditBox").keydown(function(e){
-                        var contenteditable = $(this).attr('contenteditable');
 
+                        var contenteditable = $(this).attr('contenteditable');
+                    console.log('aaaa',contenteditable);
                         if(contenteditable=='true')
                         {
                             e.stopPropagation();
@@ -43,7 +44,7 @@ define(['jquery','underscore','backbone',
 
                 }).click(function(){
                         $(this).attr('contenteditable',true);
-
+                        console.log('casdc',$(this).parent().html());
                 }).focusout(function(){
                         $(this).attr('contenteditable',false);
 

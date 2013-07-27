@@ -215,8 +215,10 @@ define(
                     if (e.keyCode == shiftKey) shiftDown = false;
             });
 
-            $('#workspace').keydown(function(e)
+            $(document).keydown(function(e)
             {
+
+
                 if (ctrlDown && shiftDown && e.keyCode == zKey){
                     this_.contentsCollection.redo();
                     return false;
@@ -227,6 +229,7 @@ define(
                 }
                 else if(ctrlDown && e.keyCode == vKey)    //ctrl+v
                 {
+
                     var clipboard = localStorage.getItem('clipboard');
 
                     console.log("clipboard",clipboard);
