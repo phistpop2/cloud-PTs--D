@@ -33,6 +33,7 @@ define(
      'EditGround',
      'asyncRenderer',
      'ObjectController',
+     'ObjectController',
      'Camera',
      'eventRepeater',
         'groundListener',
@@ -62,7 +63,7 @@ define(
             this.initShowWorkspace();
 
             var shortUrl = localStorage.getItem('presentationUrl');
-                  console.log('shortUrl',shortUrl);
+
             $('#showUrlWrap').html(shortUrl);
         },
 

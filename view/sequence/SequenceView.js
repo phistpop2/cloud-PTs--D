@@ -124,6 +124,7 @@ define(['jquery','underscore','backbone',
 
             refresh : function()
             {
+                var this_ = this;
                 var newViews = new Array();
 
                 for(var i in this.views)
@@ -140,12 +141,25 @@ define(['jquery','underscore','backbone',
 
                 for(var i in contents)
                 {
-                    console.log('cid',i);
+
                     var model = this.contentsCollection.getByCid(i);
+
+                    if(!model)
+                    {
+                        return;
+                    }
 
                     if(model.get('type') == 'text')
                     {
                         this.views[model.cid] = new TextView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
+
+                        this.views[model.cid].model.bind('change',function(model,key){
+                           console.log('key',key);
+                           if(key.changes['content'])
+                           {
+                               this_.views[model.cid].contentRefresh();
+                           }
+                        });
                     }
                     else if(model.get('type') == 'image')
                     {

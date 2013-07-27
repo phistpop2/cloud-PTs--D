@@ -198,8 +198,8 @@ define(['jquery','underscore','backbone',
                 var top = this.model.get('top');
                 var left = this.model.get('left');
 
-                var width = this.model.get('width');
-                var height = this.model.get('height');
+                var width = parseInt(this.model.get('width'));
+                var height = parseInt(this.model.get('height'));
                 var matrix3d = 0;
 
                 if(this.viewType=='workspace')
@@ -215,8 +215,25 @@ define(['jquery','underscore','backbone',
                     if( this.controlBox && !this.model.get('selected') ){
                         this.controlBox.disable();
                     }else if(this.model.get('selected')){
-                        this.controlBox.refresh();
+
+                        var borderWidth = parseInt(this.model.get('borderWidth'));
+                        var borderStyle = this.model.get('borderStyle');
+
+                        if(borderStyle && borderStyle!='none')
+                        {
+                            this.controlBox.refresh(borderWidth*2);
+                        }
+                        else
+                        {
+                            this.controlBox.refresh();
+                        }
+
                     }
+
+
+
+
+
 
                 }
                 else
@@ -1083,9 +1100,16 @@ ControlBox = function( target, tt ){
         visibility : 'hidden'
     })
 
-    function refresh(){
-        width = parseInt( target.get( 'width' ) );
-        height = parseInt( target.get( 'height' ) );
+    function refresh(bias){
+
+        if(!bias)
+        {
+            bias = 0;
+        }
+
+        console.log('bias',bias);
+        width = parseInt( target.get( 'width' )+bias );
+        height = parseInt( target.get( 'height' )+bias );
 
 
 
@@ -1196,8 +1220,8 @@ ControlBox = function( target, tt ){
                 visibility : 'hidden'
             });
         },
-        refresh : function(){
-            refresh();
+        refresh : function(bias){
+            refresh(bias);
         }
     };
 }

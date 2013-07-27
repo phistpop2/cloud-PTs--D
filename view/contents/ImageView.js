@@ -38,14 +38,27 @@ define(['jquery','underscore','backbone',
 
                         if( (width > workspaceWidth) || (height > workspaceHeight) )
                         {
+                            height = workspaceWidth * (height/width);
                             width = workspaceWidth;
-                            height = workspaceHeight;
+
                         }
 
-                        console.log('size',workspaceHeight,workspaceWidth,height,width);
+                        console.log('size',width,height);
+
 
                         model.attributes.width = width;
                         model.attributes.height = height;
+
+                        var load = this_.model.get('load');
+                        console.log('load',load);
+                        if(load)
+                        {
+                            this_.model.attributes.load=false;
+                        }
+                        else
+                        {
+                            this_.initPosition();
+                        }
                     }
                     else
                     {
@@ -70,15 +83,8 @@ define(['jquery','underscore','backbone',
                     objectWrap.append(item);
 
 
-                    var load = this_.model.get('load');
-                    if(load)
-                    {
-                        this_.model.attributes.load=false;
-                    }
-                    else
-                    {
-                        this_.initPosition();
-                    }
+
+
 
                     this_.updateView();
 

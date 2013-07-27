@@ -125,15 +125,53 @@ define(['jquery','underscore','backbone',
                 this.show(this.currentShowPage);
             },
 
+            contentVisibility : function(page)
+            {
+
+                var showModel = this.showCollection.models[page];
+                var slideContents = showModel.get('contents')
+                var moveDuration = showModel.get('moveDuration');
+
+                for(var cid in this.showCollection.contentViews)
+                {
+                    var view = this.showCollection.contentViews[cid];
+
+                    $(view.el).css({
+                        transitionDuration:  moveDuration+"ms"
+                    });
+
+                    $(view.el).removeClass('visible');
+                    $(view.el).addClass('gone');
+                }
+
+                for(var i  in slideContents)
+                {
+                    var cid = slideContents[i];
+
+                    var view = this.showCollection.contentViews[cid];
+
+                    if(view)
+                    {
+                        $(view.el).removeClass('gone');
+                        $(view.el).addClass('visible');
+                    }
+                }
+
+
+            },
+
             show : function(page)
             {
+                this.contentVisibility(page);
+
                 var cameraModule = this.cameraModule;
                 var showModel = this.showCollection.models[page];
                 var matrix3d = showModel.get('matrix3d');
                 var slideWidth = parseFloat(showModel.get('width'));
                 var slideHeight = parseFloat(showModel.get('height'));
-                var background = showModel.get('slideBackgroundColor');
 
+
+                var background = showModel.get('slideBackgroundColor');
 
                 var color = background;
                 var rgb = this.hexToRgb(color);
@@ -154,11 +192,9 @@ define(['jquery','underscore','backbone',
                 var slideBackgroundAction = showModel.get('slideBackgroundAction');
                 var world = $('#showWorkspace').find('#world');
 
-
                 var left = parseFloat((window.innerWidth - slideWidth)/2);
                 var top = parseFloat((window.innerHeight - slideHeight)/2);
 
-                slideChangeStyle = 'default';
 
 
                 if(slideChangeStyle=='default')
@@ -180,16 +216,15 @@ define(['jquery','underscore','backbone',
                 else        //fixed style
                 {
                     var this_ = this;
-
-                    $('#showWorkspace').hide();
-                    this.fixWorkspace.show();
+                    $('#showWorkspace').fadeTo(0, 0.1);
+                    this.fixWorkspace.fadeTo(0, 1.0);
 
                     this.fixWorkspace.addClass(slideChangeStyle);
                     this.prevWorkspace.css('transitionDuration',moveDuration+"ms");
 
                     this.prevWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
-             //       matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
+                    cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
 
                     world.css({
                         webkitTransform: 'matrix3d('+matrix3d+')',
@@ -197,15 +232,16 @@ define(['jquery','underscore','backbone',
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
+                    console.log("-webkit-transform",$(world).css('-webkit-transform'));
+                    this.currentWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
                     this.currentWorkspace.css('transitionDuration',moveDuration+"ms");
-                    this.currentWorld.css('webkitTransform',world[0].style['-webkit-transform']);
 
                     this.prevWorkspace.addClass('past');
                     this.currentWorkspace.removeClass('future');
 
                     $(this.currentWorkspace).bind('webkitTransitionEnd',function(){
-                               console.log('webkitTransitionEnd');
+
                         this_.prevWorkspace.css('transitionDuration','');
                         this_.currentWorkspace.css('transitionDuration','');
 
@@ -215,10 +251,9 @@ define(['jquery','underscore','backbone',
                         this_.currentWorkspace.removeClass('past');
                         this_.currentWorkspace.addClass('future');
 
-                        this_.fixWorkspace.hide();
-                        $('#showWorkspace').show();
+                        this_.fixWorkspace.fadeTo(0, 0.1);
+                        $('#showWorkspace').fadeTo(0, 1.0);
                     });
-
 
                 }
 

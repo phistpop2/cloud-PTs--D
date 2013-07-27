@@ -20,7 +20,7 @@ define(['jquery','underscore','backbone',
                 $(this.el).find(".textEditBox").keydown(function(e){
 
                         var contenteditable = $(this).attr('contenteditable');
-                    console.log('aaaa',contenteditable);
+
                         if(contenteditable=='true')
                         {
                             e.stopPropagation();
@@ -44,7 +44,7 @@ define(['jquery','underscore','backbone',
 
                 }).click(function(){
                         $(this).attr('contenteditable',true);
-                        console.log('casdc',$(this).parent().html());
+
                 }).focusout(function(){
                         $(this).attr('contenteditable',false);
 
@@ -56,6 +56,17 @@ define(['jquery','underscore','backbone',
                             return false;
                         }
                 })
+
+
+                $(this.el).find(".textEditBox").bind('DOMSubtreeModified',function(){
+                    var content = $(this_.el).find(".textEditBox").html();
+                    this_.model.set('content',content);
+                });
+
+                $(this.el).find(".textEditBox .lcWord").bind('style',function(){
+                    var content = $(this_.el).find(".textEditBox").html();
+                    this_.model.set('content',content);
+                });
 
 
 
@@ -86,6 +97,22 @@ define(['jquery','underscore','backbone',
 
                     return false;
                 });
+            },
+
+            contentRefresh : function()
+            {
+
+                if(this.viewType!='workspace')
+                {
+                    var content = this.model.get('content');
+
+                    console.log('content',content);
+                    console.log("$(this.el).find('.textEditBox')",$(this.el).find('.textEditBox'));
+                    $(this.el).find('.textEditBox').html(content);
+
+
+                }
+
             },
 
             render : function()
@@ -123,7 +150,6 @@ define(['jquery','underscore','backbone',
                     {
                         editbox = $(copyData);
                         $(this.el).find('.objectWrap').html(editbox);
-
 
                         this.eventBind();
 
@@ -169,7 +195,7 @@ define(['jquery','underscore','backbone',
                 {
                     editbox = this.model.get('content');
                     editbox = $(editbox).attr('contentEditable',false);
-                    editbox.removeClass('textEditBox');
+                 //   editbox.removeClass('textEditBox');
                     objectWrap.html(editbox);
 
 

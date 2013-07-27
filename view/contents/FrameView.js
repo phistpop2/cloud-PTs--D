@@ -10,6 +10,7 @@ define(['jquery','underscore','backbone',
 
             render : function()
             {
+                var this_ = this;
                 ObjectView.prototype.render.call(this);
 
                 var model = this.model;
@@ -29,16 +30,24 @@ define(['jquery','underscore','backbone',
                     'margin' : '0px'
                 });
 
-
-                var load = this.model.get('load');
-                if(load)
+                if(this.viewType == 'workspace')
                 {
-                    this_.model.attributes.load=false;
+                    var load = this.model.get('load');
+                    if(load)
+                    {
+                        this_.model.attributes.load=false;
+                    }
+                    else
+                    {
+                        this_.initPosition();
+                    }
                 }
                 else
                 {
-                    this_.initPosition();
+
                 }
+
+
 
                 this.updateView();
 

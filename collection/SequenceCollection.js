@@ -207,7 +207,17 @@ define(['underscore','backbone',
 
                _.each(sequenceIdArray,function(id){
                     var model = this_.getByCid(id);
+                   console.log(model);
                     var properties = this_.copyObject(model.attributes);
+                    var contentIds = new Array();
+                    for(var contentId in model.attributes.contents)
+                    {
+                        contentIds.push(contentId);
+                    }
+
+                   console.log('contentIds',contentIds);
+
+                    properties.contents = contentIds;
                     properties.cid = id;
                     sequenceDatas.push(properties);
                 });
