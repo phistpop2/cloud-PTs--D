@@ -324,7 +324,7 @@ define(
                                    model_.controller.getAbsoluteXY(srcVector,clipData.data.width,clipData.data.height);
                                    var angle = model_.controller.getRotateQuatToCurrentWorld();
                                    var pos = model_.controller.getTranslateBiasToCurrentWorld(srcVector, clipData.data.width,clipData.data.height);
-                                   model_.controller.getCetnerPosition(clipData.data.width,clipData.data.height);
+                                   model_.controller.getCenterPosition(clipData.data.width,clipData.data.height);
 
                                    clipData.data.rotateXBias = angle.x;
                                    clipData.data.rotateYBias = angle.y;
