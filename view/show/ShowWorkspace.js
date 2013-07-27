@@ -156,8 +156,8 @@ define(['jquery','underscore','backbone',
                 var world = $('#showWorkspace').find('#world');
 
 
-                var left = parseFloat((window.innerWidth - slideWidth)/2);
-                var top = parseFloat((window.innerHeight - slideHeight)/2);
+                var left = parseFloat(($('#showWorkspace').width()- slideWidth)/2);
+                var top = parseFloat(($('#showWorkspace').height() - slideHeight)/2);
 
                 matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
 
@@ -337,31 +337,24 @@ define(['jquery','underscore','backbone',
                     newHeight = slideHeight
                 }
 
-                $('#showWorkspace').css({
-                    'width' : newWidth,
-                    'height' : newHeight
-                });
 
-                var scaleW = window.innerWidth / newWidth;//parseInt($(this_.el).css('width'));
-                var scaleH = window.innerHeight / newHeight;//parseInt($(this_.el).css('height'));
-
-
-                console.log('new',newWidth,newHeight);
-                var scale = scaleW;
-
-                if(scaleH < scaleW)  {
-                    scale = scaleH;
+                var scale = window.innerWidth / newWidth;//parseInt($(this_.el).css('width'));
+                var baseScale = 1.35;
+                if( scale > baseScale ){
+                    scale = baseScale;
+                    newWidth = window.innerWidth/1.35;
+                    newHeight = window.innerHeight/1.35
                 }
 
 
                 $('#showWorkspace').css({
+                    'width' : newWidth,
+                    'height' : newHeight,
                     '-webkit-transform' : 'scale('+scale+')',
                     '-webkit-transform-origin' : '0% 0%'
                 });
 
 
-                var workspaceWidth = window.innerWidth*scale;
-                var workspaceHeight = window.innerHeight*scale;
 
                 var cameraModule = this.cameraModule;
 
@@ -369,16 +362,12 @@ define(['jquery','underscore','backbone',
                 var matrix3d = showModel.get('matrix3d');
 
 
-                var left = parseFloat( (workspaceWidth - slideWidth)/2);
-                var top = parseFloat( (workspaceHeight - slideHeight)/2);
-                console.debug( 'WWWWWWWWWWW',window.innerWidth, window.innerHeight, slideWidth, slideHeight );
+                var left = parseFloat( (newWidth-slideWidth)/2);
+                var top = parseFloat( (newHeight-slideHeight)/2);
 
 
 
-                console.log('matrix3d',matrix3d);
                 matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
-                console.log('matrix3d',matrix3d);
-                console.log('left top',left,top);
 
                 var world = $('#showWorkspace').find('#world');
                 world.css({
