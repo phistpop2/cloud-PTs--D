@@ -78,7 +78,9 @@ define(['underscore','backbone',
                     {
                         model = new FrameModel(content);
                     }
-                   model.cid = model.cid;
+
+                   console.log('content.cid',content.cid);
+                   model.cid = content.cid;
 
 
                    model.initController(this_.cameraModule.getCamera());
@@ -103,6 +105,9 @@ define(['underscore','backbone',
                    {
                        this_.contentViews[model.cid] = new ObjectView({model: model,id:'view_'+model.cid, 'cameraModule' : this_.cameraModule, 'world' : world, 'viewType' : 'show'}).render();
                    }
+
+
+
                });
 
 

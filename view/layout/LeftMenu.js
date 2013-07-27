@@ -28,12 +28,11 @@ define(['jquery','underscore','backbone',
 
             eventBind : function()
             {
-
                 $(window).resize(function()
                 {
                     var height = parseInt($('#lmListButtonWrap').css('height'));
                     var sequenceArrayContainerHeight = (height - (parseInt($('#lmSettingButton').css('height'))))-230
-                    $('#sequenceArrayContainer').css('height',sequenceArrayContainerHeight+'px');
+                    $('#sequenceArrayContainerOuter').css('height',sequenceArrayContainerHeight+'px');
                 })
             },
 
@@ -44,7 +43,7 @@ define(['jquery','underscore','backbone',
 
                 var height = parseInt($('#lmListButtonWrap').css('height'));
                 var sequenceArrayContainerHeight = (height - (parseInt($('#lmSettingButton').css('height'))))-230
-                $('#sequenceArrayContainer').css('height',sequenceArrayContainerHeight+'px');
+                $('#sequenceArrayContainerOuter').css('height',sequenceArrayContainerHeight+'px');
 
                 $('#sequenceArrayContainer').multisortable();
 

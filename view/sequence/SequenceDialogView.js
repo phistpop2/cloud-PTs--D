@@ -326,15 +326,16 @@ define(['jquery','underscore','backbone',
                         var contents = this_.model.get('contents');
                         var doContain = true;
 
-                        console.log(contents);
-
-
                         for(var i in contents)
                         {
                             if(i == cid)
                             {
                                 this_.doInactiveContent(cid);
-                                contents = _.without(contents,cid);
+                                console.log('before contents',contents)
+
+                                delete contents[cid];
+
+                                console.log('after contents',contents)
                                 doContain = false;
                                 break;
                             }
@@ -342,17 +343,31 @@ define(['jquery','underscore','backbone',
 
                         if(doContain)
                         {
-                            contents[cid] = this_.model.collection.getContentsCollection().getByCid(cid);
+                            contents[cid] = this_.sequenceCollection.getContentsCollection().getByCid(cid);
                             this_.doActiveContent(cid);
                         }
 
                         this_.model.set('contents',contents);
 
+                            console.log("this_.sequenceCollection.views[cid]",this_.sequenceCollection.views[cid],cid)
+                        this_.sequenceCollection.views[this_.model.cid].refresh();
                     });
 
                     contentsList.append(item);
 
-                    this_.doInactiveContent(contentModel.cid);
+                    var contents = this.model.get('contents');
+
+                    if(contents[contentModel.cid])
+                    {
+                        this_.doActiveContent(contentModel.cid);
+                    }
+                    else
+                    {
+                        this_.doInactiveContent(contentModel.cid);
+                    }
+
+
+
                 }
 
                 $('#previewWorldWrap div[id^="view"]').each(function(){
@@ -374,13 +389,16 @@ define(['jquery','underscore','backbone',
                         var contents = this_.model.get('contents');
                         var doContain = true;
 
-                        for(var i = 0  ; i < contents.length ; i++)
+                        for(var i in contents)
                         {
 
-                            if(contents[i] == cid)
+                            if(i == cid)
                             {
-                                this_.doInactiveContent(cid);
-                                contents.splice(i,1);
+                                console.log('before contents',contents)
+
+                                delete contents[cid];
+
+                                console.log('after contents',contents)
                                 doContain = false;
                                 break;
                             }
@@ -388,8 +406,12 @@ define(['jquery','underscore','backbone',
 
                         if(doContain)
                         {
-                            contents.push(cid);
+                            contents[cid] = this_.model.collection.getContentsCollection().getByCid(cid);
                             this_.doActiveContent(cid);
+                        }
+                        else
+                        {
+                            this_.doInactiveContent(cid);
                         }
 
                         this_.model.set('contents',contents);
