@@ -26,10 +26,9 @@ define(['jquery','underscore','backbone'],
             borderBottomRightRadius : 0,
 
             //etc
-            selected : false
-
-
-
+            selected : false,
+            mainTitle : false,
+            subTitle : false
         },
 
         doCommited : true,

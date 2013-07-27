@@ -46,6 +46,9 @@ define(['jquery','underscore','backbone',
                 this.bindEvents();
                 this.initInsertButtons();
                 this.initTextToolButton();
+
+                //intro
+                //this.insertIntroView();
             },
 
             initTextToolButton : function()
@@ -282,8 +285,6 @@ define(['jquery','underscore','backbone',
 
 
                 this.initImageInsertButton();
-
-
             },
 
             initImageInsertButton : function()

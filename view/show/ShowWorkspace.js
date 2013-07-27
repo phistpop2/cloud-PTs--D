@@ -172,12 +172,6 @@ define(['jquery','underscore','backbone',
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
-
-
-
-                //    this.resize();
-
-
                 }
                 else        //fixed style
                 {
@@ -375,8 +369,9 @@ define(['jquery','underscore','backbone',
                 var matrix3d = showModel.get('matrix3d');
 
 
-                var left = parseFloat((window.innerWidth - slideWidth)/2);
-                var top = parseFloat((window.innerHeight - slideHeight)/2);
+                var left = parseFloat( (parseInt(window.innerWidth) - slideWidth)/2);
+                var top = parseFloat( (parseInt(window.innerHeight) - slideHeight)/2);
+                console.debug( 'WWWWWWWWWWW',window.innerWidth, window.innerHeight, slideWidth, slideHeight );
 
 
 

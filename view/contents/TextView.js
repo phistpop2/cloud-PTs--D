@@ -156,12 +156,37 @@ define(['jquery','underscore','backbone',
                         this.initPosition();
                     }
 
+                    if( this.model.attributes.mainTitle ){
+                        console.debug( 'main!!');
+                        $(this.el).find('.lcWord').each(function(){
+                            $(this).css({
+                                'fontSize' : '80px',
+                                color : '#ffffff'
+                            })
+                        });
+                        $(editbox).css({
+                            'textAlign' : 'center'
+                        });
+                    }else if(this.model.attributes.subTitle){
+                        console.debug( 'sub!!');
+                        $(this.el).find('.lcWord').each(function(){
+                            $(this).css({
+                                'fontSize' : '50px',
+                                color : '#999999'
+                            })
+                        });
+                        $(editbox).css({
+                            'textAlign' : 'center'
+                        });
+                    }
+
 
 
                     editbox.bind('allEventRefresh',function()
                     {
                         var content = $(this_.el).html();
                         this_.model.set('content',content);
+
                     });
 
                 }
