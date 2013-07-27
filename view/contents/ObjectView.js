@@ -40,7 +40,6 @@ define(['jquery','underscore','backbone',
 
                 $(document).keydown(function(e)
                 {
-
                     if (e.keyCode == ctrlKey) ctrlDown = true;
 
                 }).keyup(function(e)
@@ -208,7 +207,6 @@ define(['jquery','underscore','backbone',
                     this.model.controller.setPosition(this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
 
 
-                    console.log('asdv',this.model.get('translateX'),this.model.get('translateY'),this.model.get('translateZ'));
                     matrix3d = this.model.controller.getMatrixQuery();
                     this.model.attributes.matrix3d = matrix3d;
 
@@ -239,8 +237,6 @@ define(['jquery','underscore','backbone',
                     "padding" : '0px',
                     "margin" : '0px'
                 });
-
-                 console.log('matrix3d',matrix3d);
                 this.cssRenderer();
 
 

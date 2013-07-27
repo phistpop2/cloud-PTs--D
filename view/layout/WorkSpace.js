@@ -75,8 +75,12 @@ define(['jquery','underscore','backbone',
                         this_.contentsCollection.setSelected();
                         zooming = true;
                         zoomer.init(prevX, prevY);
+                    }else if(e.shiftKey){
+                        this_.contentsCollection.setSelected();
+                        moveEnable = true;
                     }else{
                         this_.contentsCollection.setSelected();
+                        this_.cameraModule.getCamera().lookFacade();
                         moveEnable = true;
                     }
                 })
@@ -260,7 +264,7 @@ Zoomer = function( _camera ){
     var innerPillar = new Array();
     var camera = _camera;
     var controller = new ObjectController( _camera );
-    var wBias = 200;
+    var wBias = 0;
     var size= 2048;
     var tick = 0;
     var d = new Date();
