@@ -13,6 +13,8 @@ define(['jquery','underscore','backbone',
 
             eventBind : function()
             {
+                var this_ = this;
+
                 ObjectView.prototype.eventBind.call(this);
 
                 $(this.el).find(".textEditBox").keydown(function(e){
@@ -39,6 +41,12 @@ define(['jquery','underscore','backbone',
                             e.stopPropagation();
                         }
 
+                }).click(function(){
+                        $(this).attr('contenteditable',true);
+
+                }).focusout(function(){
+                        $(this).attr('contenteditable',false);
+
                 }).mousemove(function(e){
                         var contenteditable = $(this).attr('contenteditable');
 
@@ -48,6 +56,35 @@ define(['jquery','underscore','backbone',
                         }
                 })
 
+
+
+                $(this.el).find(".textEditBox").bind('paste',function(e)
+                {
+                    e = e.originalEvent;
+                    var pastedText = undefined;
+                    if (e.clipboardData && e.clipboardData.getData) {
+                        pastedText = e.clipboardData.getData('text/plain');
+                    }
+
+
+
+                    var targetEl = null;
+
+                    if(window.getSelection())
+                    {
+                        targetEl = window.getSelection().anchorNode.parentElement
+                    }
+
+                    if(targetEl)
+                    {
+                        $(targetEl).append(pastedText);
+                        ($(this_.el).find(".textEditBox")).trigger('refresh');
+                    }
+
+                    console.log("pastedText",pastedText);
+
+                    return false;
+                });
             },
 
             render : function()
@@ -66,11 +103,33 @@ define(['jquery','underscore','backbone',
                 if(this.viewType == 'workspace')
                 {
                     var copyData = this.model.get('copyData');
+                    var load = this.model.get('load');
 
-                    if(copyData)
+                    if(load)
+                    {
+                        editbox = $("<div class='textEditBox' >");
+                        objectWrap.append(editbox);
+                        this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
+                        editbox.html(this_.model.get('content'));
+                        objectWrap.html(editbox);
+
+                          console.log('objectWrap',objectWrap.html());
+
+                        this.eventBind();
+                        this.model.attributes.load = false;
+                    }
+                    else if(copyData)
                     {
                         editbox = $(copyData);
                         $(this.el).find('.objectWrap').html(editbox);
+
+
+                        this.eventBind();
+
+                        var content = $(this.el).find('.objectWrap').html();
+                        this.model.attributes.content = content;
+
+                        this.initPosition();
                     }
                     else
                     {
@@ -87,6 +146,13 @@ define(['jquery','underscore','backbone',
                                 'fontSize' : '40px'
                             })
                         });
+
+                        this.eventBind();
+
+                        var content = $(this.el).find('.objectWrap').html();
+                        this.model.attributes.content = content;
+
+                        this.initPosition();
                     }
 
 
@@ -97,12 +163,6 @@ define(['jquery','underscore','backbone',
                         this_.model.set('content',content);
                     });
 
-                    this.eventBind();
-
-                    var content = $(this.el).find('.objectWrap').html();
-                    this.model.attributes.content = content;
-
-                    this.initPosition();
                 }
                 else
                 {
@@ -122,6 +182,23 @@ define(['jquery','underscore','backbone',
                 this.updateView();
 
                 return this;
+            },
+
+            setCaretPosition :function(ctrl, pos)
+            {
+
+                if(ctrl.setSelectionRange)
+                {
+                    ctrl.focus();
+                    ctrl.setSelectionRange(pos,pos);
+                }
+                else if (ctrl.createTextRange) {
+                    var range = ctrl.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
             }
 
 

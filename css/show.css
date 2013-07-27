@@ -125,3 +125,11 @@ html, body {
 
 
 
+#showUrlWrap{
+    bottom:0;
+    right : 0;
+    margin-right : 6px;
+    margin-top : 6px;
+    position: absolute;
+
+}

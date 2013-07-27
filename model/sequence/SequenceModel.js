@@ -28,9 +28,9 @@ define(['jquery','underscore','backbone'],
         initialize : function()
         {
             _.bindAll(this);
-            if(!this.get('models'))
+            if(!this.get('contents'))
             {
-                this.set('models',new Array());
+                this.set('contents',new Array());
             }
 
         },

@@ -66,12 +66,6 @@ define(['jquery','underscore','backbone',
 
             },
 
-            moveCenterPosition : function()
-            {
-
-            },
-
-
             objectSelect : function(e)
             {
 

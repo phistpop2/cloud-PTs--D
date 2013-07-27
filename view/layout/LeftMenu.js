@@ -99,7 +99,8 @@ define(['jquery','underscore','backbone',
 
             saveCurrentWork : function(e)
             {
-                var saveDatas = this.collection.extractCurrentWorkToJSON();
+                var saveDatas = this.sequenceCollection.extractCollectionToJson();
+                console.log("saveDatas",saveDatas);
                 this.session.saveToGoogleDrive(saveDatas);
             },
 
@@ -151,14 +152,15 @@ define(['jquery','underscore','backbone',
                     'failure' : function(err){console.log(err)}
                 });
 
-
             },
 
 
 
             popupStartDialog : function(data)
             {
+
                 var presentationUrl = data.shortUrl;
+                localStorage.setItem('presentationUrl',presentationUrl);
                 var shortUrl = data.shortUrl;
                 var this_ = this;
 
@@ -190,7 +192,8 @@ define(['jquery','underscore','backbone',
             startPresentation : function(data)
             {
                 var presentationUrl = data.shortUrl;
-                console.log(presentationUrl);
+                localStorage.setItem('presentationUrl',presentationUrl);
+                console.log("presentationUrl",presentationUrl);
 
                 window.open(presentationUrl);
             },

@@ -27,7 +27,6 @@ define(['underscore','backbone',
             views : [],
             model_indexes: [],
 
-
             selected : null,
 
             history : [],         //undo stack
@@ -72,6 +71,14 @@ define(['underscore','backbone',
 
                 });
 
+            },
+
+            extractCurrentWorkToJSON : function(){
+                var saveDatas = '';
+
+
+
+                return saveDatas;
             },
 
             removeFunc : function(model)
@@ -201,7 +208,7 @@ define(['underscore','backbone',
                _.each(sequenceIdArray,function(id){
                     var model = this_.getByCid(id);
                     var properties = this_.copyObject(model.attributes);
-
+                    properties.cid = id;
                     sequenceDatas.push(properties);
                 });
 
@@ -216,7 +223,7 @@ define(['underscore','backbone',
 
                 results.sequenceDatas = sequenceDatas;
                 results.contentDatas = contentDatas;
-               console.log(results);
+                console.log(results);
                 return results;
            },
 

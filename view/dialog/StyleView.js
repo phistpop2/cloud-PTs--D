@@ -24,6 +24,9 @@ define(['jquery','underscore','backbone',
 
             contentsCollection : null,
 
+            limitWidth : null,
+            limitHeight : null,
+
             initialize : function(){
                 _.bindAll(this);
                 this.contentsCollection = this.options.contentsCollection;
@@ -37,6 +40,13 @@ define(['jquery','underscore','backbone',
             eventBind : function()
             {
                 var this_ = this;
+
+                $(window).bind('resize',function(){
+
+                    this_.limitWidth = $("#workSpace").width()-($("#styleDialog .dialog_content").width()+10);
+                    this_.limitHeight= $("#workSpace").height()-($("#styleDialog .dialog_content").height()-$("#styleDialog .dialog_content").height()/3*2);
+                });
+
                 this.contentsCollection.bind('selected',function()
                 {
                     if(this_.isOpen())
@@ -89,8 +99,33 @@ define(['jquery','underscore','backbone',
             render : function()
             {
                 var this_ = this;
+                this.limitWidth = $("#workSpace").width()-($("#styleDialog .dialog_content").width()+10);
+                this.limitHeight= $("#workSpace").height()-($("#styleDialog .dialog_content").height()-$("#styleDialog .dialog_content").height()/3*2);
 
-                $('#styleDialog').draggable();
+                $('#styleDialog').draggable({
+                    drag: function(event, ui) {
+                        var newTop = ui.position.top;
+                        var newLeft = ui.position.left;
+
+
+
+                        if(this_.limitWidth < newLeft)
+                        {
+                            newLeft = this_.limitWidth;
+                        }
+                        if(this_.limitHeight < newTop)
+                        {
+                            newTop = this_.limitHeight;
+                            return false;
+
+                        }
+
+
+
+                        ui.position.top = newTop;
+                        ui.position.left = newLeft;
+                    }
+                });
 
                 $("#style_selector").change(function() {
                     var styleValue = $(this).val();
@@ -307,9 +342,12 @@ define(['jquery','underscore','backbone',
                     var slider = $(this);
 
 
+                    console.log('value',input.val());
+
                     $(this).slider({
                         'max' : max,
                         'min' : min,
+                        'value' : input.val(),
                         slide : function(e,ui)
                         {
                             var val = ui.value;
@@ -317,14 +355,16 @@ define(['jquery','underscore','backbone',
                             var event = $.Event('change');
                             event.value = val;
                             input.trigger(event);
-
                         }
                     });
+
+
+
 
                     $(input).bind('change',function(e){
                         var val = $(this).val();
 
-                        if(e)
+                        if(e.value)
                         {
                             val = e.value;
                         }
@@ -343,6 +383,7 @@ define(['jquery','underscore','backbone',
                         {
                             val = max;
                         }
+
 
                         $(this).val(val);
                         slider.slider("option","value",val);
