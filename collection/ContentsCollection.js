@@ -37,7 +37,7 @@ define(['underscore','backbone',
 
            eventBind : function()
            {
-               var this_ = this;
+                var this_ = this;
                 this.bind('changeSelect',function(){
 
                     for(var i in this_.models)
@@ -61,9 +61,21 @@ define(['underscore','backbone',
                             model.set('selected',true);
                         }
                     }
-
-
                 });
+
+               this.bind('modify',function(data){
+
+                   var selectedObjects = this_.selectorController.getSelectedObjects();
+                   for(var i in selectedObjects)
+                   {
+                       var selectedObject = selectedObjects[i];
+                       if(selectedObject.type == 'content' && data.caster != selectedObject.data )
+                       {
+                           var model = this_.getByCid(selectedObject.data);
+                           model.controller.receiveRemoteControl( data );
+                       }
+                   }
+               });
 
            },
 
@@ -79,8 +91,8 @@ define(['underscore','backbone',
                this.cameraModule = cameraModule_;
            },
 
-           addSelected : function(model)
-           {
+            addSelected : function(model)
+            {
 
                var selectedObject = {
                    'type' : 'content',
@@ -110,8 +122,10 @@ define(['underscore','backbone',
                }
 
                this.trigger('selected');
-           },
-
+            },
+            notifyModify : function(data){
+                this.selectorController.broadcastModify(data);
+            },
             isSelectedModel : function(model)
             {
                 var selected = false;
