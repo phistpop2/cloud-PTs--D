@@ -282,10 +282,23 @@ define(['jquery','underscore','backbone',
                 });
 
 
+                var load = this.model.get('load');
+
                 this.updateView();
                 this.eventBind();
 
-                this.objectCapture();
+                if(load)
+                {
+                    this.model.attributes.laod = false;
+                    this.refresh();
+
+
+                }
+                else
+                {
+                    this.objectCapture();
+                }
+
 
                 return this;
             },
