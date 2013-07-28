@@ -1,12 +1,12 @@
 define(['jquery','underscore','backbone',
-        'view/sequence/SequenceDialogView',
-        'view/contents/ObjectView',
-        'view/contents/TextView',
-        'view/contents/ImageView',
-        'view/contents/VideoView',
-        'view/contents/FrameView',
-        'view/contents/FrameView',
-        'ObjectController'],
+    'view/sequence/SequenceDialogView',
+    'view/contents/ObjectView',
+    'view/contents/TextView',
+    'view/contents/ImageView',
+    'view/contents/VideoView',
+    'view/contents/FrameView',
+    'view/contents/FrameView',
+    'ObjectController'],
     function($,_,Backbone,
              SequenceDialogView,
              ObjectView,TextView,ImageView,VideoView,FrameView){
@@ -49,17 +49,17 @@ define(['jquery','underscore','backbone',
 
                 }).mousedown(function(e){
 
-                    if( !e.ctrlKey ){
-                        var qo = this_.model.get('quaternion');
-                        var zo = this_.model.get('zoom');
-                        this_.cameraModule.getCamera().lookFacade( quaternion( qo.x, qo.y, qo.z, qo.w) );
-                        this_.cameraModule.getCamera().zoomFacade( vector3( zo.x, zo.y, zo.z) );
+                        if( !e.ctrlKey ){
+                            var qo = this_.model.get('quaternion');
+                            var zo = this_.model.get('zoom');
+                            this_.cameraModule.getCamera().lookFacade( quaternion( qo.x, qo.y, qo.z, qo.w) );
+                            this_.cameraModule.getCamera().zoomFacade( vector3( zo.x, zo.y, zo.z) );
 
-                        //flush multi selected model
-                        this_.sequenceCollection.setSelected( this_.model );
-                    }
+                            //flush multi selected model
+                            this_.sequenceCollection.setSelected( this_.model );
+                        }
 
-                });
+                    });
 
 
                 this.contentsCollection.bind('remove',function(model){
@@ -156,11 +156,11 @@ define(['jquery','underscore','backbone',
                         this.views[model.cid] = new TextView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
 
                         this.views[model.cid].model.bind('change',function(model,key){
-                           console.log('key',key);
-                           if(key.changes['content'])
-                           {
-                               this_.views[model.cid].contentRefresh();
-                           }
+                            console.log('key',key);
+                            if(key.changes['content'])
+                            {
+                                this_.views[model.cid].contentRefresh();
+                            }
                         });
                     }
                     else if(model.get('type') == 'image')
@@ -189,19 +189,8 @@ define(['jquery','underscore','backbone',
                 this.li = $("<li id = " +this.model.cid+ "></li>");
                 var indexView = $("<div class='number_view'>"+index+"</div>");
 
-                this.li.css({
 
-                    padding: '0px',
-                    margin: '2px',
-                    background : 'rgba(255,255,255,0.1)',
-                    webkitBorderRadius : '3px'
-                })
-                indexView.css({
 
-                    top : '0px',
-                    left : '0px',
-                    color: '#ffffff'
-                });
 
 
                 this.li.append( indexView );
@@ -212,7 +201,7 @@ define(['jquery','underscore','backbone',
 
 
                 $('#sequenceArrayContainer').append(this.li);
-                $(this.li).css('height','150px');
+                // $(this.li).css('height','135px');
 
                 var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
 
@@ -220,10 +209,9 @@ define(['jquery','underscore','backbone',
 
                 this.refresh();
 
-                var wrapWidth = 200;
-                var wrapHeight = 150;
+                var wrapWidth = 174;
+                var wrapHeight = 130;
 
-                console.log('wrapSize',wrapWidth,wrapHeight);
 
                 var contentWidth = parseFloat(this.model.get('width'));
                 var contentHeight = parseFloat(this.model.get('height'));
@@ -232,7 +220,6 @@ define(['jquery','underscore','backbone',
                 var wrapAspect = wrapWidth / wrapHeight;
                 var newHeight = 0, newWidth = 0;
 
-                console.log('aspacet',contentAspect,wrapAspect);
 
 
 
@@ -258,13 +245,29 @@ define(['jquery','underscore','backbone',
                     scale = scaleH;
                 }
 
-
+                this.li.css({
+                    width : 200-6,
+                    height : 134,
+                    padding: '0px',
+                    marginLeft: '2px',
+                    marginBottom : 2,
+                    background : 'rgba(255,255,255,0.1)',
+                    webkitBorderRadius : '3px'
+                })
+                indexView.css({
+                    top : '0px',
+                    left : '0px',
+                    paddingTop : 6,
+                    paddingLeft : 3,
+                    color: '#ffffff'
+                });
                 $(this.el).css({
                     'position' : 'relative',
                     'padding' : '0px',
                     'width' : newWidth,
                     'height' : newHeight,
-                    'top' : '-16px',
+                    'top' : -18,
+                    'left' : 18,
                     '-webkit-transform-origin' : '0% 0%',
                     '-webkit-transform': 'scale('+scale+')'
                 });
@@ -274,7 +277,6 @@ define(['jquery','underscore','backbone',
                 var left = parseFloat((contentWidth - newWidth )/2);
                 var top = parseFloat((contentHeight - newHeight)/2);
 
-                console.debug( 'left top', left, top)
 
                 matrix3d = this.cameraModule.getCamera().getRevisedMatrixQuery(left,-top,matrix3d);
 
@@ -351,8 +353,8 @@ define(['jquery','underscore','backbone',
 
 
 
-    });
+        });
 
         return sequenceView;
 
-});
+    });
