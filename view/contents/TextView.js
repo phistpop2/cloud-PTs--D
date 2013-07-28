@@ -46,6 +46,7 @@ define(['jquery','underscore','backbone',
                         $(this).attr('contenteditable',true);
 
                 }).focusout(function(){
+                        ($(this_.el).find(".textEditBox")).trigger('refresh');
                         $(this).attr('contenteditable',false);
 
                 }).mousemove(function(e){
@@ -69,7 +70,60 @@ define(['jquery','underscore','backbone',
                 });
 
 
+                $(this.el).find(".textEditBox").bind('paste',function(e)
+                {
+                    e = e.originalEvent;
+                    var pastedText = undefined;
+                    if (e.clipboardData && e.clipboardData.getData) {
+                        pastedText = e.clipboardData.getData('text/plain');
+                    }
 
+
+
+                    var targetEl = null;
+                    var targetOffset = 0;
+
+                    if(window.getSelection())
+                    {
+                        console.log(window.getSelection());
+                        if( (window.getSelection().anchorNode))
+                        {
+                            if($(window.getSelection().anchorNode).hasClass('textEditBox'))
+                            {
+                                targetEl = window.getSelection().anchorNode;
+                            }
+                            else if($(window.getSelection().anchorNode.parentNode).hasClass('lcWord'))
+                            {
+
+                                targetEl = window.getSelection().anchorNode.parentNode;
+                            }
+
+                        }
+                    }
+
+                    if(targetEl)
+                    {
+                        if($(targetEl).hasClass('lcWord') && ($(targetEl).next().length>0))
+                        {
+                            $(targetEl).next().prepend(pastedText);
+                        }
+                        else if($(targetEl).hasClass('lcWord'))
+                        {
+                            $(targetEl).parent().append(pastedText);
+
+                        }
+                        else
+                        {
+                            console.log('herle');
+                            $(targetEl).prepend(pastedText);
+                        }
+
+
+                    }
+                    ($(this_.el).find(".textEditBox")).trigger('refresh');
+
+                    return false;
+                });
             },
 
             contentRefresh : function()
