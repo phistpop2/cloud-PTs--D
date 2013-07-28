@@ -175,7 +175,6 @@ define(['jquery','underscore','backbone',
                     }
                 }
             },
-
             render : function()
             {
                 var index = this.sequenceCollection .length;
@@ -187,19 +186,8 @@ define(['jquery','underscore','backbone',
                 this.li = $("<li id = " +this.model.cid+ "></li>");
                 var indexView = $("<div class='number_view'>"+index+"</div>");
 
-                this.li.css({
 
-                    padding: '0px',
-                    margin: '2px',
-                    background : 'rgba(255,255,255,0.1)',
-                    webkitBorderRadius : '3px'
-                })
-                indexView.css({
 
-                    top : '0px',
-                    left : '0px',
-                    color: '#ffffff'
-                });
 
 
                 this.li.append( indexView );
@@ -210,15 +198,17 @@ define(['jquery','underscore','backbone',
 
 
                 $('#sequenceArrayContainer').append(this.li);
-                $(this.li).css('height','150px');
+                // $(this.li).css('height','135px');
 
                 var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
 
 
-                var wrapWidth = 200;
-                var wrapHeight = 150;
 
-                console.log('wrapSize',wrapWidth,wrapHeight);
+                this.refresh();
+
+                var wrapWidth = 174;
+                var wrapHeight = 130;
+
 
                 var contentWidth = parseFloat(this.model.get('width'));
                 var contentHeight = parseFloat(this.model.get('height'));
@@ -227,7 +217,6 @@ define(['jquery','underscore','backbone',
                 var wrapAspect = wrapWidth / wrapHeight;
                 var newHeight = 0, newWidth = 0;
 
-                console.log('aspacet',contentAspect,wrapAspect);
 
 
 
@@ -253,13 +242,29 @@ define(['jquery','underscore','backbone',
                     scale = scaleH;
                 }
 
-
+                this.li.css({
+                    width : 200-6,
+                    height : 134,
+                    padding: '0px',
+                    marginLeft: '2px',
+                    marginBottom : 2,
+                    background : 'rgba(255,255,255,0.1)',
+                    webkitBorderRadius : '3px'
+                })
+                indexView.css({
+                    top : '0px',
+                    left : '0px',
+                    paddingTop : 6,
+                    paddingLeft : 3,
+                    color: '#ffffff'
+                });
                 $(this.el).css({
                     'position' : 'relative',
                     'padding' : '0px',
                     'width' : newWidth,
                     'height' : newHeight,
-                    'top' : '-16px',
+                    'top' : -18,
+                    'left' : 18,
                     '-webkit-transform-origin' : '0% 0%',
                     '-webkit-transform': 'scale('+scale+')'
                 });
@@ -269,7 +274,6 @@ define(['jquery','underscore','backbone',
                 var left = parseFloat((contentWidth - newWidth )/2);
                 var top = parseFloat((contentHeight - newHeight)/2);
 
-                console.debug( 'left top', left, top)
 
                 matrix3d = this.cameraModule.getCamera().getRevisedMatrixQuery(left,-top,matrix3d);
 
@@ -278,29 +282,13 @@ define(['jquery','underscore','backbone',
                 });
 
 
-
-                var load = this.model.get('load');
-
                 this.updateView();
                 this.eventBind();
 
-                if(load)
-                {
-                    this.model.attributes.load = false;
-                    this.refresh();
-                    console.log('refresh',this.model.get('contents'));
-                }
-                else
-                {
-                    this.objectCapture();
-
-                }
-
-
+                this.objectCapture();
 
                 return this;
             },
-
 
             updateView : function()
             {
