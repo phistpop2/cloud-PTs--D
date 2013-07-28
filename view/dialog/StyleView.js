@@ -413,9 +413,15 @@ define(['jquery','underscore','backbone',
                     var shadowColorVal = $('#shadowColor').val();
 
                     var textShadow = horizontalLengthVal+"px "+verticalLengthVal+"px "+blurRadiusVal+"px "+shadowColorVal;
-                    var text = selectRange[0];
+                    var text = window.getSelectMergeRange();
 
-                    var textShadows = $(text).css('textShadow').replace('none','');
+                    var textShadows = '';
+
+                    if(text && $(text).css('textShadow'))
+                    {
+                        textShadows = $(text).css('textShadow').replace('none','');
+                    }
+
 
                     textShadows+=(', '+textShadow);
 
@@ -425,7 +431,7 @@ define(['jquery','underscore','backbone',
                     }
 
                     console.log('textShadows : '+textShadows);
-                    $(selectRange).css('textShadow',textShadows);
+                    $(text).css('textShadow',textShadows);
 
 
                     this_.refreshTextStyleList(textShadows,$('#textShadowList'),selectRange,'textShadow');

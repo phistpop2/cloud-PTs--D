@@ -997,7 +997,7 @@ ControlBox = function( target, tt ){
             bias = 0;
         }
 
-        console.log('bias',bias);
+
         width = parseInt( target.get( 'width' )+bias );
         height = parseInt( target.get( 'height' )+bias );
 

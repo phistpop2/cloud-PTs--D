@@ -451,8 +451,6 @@ define(
         getSelectRange : function(){
             var sel = window.getSelection();
 
-
-
             var startWordNode = sel.anchorNode.parentNode;
             var startWordIdx = $(startWordNode).index();
             var startSentenceNode = startWordNode.parentNode;
@@ -534,29 +532,48 @@ define(
             return selectedSentence;
         },
 
+        upperToTextEditBox : function(el)
+        {
+            if($(el).hasClass('textEditBox'))
+            {
+                return el;
+            }
+            else
+            {
+                return this.upperToTextEditBox($(el).parent());
+            }
+        },
+
         getSelectMergeRange : function()
         {
-            var rawSelectRange = window.getSelectRange();
-            var mergeRange = [];
-
-            if(rawSelectRange)
+            var targetElement = new Array();
+            if(window.getSelection())
             {
-                _.each(rawSelectRange,function(c){
+                var range = window.getSelection().getRangeAt(0);
+                var startNode = range.startContainer.parentNode;
+                var endNode = range.endContainer.parentNode;
 
-                    if(Object.prototype.toString.call( c ) === '[object Object]'){
-                        for(var i = 0 ; i < c.length ; i++)
-                        {
-                            mergeRange.push(c[i]);
-                        }
-                    }
-                    else{
 
-                        mergeRange.push(c)
+                if(($(startNode).hasClass('lcWord')&&$(endNode).hasClass('lcWord')))
+                {
+                    var box =  this.upperToTextEditBox(startNode);
+
+                    var startIdx =$($(box).find('.lcWord')).index(startNode)-1;
+                    var endIdx = $($(box).find('.lcWord')).index(endNode)-startIdx;
+                    var lcWords = $($(box).find('.lcWord:gt('+startIdx+'):lt('+endIdx+')'));
+
+                    _.each(lcWords,function(lcWord){
+                    if(($(lcWord)[0].firstChild) && $(lcWord)[0].firstChild.nodeName=='#text')
+                    {
+                        targetElement.push(lcWord);
                     }
                 });
+                }
             }
 
-            return mergeRange;
+            console.log('targetElement',targetElement);
+            return targetElement;
+
         },
 
         selectRangeBackwards : function(range) {
