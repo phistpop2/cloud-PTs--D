@@ -428,14 +428,8 @@ define(
                     {
                         var selection = window.getSelection().getRangeAt(0) ;
 
-                        var className = selection.commonAncestorContainer.className;
-
-                        if((className=='clSentence')||
-                            (className=='textEditBox'))
-                        {
-                            window.selection = selection.cloneRange();
-                            window.selection.view =  selection.commonAncestorContainer;
-                        }
+                        window.selection = selection.cloneRange();
+                        window.selection.view =  selection.commonAncestorContainer;
                     }
                     else
                     {

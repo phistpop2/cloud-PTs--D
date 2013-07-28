@@ -887,11 +887,14 @@ define(['jquery','underscore','backbone',
 
                 this.unActiveMenuSelection();
 
-                $('#TopToolBar > *').bind('mousedown',this_.saveSelection);
+                $('#TopToolBar > *').bind('mousedown',function(){
+                    this_.saveSelection();
+
+                });
 
                 $('#TopToolBar > *').bind('mouseup',function(e){
                     this_.restoreSelection();
-
+//                    e.stopPropagation();
                 });
 
                 $('#TopToolBar input').each(function(){
