@@ -416,6 +416,8 @@ define(
 
             var selectedObject = this.contentsCollection.getSelectedLastObject();
 
+            console.log('selectedObject',selectedObject);
+
             if(selectedObject)
             {
                 if(selectedObject.get('type')=='text')
@@ -429,7 +431,7 @@ define(
                         if((className=='clSentence')||
                             (className=='textEditBox'))
                         {
-                            window.selection = selection;
+                            window.selection = window.getSelectMergeRange() ;
                             window.selection.view =  selection.commonAncestorContainer;
                         }
                     }
@@ -544,29 +546,68 @@ define(
             }
         },
 
+
         getSelectMergeRange : function()
         {
             var targetElement = new Array();
             if(window.getSelection())
             {
                 var range = window.getSelection().getRangeAt(0);
+
+                if(range.startOffset == range.endOffset)
+                {
+                    return false;
+                }
+
                 var startNode = range.startContainer.parentNode;
                 var endNode = range.endContainer.parentNode;
+
 
 
                 if(($(startNode).hasClass('lcWord')&&$(endNode).hasClass('lcWord')))
                 {
                     var box =  this.upperToTextEditBox(startNode);
 
-                    var startIdx =$($(box).find('.lcWord')).index(startNode)-1;
-                    var endIdx = $($(box).find('.lcWord')).index(endNode)-startIdx;
-                    var lcWords = $($(box).find('.lcWord:gt('+startIdx+'):lt('+endIdx+')'));
+                    var startIdx =$($(box).find('.lcWord')).index(startNode);
+                    var endIdx = $($(box).find('.lcWord')).index(endNode);
+
+                    if(startIdx > endIdx)
+                    {
+                        var tmp = startIdx;
+                        startIdx = endIdx;
+                        endIdx = tmp;
+                    }
+
+
+
+
+                    endIdx-=startIdx;
+
+
+
+
+                    var lcWords = $(box).find('.lcWord:eq('+startIdx+')');
+                    console.log(lcWords);
+                    if(lcWords)
+                    {
+                        lcWords=lcWords.add($(box).find('.lcWord:gt('+startIdx+'):lt('+endIdx+')'));
+
+                    }
+                    else
+                    {
+                        lcWords = $(box).find('.lcWord:gt('+startIdx+'):lt('+endIdx+')');
+
+                    }
+                    console.log(lcWords);
+
+
 
                     _.each(lcWords,function(lcWord){
                     if(($(lcWord)[0].firstChild) && $(lcWord)[0].firstChild.nodeName=='#text')
                     {
                         targetElement.push(lcWord);
                     }
+
                 });
                 }
             }
