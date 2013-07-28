@@ -168,7 +168,7 @@ define(['jquery','underscore','backbone',
                         editbox.html(this_.model.get('content'));
                         objectWrap.html(editbox);
 
-                          console.log('objectWrap',objectWrap.html());
+
 
                         this.eventBind();
                         this.model.attributes.load = false;

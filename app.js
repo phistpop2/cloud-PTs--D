@@ -117,7 +117,7 @@ define(
 
         setupWork : function(event)
         {
-            var workData = JSON.parse(event.workData);
+
 
             this.cameraModule = new CameraModule({viewPort : $('#workSpace')});
             this.selectorController = new SelectController();
@@ -141,6 +141,7 @@ define(
                window.selection = null;
             });
 
+            var workData = JSON.parse(event.workData);
             this.workDataSetup(workData);
 
         },
@@ -647,6 +648,17 @@ define(
         {
             var contentDatas = workData.contentDatas;
             var sequenceDatas = workData.sequenceDatas;
+
+            if(!contentDatas)
+            {
+                contentDatas = {};
+            }
+            if(!sequenceDatas)
+            {
+                sequenceDatas = {};
+            }
+
+
             var fresh = true;
 
             for(var i in contentDatas)
@@ -675,16 +687,16 @@ define(
                 this.contentsCollection.add(model);
                 fresh = false;
             }
-            for(var i in sequenceDatas)
+            for(var i=0 ; i< sequenceDatas.length ; i++)
             {
                 var sequenceData = sequenceDatas[i];
 
                 console.log('sequenceData',sequenceData);
 
                 var contents = new Array();
-                for(var i = 0 ; i < sequenceData,contents.length ; i++)
+                for(var j = 0 ; j < sequenceData.contents.length ; j++)
                 {
-                    contents.push(sequenceData,contents[i]);
+                    contents.push(sequenceData.contents[j]);
                 }
 
                 sequenceData.contents =contents;
@@ -692,8 +704,10 @@ define(
                 console.log('sequenceData_',sequenceData);
 
                 var model = new SequenceModel(sequenceData)
-
+                model.cid = sequenceData.cid;
+                model.set('load',true);
                 console.log('sequcenModel',model);
+
                 this.sequenceCollection.add(model);
                 fresh = false;
             }

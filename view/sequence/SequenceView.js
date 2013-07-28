@@ -70,11 +70,11 @@ define(['jquery','underscore','backbone',
                         console.log('this_.views',this_.views,model.cid);
 
                         var contentsArray = this_.model.get('contents');
-                        for(var i in contentsArray)
+                        for(var i =0 ; i < contentsArray.length ; i ++)
                         {
-                            if(i == model.cid)
+                            if(contentsArray[i] == model.cid)
                             {
-                                delete contentsArray[i];
+                                contentsArray.splice(i,1);
                                 console.log('contentsArray',contentsArray);
                             }
                         }
@@ -112,11 +112,9 @@ define(['jquery','underscore','backbone',
                     if(model.isCurrentScreen())
                     {
                         console.log('currentScreen',model)
-                        contents[model.cid]=model;
+                        contents.push(model.cid);
                     }
                 }
-
-
 
                 this.model.set('contents',contents);
 
@@ -141,10 +139,10 @@ define(['jquery','underscore','backbone',
 
                 var contents = this.model.get('contents');
 
-                for(var i in contents)
+                for(var i=0 ; i < contents.length ; i++)
                 {
-
-                    var model = this.contentsCollection.getByCid(i);
+                    var cid = contents[i];
+                    var model = this.contentsCollection.getByCid(cid);
 
                     if(!model)
                     {
@@ -217,9 +215,6 @@ define(['jquery','underscore','backbone',
                 var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
 
 
-
-                this.refresh();
-
                 var wrapWidth = 200;
                 var wrapHeight = 150;
 
@@ -283,10 +278,25 @@ define(['jquery','underscore','backbone',
                 });
 
 
+
+                var load = this.model.get('load');
+
                 this.updateView();
                 this.eventBind();
 
-                this.objectCapture();
+                if(load)
+                {
+                    this.model.attributes.load = false;
+                    this.refresh();
+                    console.log('refresh',this.model.get('contents'));
+                }
+                else
+                {
+                    this.objectCapture();
+
+                }
+
+
 
                 return this;
             },

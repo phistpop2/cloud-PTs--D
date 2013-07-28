@@ -326,14 +326,14 @@ define(['jquery','underscore','backbone',
                         var contents = this_.model.get('contents');
                         var doContain = true;
 
-                        for(var i in contents)
+                        for(var i = 0; i < contents.length ; i++)
                         {
-                            if(i == cid)
+                            if(contents[i] == cid)
                             {
                                 this_.doInactiveContent(cid);
                                 console.log('before contents',contents)
 
-                                delete contents[cid];
+                                contents.splice(i,1);
 
                                 console.log('after contents',contents)
                                 doContain = false;
@@ -343,7 +343,7 @@ define(['jquery','underscore','backbone',
 
                         if(doContain)
                         {
-                            contents[cid] = this_.sequenceCollection.getContentsCollection().getByCid(cid);
+                            contents.push(cid)
                             this_.doActiveContent(cid);
                         }
 
@@ -389,14 +389,14 @@ define(['jquery','underscore','backbone',
                         var contents = this_.model.get('contents');
                         var doContain = true;
 
-                        for(var i in contents)
+                        for(var i=0 ; i<  contents.length ; i++)
                         {
 
-                            if(i == cid)
+                            if(contents[i] == cid)
                             {
                                 console.log('before contents',contents)
 
-                                delete contents[cid];
+                                contents.splice(i,1);
 
                                 console.log('after contents',contents)
                                 doContain = false;
@@ -406,7 +406,7 @@ define(['jquery','underscore','backbone',
 
                         if(doContain)
                         {
-                            contents[cid] = this_.model.collection.getContentsCollection().getByCid(cid);
+                            contents.push(cid);
                             this_.doActiveContent(cid);
                         }
                         else

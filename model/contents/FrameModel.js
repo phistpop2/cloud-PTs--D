@@ -11,10 +11,6 @@ define(['jquery','underscore','backbone',
 
           }
 
-
-
-
-
     });
 
     return frameModel;

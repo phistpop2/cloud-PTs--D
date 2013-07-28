@@ -202,24 +202,29 @@ define(['underscore','backbone',
 
                 _.each(sequenceViewEls, function(sequenceView){
                    var id = $(sequenceView).data('id');
+
                     sequenceIdArray.push(id);
                 });
 
                _.each(sequenceIdArray,function(id){
                     var model = this_.getByCid(id);
-                   console.log(model);
+                    var contents = model.attributes.contents;
                     var properties = this_.copyObject(model.attributes);
                     var contentIds = new Array();
-                    for(var contentId in model.attributes.contents)
+
+                   console.log('sequnce view '+id+" : ", model);
+
+                    for(var i = 0 ; i < contents.length ; i++)
                     {
-                        contentIds.push(contentId);
+
+                        contentIds.push(contents[i]);
                     }
 
-                   console.log('contentIds',contentIds);
 
                     properties.contents = contentIds;
                     properties.cid = id;
                     sequenceDatas.push(properties);
+                    console.log('sequenceData',properties);
                 });
 
                 var contentModels = this.contentsCollection.models;

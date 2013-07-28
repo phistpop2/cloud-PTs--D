@@ -221,9 +221,11 @@ define(['jquery','underscore','backbone',
 
                         if(borderStyle && borderStyle!='none')
                         {
+
                             this.controlBox.refresh(borderWidth*2);
                         }
                         else
+
                         {
                             this.controlBox.refresh();
                         }
@@ -997,9 +999,8 @@ ControlBox = function( target, tt ){
             bias = 0;
         }
 
-
-        width = parseInt( target.get( 'width' )+bias );
-        height = parseInt( target.get( 'height' )+bias );
+        width = parseInt( target.get( 'width' ))+bias;
+        height = parseInt( target.get( 'height' ))+bias;
 
 
 
@@ -1072,6 +1073,7 @@ ControlBox = function( target, tt ){
             width : width+gap*2
         });
 
+
         moveSouthBar.getButton().css({
             top : height+gap*2+line/2-moveButtonRange/2,
             width : width+gap*2
@@ -1084,7 +1086,7 @@ ControlBox = function( target, tt ){
             height : height+gap*2+line/2
         });
 
-
+        console.log( moveEastBar.getButton().css('width'),width);
         rotationX.refresh( width, height );
         /*
          context.beginPath();
