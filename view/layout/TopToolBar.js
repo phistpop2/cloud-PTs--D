@@ -889,7 +889,10 @@ define(['jquery','underscore','backbone',
 
                 $('#TopToolBar > *').bind('mousedown',this_.saveSelection);
 
-                $('#TopToolBar > *').bind('mouseup',this_.restoreSelection);
+                $('#TopToolBar > *').bind('mouseup',function(e){
+                    this_.restoreSelection();
+
+                });
 
                 $('#TopToolBar input').each(function(){
 

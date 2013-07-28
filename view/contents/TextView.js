@@ -154,7 +154,7 @@ define(['jquery','underscore','backbone',
 
                         this.initPosition();
                     }
-
+                    editbox.focus();
 
 
                     editbox.bind('allEventRefresh',function()

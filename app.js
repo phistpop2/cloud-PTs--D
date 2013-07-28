@@ -136,6 +136,10 @@ define(
             window.getSelectMergeRange = this.getSelectMergeRange;
             window.selectRangeBackwards = this.selectRangeBackwards;
             window.saveSelectRange = this.saveSelectRange;;
+            this.selectorController.addCollection('app',this);
+            this.bind('changeSelect',function(){
+               window.selection = null;
+            });
 
             this.workDataSetup(workData);
 
@@ -412,8 +416,6 @@ define(
 
         saveSelectRange : function()
         {
-
-
             var selectedObject = this.contentsCollection.getSelectedLastObject();
 
             console.log('selectedObject',selectedObject);
@@ -431,13 +433,24 @@ define(
                         if((className=='clSentence')||
                             (className=='textEditBox'))
                         {
-                            window.selection = window.getSelectMergeRange() ;
+                            window.selection = selection.cloneRange();
                             window.selection.view =  selection.commonAncestorContainer;
                         }
                     }
                     else
                     {
-                        window.selection = null;
+                        var range = document.createRange();
+                        var startNode = $('#view_'+selectedObject.cid+' .textEditBox').find('.lcWord:first-child');
+                        var endNode = $('#view_'+selectedObject.cid+' .textEditBox').find('.lcWord:last-child');
+
+                        range.setStart(startNode[0],0);
+                        range.setEnd(endNode[0],endNode.text().length);
+
+                        window.selection = range;
+
+                        window.selection.view =  range.commonAncestorContainer;
+
+
                     }
                 }
                 else
@@ -623,17 +636,16 @@ define(
             if ( savedRange != null ) {
                 if (window.getSelection)
                 {
-                    var selectionView = window.selection.view;
-                    console.log('selectionView',selectionView);
-                    $(selectionView).focus();
+//                    var selectionView = window.selection.view;
+//                    $(selectionView).focus();
                     var s = window.getSelection();
-                    if (s.rangeCount > 0)
-                        s.removeAllRanges();
+                    s.removeAllRanges();
                     s.addRange(savedRange);
+                    console.log('savedRange',savedRange);
+
                 }
             }
 
-            console.log('selectRangeBackwards');
 
         },
 
