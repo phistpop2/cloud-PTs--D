@@ -100,6 +100,13 @@ define(['jquery','underscore','backbone'],
                 this.collection.remove(this);
             }
         },
+        notifyModify : function(data){
+            if(this.collection)
+            {
+                this.collection.notifyModify(data);
+            }
+
+        },
 
         commitToCollection : function(key,value)
         {

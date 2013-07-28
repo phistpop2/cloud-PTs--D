@@ -77,7 +77,7 @@ define(['jquery','underscore','backbone',
                         zooming = true;
                         zoomer.init(prevX, prevY);
                     }else if(e.shiftKey){
-
+                        moveEnable = true;
                     }else{
                         this_.contentsCollection.setSelected();
                         moveEnable = true;
@@ -87,7 +87,7 @@ define(['jquery','underscore','backbone',
 
 
                 $('#workSpace').bind('mousemove',function(e){
-                    if(moveEnable || e.shiftKey )
+                    if(moveEnable)
                     {
                         var currX = e.clientX;
                         var currY = e.clientY;

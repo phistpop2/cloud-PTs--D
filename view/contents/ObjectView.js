@@ -15,6 +15,12 @@ define(['jquery','underscore','backbone',
                 this.disableControl =  this.options.disableControl;
                 this.world = this.options.world;
 
+                //...
+                this.prevX = 0;
+                this.prevY = 0;
+                this.moving = 0;
+                this.shifting = false;
+
                 if(this.options.viewType)
                 {
                     this.viewType = this.options.viewType;
@@ -23,7 +29,8 @@ define(['jquery','underscore','backbone',
 
             events : {
                 "mousedown" : "objectSelect",
-                "mouseup" : "saveSelectRange"
+                "mouseup" : "saveSelectRange",
+                "mousemove" : "objectMove"
             },
 
             eventBind : function()
@@ -70,23 +77,33 @@ define(['jquery','underscore','backbone',
                 if(e.ctrlKey)
                 {
                     this.model.addSelectedToCollection(this.model);
+                    e.stopPropagation();
                 }else if(e.shiftKey){
-                    this.model.controller.lookFacade();
-                    this.model.controller.zoomFacade(parseInt(this.model.get('width')),parseInt(this.model.get('height')));
+                    this.shifting = true;
                 }
                 else
                 {
                     this.model.setSelected();
+                    e.stopPropagation();
                 }
-
-
-                e.stopPropagation();
-
             },
-
-            saveSelectRange : function()
+            objectMove : function(e)
+            {
+                if( this.moving < 1 ){
+                    this.moving++;
+                    e.stopPropagation();
+                }else{
+                    this.shifting = false;
+                }
+            },
+            saveSelectRange : function(e)
             {
                 window.saveSelectRange();
+                if( this.shifting ){
+                    this.model.controller.lookFacade();
+                    this.model.controller.zoomFacade(parseInt(this.model.get('width')),parseInt(this.model.get('height')));
+                    this.shifting = false;
+                }
             },
 
             render : function()
@@ -100,7 +117,7 @@ define(['jquery','underscore','backbone',
                     this.eventBind();
 //                    this.initPosition();
 
-                    this.controlBox = ControlBox( this.model, $(this.el) );
+                    this.controlBox = this.model.controller.genControlBox( this.model );
                     $(this.el).append( this.controlBox.getBox() );
                     this.cameraModule.getCamera().shot();
 
@@ -229,14 +246,7 @@ define(['jquery','underscore','backbone',
                         {
                             this.controlBox.refresh();
                         }
-
                     }
-
-
-
-
-
-
                 }
                 else
                 {
@@ -272,7 +282,7 @@ define(['jquery','underscore','backbone',
     });
 
 
-ControlBox = function( target, tt ){
+ControlBox = function( target ){
     var box = $("<div id='control_box'></div>");
     //var context = box[0].getContext("2d");
 
@@ -307,6 +317,7 @@ ControlBox = function( target, tt ){
     var currAngle = vector3(0,0,0);
 
 
+
     function setJob( _job, x,y ){
         job = _job;
         prevX = x;
@@ -329,12 +340,22 @@ ControlBox = function( target, tt ){
 
 
 
-        console.debug( 'job', job)
+        console.debug( 'job', job, prevX, prevY)
         if( job > 3 ){
             originQuatern = target.controller.lookFacade();
             originVector = target.controller.getParent().getLocation().clone();
             target.controller.zoomResizeFacade( width, height, x, y, gap, job-4, transTime );
         }
+        var values = new Array();
+        var modify = {
+            'caster' : target.cid,
+            'job': job,
+            'setting' : true,
+            'value' : values
+        };
+        values.push( prevX );
+        values.push( prevY );
+        target.notifyModify( modify );
         /*
          switch( _job ){
          case JOB['RESIZE_N']:
@@ -364,15 +385,445 @@ ControlBox = function( target, tt ){
          }                 */
 
     }
-    function length( x0, y0, x1, y1){
-        x0 = parseInt( x0 );
-        y0 = parseInt( y0 );
-        x1 = parseInt( x1 );
-        y1 = parseInt( y1 );
-        console.debug( x0, y0, x1, y1 );
-        return Math.sqrt( (x1-x0)*(x1-x0)+(y1-y0)*(y1-y0))
+    function remoteSettingJob( data ){
+        job = data.job;
+        prevX = data.value[0];
+        prevY = data.value[1];
+        srcX = data.value[0];
+        srcY = data.value[1];
+        moveEnable = false;
+        originWidth = width;
+        originHeight = height;
+        originPos = target.controller.getLocation().clone();
+        originRotationX = target.get('rotateX');
+        originRotationY = target.get('rotateY');
+        originAspect = width/height;
+        currRotationX = originRotationX;
+        currRotationY = originRotationY;
+        currAngle = target.controller.getAngle().clone();
+
+        xReverse = false;
+        yReverse = false;
+    }
+    function remoteResize( data ){
+        var currX = data.value[0];
+        var currY = data.value[1];
+        var pos3d = vector3(0,0,0);
+        var currW = originWidth;
+        var currH = originHeight;
+        var newX = currX;
+        var newY = currY;
+        console.debug( 'remoteResize', data );
+
+
+
+        switch( job ){
+            case 4: //resize n
+                if( originHeight + srcY-currY >= 0  ){
+                    reverseX( false );
+                    pos3d = target.controller.getResizePosition(originPos, 0,currY-srcY );
+                    newX = srcX;
+                    newY = currY;
+                }else{
+                    reverseX( true );
+                    pos3d = target.controller.getResizePosition(originPos, 0,originHeight );
+                    newX = srcX;
+                    newY = srcY+originHeight;
+                }
+                currH = Math.abs(originHeight + srcY-currY);
+                break;
+            case 5: //resize s
+                if( originHeight + currY-srcY >= 0  ){
+                    reverseX( false );
+                    pos3d = target.controller.getResizePosition(originPos, 0,0 );
+                    newX = srcX;
+                    newY = currY;
+                }else{
+                    reverseX( true );
+                    pos3d = target.controller.getResizePosition(originPos, 0, originHeight+currY-srcY );
+                    newX = srcX;
+                    newY = srcY-originHeight;
+                }
+                break;
+            case 6: //resize w
+                if( originWidth + srcX - currX >= 0  ){
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, currX-srcX,0 );
+                    newX = currX;
+                    newY = srcY;
+                }else{
+                    reverseY( true );
+                    pos3d = target.controller.getResizePosition(originPos, originWidth,0 );
+                    newX = srcX+originWidth;
+                    newY = srcY;
+                }
+                break;
+            case 7: //resize e
+                if( originWidth + currX - srcX >= 0  ){
+                    reverseY( false );
+                    //pos3d = target.controller.getResizePosition(originPos, 0,0 );
+                    newX = currX;
+                    newY = srcY;
+                }else{
+                    reverseY( true );
+                    //pos3d = target.controller.getResizePosition(originPos, originWidth+currX-srcX,0 );
+                    newX = srcX-originWidth;
+                    newY = srcY;
+                }
+                currW = Math.abs(originWidth + currX - srcX)
+                break;
+            case 8: //resize nw
+                var newW = Math.abs(originWidth + srcX-currX);
+                var newH = Math.abs(originHeight + srcY-currY);
+                var newX = currX;
+                var newY = currY;
+
+                if( originHeight + srcY-currY >= 0 && originWidth + srcX - currX >= 0  ){
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            var tempW = newH*originAspect;
+                            newX = newX - (tempW-newW);
+                            newW = tempW;
+                        }else{
+                            var tempH = newW/originAspect;
+                            newY = newY - (tempH-newH);
+                            newH = tempH;
+                        }
+                    }
+                    reverseX( false );
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, originWidth-newW, originHeight-newH );
+                }else if(originWidth + srcX - currX >= 0){
+                    newX = currX;
+                    newY = srcY+originHeight;
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            var tempW = newH*originAspect;
+                            newX = newX - (tempW-newW);
+                            newW = tempW;
+                        }else{
+
+                            newH = newW/originAspect;
+                        }
+                    }
+                    reverseX( true );
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, originWidth-newW,originHeight );
+                }else if(originHeight + srcY-currY >= 0){
+                    newX = srcX+originWidth;
+                    newY = currY;
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            newW = newH*originAspect;
+                        }else{
+
+                            var tempH = newW/originAspect;
+                            newY = newY - (tempH-newH);
+                            newH = tempH;
+                        }
+                    }
+                    reverseX(false);
+                    reverseY(true);
+                    pos3d = target.controller.getResizePosition(originPos, originWidth, originHeight-newH );
+                }else{
+                    newX = srcX+originWidth;
+                    newY = srcY+originHeight;
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            newW = newH*originAspect;
+                        }else{
+                            newH = newW/originAspect;
+                        }
+                    }
+                    reverseX( true );
+                    reverseY( true );
+                    pos3d = target.controller.getResizePosition(originPos, originWidth,originHeight );
+                }
+                currW = newW;
+                currH = newH;
+                break;
+            case 9: //resize ne
+                if(originHeight + srcY-currY >= 0 && originWidth + currX - srcX >= 0){
+                    newW = originWidth + currX-srcX;
+                    newH = originHeight + srcY-currY;
+                    newX = currX;
+                    newY = currY;
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            var tempW = newH*originAspect;
+                            newX = newX + (tempW-newW);
+                            newW = tempW;
+                        }else{
+
+                            var tempH = newW/originAspect;
+                            newY = newY - (tempH-newH);
+                            newH = tempH;
+                        }
+                    }
+                    reverseX( false );
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, 0,originHeight-newH );
+                }else if(originWidth + currX - srcX >= 0){
+                    newW = originWidth + currX-srcX;
+                    newH = Math.abs(originHeight + srcY-currY);
+                    newX = currX;
+                    newY = srcY+originHeight;
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            var tempW = newH*originAspect;
+                            newX = newX + (tempW-newW);
+                            newW = tempW;
+                        }else{
+                            newH = newW/originAspect;
+                        }
+                    }
+                    reverseX( true );
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, 0,originHeight );
+                }else if(originHeight + srcY-currY >= 0){
+                    newW = Math.abs(originWidth + currX - srcX);
+                    newH = originHeight + srcY-currY;
+                    newX = srcX-originWidth;
+                    newY = currY;
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            newW = newH*originAspect;
+                        }else{
+                            var tempH = newW/originAspect;
+                            newY = newY - (tempH-newH);
+                            newH = tempH;
+                        }
+                    }
+
+                    reverseX( false );
+                    reverseY( true );
+                    pos3d = target.controller.getResizePosition(originPos, -newW, originHeight-newH  );
+                }else{
+                    newW = Math.abs(originWidth + currX - srcX);
+                    newH = Math.abs(originHeight + srcY-currY);
+                    newX = srcX-originWidth;
+                    newY = srcY+originHeight;
+
+
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            newW = newH*originAspect;
+                        }else{
+                            newH = newW/originAspect;
+                        }
+                    }
+                    reverseX( true );
+                    reverseY( true );
+                    pos3d = target.controller.getResizePosition(originPos, -newW, originHeight );
+                }
+                currW = newW;
+                currH = newH;
+                break;
+            case 10: //resize sw
+                if(originHeight + currY-srcY >= 0 && originWidth + srcX - currX >= 0){
+                    newW = originWidth + srcX - currX;
+                    newH = originHeight + currY-srcY;
+                    newX = currX;
+                    newY = currY;
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            var tempW = newH*originAspect;
+                            newX = newX - (tempW-newW);
+                            newW = tempW;
+                        }else{
+
+                            var tempH = newW/originAspect;
+                            newY = newY + (tempH-newH);
+                            newH = tempH;
+                        }
+                    }
+                    reverseX( false );
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, originWidth-newW, 0 );
+
+                }else if(originWidth + srcX - currX >= 0){
+                    newW = originWidth + srcX - currX;
+                    newH = Math.abs(originHeight + currY-srcY);
+                    newX = currX;
+                    newY = srcY-originHeight;
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            var tempW = newH*originAspect;
+                            newX = newX - (tempW-newW);
+                            newW = tempW;
+                        }else{
+                            newH = newW/originAspect;
+                        }
+                    }
+                    reverseX( true );
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, originWidth-newW, -newH);
+                }else if(originHeight + currY-srcY >= 0){
+                    newW = Math.abs(originWidth + srcX - currX);
+                    newH = originHeight + currY-srcY;
+                    newX = srcX+originWidth;
+                    newY = currY;
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            newW = newH*originAspect;
+                        }else{
+                            var tempH = newW/originAspect;
+                            newY = newY + (tempH-newH);
+                            newH = tempH;
+                        }
+                    }
+                    reverseX( false );
+                    reverseY( true );
+                    pos3d = target.controller.getResizePosition(originPos, originWidth,0 );
+                }else{
+                    newW = Math.abs(originWidth + srcX-currX);
+                    newH = Math.abs(originHeight + currY-srcY);
+                    newX = srcX+originWidth;
+                    newY = srcY-originHeight;
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            newW = newH*originAspect;
+                        }else{
+                            newH = newW/originAspect;
+                        }
+                    }
+                    reverseX( true );
+                    reverseY( true );
+                    var pos3d = target.controller.getResizePosition(originPos, originWidth, -newH);
+                }
+                currW = newW;
+                currH = newH;
+                break;
+            case 11: //resize se
+                if( originHeight + currY-srcY >= 0 && originWidth + currX - srcX >= 0 ){
+                    newW =  originWidth + currX - srcX;
+                    newH = originHeight + currY-srcY;
+                    newX = currX;
+                    newY = currY;
+
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            var tempW = newH*originAspect;
+                            newX = newX + (tempW-newW);
+                            newW = tempW;
+                        }else{
+
+                            var tempH = newW/originAspect;
+                            newY = newY + (tempH-newH);
+                            newH = tempH;
+                        }
+                    }
+                    reverseX( false );
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, 0,0 );
+                }else if( originWidth + currX - srcX >= 0 ){
+                    newW =  originWidth + currX - srcX;
+                    newH = Math.abs(originHeight + currY-srcY);
+                    newX = currX;
+                    newY = srcY-originHeight;
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            var tempW = newH*originAspect;
+                            newX = newX + (tempW-newW);
+                            newW = tempW;
+                        }else{
+                            newH = newW/originAspect;
+                        }
+                    }
+                    reverseX( true );
+                    reverseY( false );
+                    pos3d = target.controller.getResizePosition(originPos, 0, -newH );
+                }else if( originHeight + currY-srcY >= 0 ){
+                    newW = Math.abs(originWidth + currX - srcX);
+                    newH =  originHeight + currY-srcY;
+                    newX =  srcX-originWidth;
+                    newY = currY;
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            newW = newH*originAspect;
+                        }else{
+                            var tempH = newW/originAspect;
+                            newY = newY + (tempH-newH);
+                            newH = tempH;
+                        }
+                    }
+                    reverseX( false );
+                    reverseY( true );
+                    pos3d = target.controller.getResizePosition(originPos, -newW,0 );
+                }else{
+                    newW = Math.abs(originWidth + currX - srcX);
+                    newH = Math.abs(originHeight + currY-srcY);
+                    newX =  srcX-originWidth;
+                    newY = srcY-originHeight;
+
+                    if( data.shiftKey ){
+                        var aspect = newW/newH;
+                        if( originAspect > aspect ){
+                            newW = newH*originAspect;
+                        }else{
+                            newH = newW/originAspect;
+                        }
+                    }
+                    reverseX( true );
+                    reverseY( true );
+                    var pos3d = target.controller.getResizePosition(originPos, -newW, -newH );
+                }
+                currW = newW;
+                currH = newH;
+                break;
+        }
+
+
+        target.set({
+            'translateX':pos3d.getX(),
+            'translateY':pos3d.getY(),
+            'translateZ':pos3d.getZ(),
+            width : currW,
+            height : currH
+        });
+
+        prevX = currX;
+        prevY = currY;
 
     }
+
 
     var options = {
         target : target,
@@ -385,13 +836,16 @@ ControlBox = function( target, tt ){
 
     $('#workSpace').bind('mousemove',function(e){
 
-        if(moveEnable && target.isSelected())
+        if( moveEnable && target.isSelected())
         {
+
             var currX = e.clientX;
             var currY = e.clientY;
 
             var scalar1 = currX-prevX;
             var scalar2 = currY-prevY;
+
+
             if( job > JOB['ROTATE_Z'] ){
                 var pos3d = vector3(0,0,0);
                 var currW = originWidth;
@@ -399,10 +853,14 @@ ControlBox = function( target, tt ){
                 var newX = currX;
                 var newY = currY;
             }
-
+            var values = new Array();
+            var modify = {
+                'caster' : target.cid,
+                'job': job,
+                'value' : values
+            };
             switch( job ){
                 case 0:   //move
-                    console.debug( 'move')
                     if( e.shiftKey )
                         break;
                     var pos3d = target.controller.getPosition(scalar1,scalar2);
@@ -412,7 +870,8 @@ ControlBox = function( target, tt ){
                             'translateY':pos3d.getY(),
                             'translateZ':pos3d.getZ()}
                     );
-
+                    values.push( scalar1 );
+                    values.push( scalar2 );
                     break;
                 case 1: //rotateX
                     var rot3d = target.controller.rotateX(prevY-currY);
@@ -421,6 +880,7 @@ ControlBox = function( target, tt ){
                         'rotateY':rot3d.getY(),
                         'rotateZ':rot3d.getZ()
                     });
+                    values.push( prevY - currY );
                     break;
                 case 2: //rotateY
                     var rot3d = target.controller.rotateY(prevX-currX);
@@ -429,6 +889,7 @@ ControlBox = function( target, tt ){
                         'rotateY':rot3d.getY(),
                         'rotateZ':rot3d.getZ()
                     });
+                    values.push( prevX - currX );
                     break;
                 case 3: //rotateZ
                     var rot3d = target.controller.rotateZ(-(prevX-currX+prevY-currY)/2);
@@ -437,6 +898,7 @@ ControlBox = function( target, tt ){
                         'rotateY':rot3d.getY(),
                         'rotateZ':rot3d.getZ()
                     });
+                    values.push( -(prevX-currX+prevY-currY)/2 );
                     break;
                 case 4: //resize n
                     if( originHeight + srcY-currY >= 0  ){
@@ -845,11 +1307,18 @@ ControlBox = function( target, tt ){
                     height : currH
                 });
                 target.controller.zoomResizeFacade( currW, currH, newX, newY, gap, job-4 );
+
+                values.push( currX );
+                values.push( currY );
+                target.notifyModify( modify );
+            }else{
+                target.notifyModify( modify );
             }
             prevX = currX;
             prevY = currY;
         }
     }).bind('mouseup',function(e){
+            console.debug( 'mouse up', target.cid)
 
             if( target.isSelected() )
             {
@@ -861,7 +1330,7 @@ ControlBox = function( target, tt ){
                     'translateY': target.get('translateY'),
                     'translateZ': target.get('translateZ')
                 });
-                if( job > 3  ){
+                if( job > 3 && moveEnable ){
                     target.controller.zoomOut( originQuatern, originVector );
                 }
             }
@@ -1018,7 +1487,6 @@ ControlBox = function( target, tt ){
          context.rect( 0,0,width,height);
          context.strokeStyle = "#ff0000";
          context.stroke();
-
          */
 
         box[0].width = width + gap*3;
@@ -1114,6 +1582,51 @@ ControlBox = function( target, tt ){
         },
         refresh : function(bias){
             refresh(bias);
+        },
+        remoteModify : function( data ){
+            console.debug( 'remote', data )
+            if( data.setting ){
+                remoteSettingJob( data );
+                return;
+            }
+            switch( data.job ){
+                case 0:   //move
+                    var pos3d = target.controller.getPosition(data.value[0], data.value[1]);
+                    target.set({
+                            'translateX':pos3d.getX(),
+                            'translateY':pos3d.getY(),
+                            'translateZ':pos3d.getZ()}
+                    );
+                    break;
+                case 1: //rotateX
+                    var rot3d = target.controller.rotateX(data.value[0]);
+                    target.set({
+                        'rotateX':rot3d.getX(),
+                        'rotateY':rot3d.getY(),
+                        'rotateZ':rot3d.getZ()
+                    });
+                    break;
+                case 2: //rotateY
+                    var rot3d = target.controller.rotateY(data.value[0]);
+                    target.set({
+                        'rotateX':rot3d.getX(),
+                        'rotateY':rot3d.getY(),
+                        'rotateZ':rot3d.getZ()
+                    });
+                    break;
+                case 3: //rotateZ
+                    var rot3d = target.controller.rotateZ(data.value[0]);
+                    target.set({
+                        'rotateX':rot3d.getX(),
+                        'rotateY':rot3d.getY(),
+                        'rotateZ':rot3d.getZ()
+                    });
+                    break;
+                default:
+                    remoteResize( data );
+                    break;
+            }
+
         }
     };
 }
@@ -1137,6 +1650,7 @@ ResizeButtonRectangle = function( options, size, position ){
             })
             button.bind('mousedown',function(e){
                 options.setJob(JOB['RESIZE_N'], e.clientX, e.clientY );
+                e.stopPropagation();
             });
             break;
         case 1: //south
@@ -1145,6 +1659,7 @@ ResizeButtonRectangle = function( options, size, position ){
             })
             button.bind('mousedown',function(e){
                 options.setJob(JOB['RESIZE_S'], e.clientX, e.clientY );
+                e.stopPropagation();
             });
             break;
         case 2: //west
@@ -1153,6 +1668,7 @@ ResizeButtonRectangle = function( options, size, position ){
             })
             button.bind('mousedown',function(e){
                 options.setJob(JOB['RESIZE_W'], e.clientX, e.clientY );
+                e.stopPropagation();
             });
             break;
         case 3: //east
@@ -1160,7 +1676,9 @@ ResizeButtonRectangle = function( options, size, position ){
                 cursor : 'e-resize'
             })
             button.bind('mousedown',function(e){
+                console.debug( 'mousedown e')
                 options.setJob(JOB['RESIZE_E'], e.clientX, e.clientY );
+                e.stopPropagation();
             });
             break;
         default:
@@ -1255,6 +1773,7 @@ ResizeButtonCircle = function( options, size, position ){
 
     button.bind('mousedown',function(e){
         options.setJob(JOB['ROTATE_Z'], e.clientX, e.clientY );
+        e.stopPropagation();
     });
 
 
@@ -1315,6 +1834,7 @@ MoveButton = function(options, horizontal){
 
     button.bind('mousedown',function(e){
         options.setJob( JOB['MOVE'], e.clientX, e.clientY );
+        e.stopPropagation();
     });
 
 
@@ -1329,12 +1849,6 @@ MoveButton = function(options, horizontal){
 }
 RotationButton = function(options){
     var button = $("<div class='rotationButton'></div>");
-
-    var axisYNorth = $("<div class='rotationButton'></div>");
-    var axisYSouth = $("<div class='rotationButton'></div>");
-    var axisXWest = $("<div class='rotationButton'></div>");
-    var axisXEast = $("<div class='rotationButton'></div>");
-
     var length = 20;
     var slice = 10;
     var gap = options.gap;
@@ -1430,6 +1944,7 @@ Cylinder = function(options, axis, facets, length ){
             }else{
                 options.setJob(JOB['ROTATE_Y'], e.clientX, e.clientY );
             }
+            e.stopPropagation();
         });
     }
 
@@ -1487,6 +2002,6 @@ Cylinder = function(options, axis, facets, length ){
     };
 }
 
-var JOB = {'MOVE':0, 'ROTATE_X':1, 'ROTATE_Y':2, 'ROTATE_Z':3
+var JOB = {'SETTING': -1,'MOVE':0, 'ROTATE_X':1, 'ROTATE_Y':2, 'ROTATE_Z':3
     ,'RESIZE_N':4, 'RESIZE_S':5, 'RESIZE_W':6, 'RESIZE_E':7
     ,'RESIZE_NW':8, 'RESIZE_NE':9, 'RESIZE_SW':10, 'RESIZE_SE':11}

@@ -237,23 +237,7 @@ define(['jquery','underscore','backbone',
 
                 var world = $('#workSpace #world').clone();
 
-                console.log('world',world);
                 previewWorldWrap.html(world);
-
-                var scale = 1.0;
-
-                var slideWidth = parseFloat(this.model.get('width'));
-                var slideHeight = parseFloat(this.model.get('height'));
-
-                var scaleW = parseFloat(width/slideWidth);
-                var scaleH = parseFloat(height/slideHeight);
-
-                scale = scaleW;
-
-                if(scaleH < scaleW)
-                {
-                    scale = scaleH;
-                }
 
 
                 var color = this.model.get('slideBackgroundColor');
@@ -267,20 +251,51 @@ define(['jquery','underscore','backbone',
 
                 var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%)';
 
-                console.log('scale',scale);
-
-                $(world).css({
-                    '-webkit-transform': 'scale('+scale+') matrix3d('+this.model.get('matrix3d')+')'
-
-                });
 
 
+                var slideWidth = parseFloat(this.model.get('width'));
+                var slideHeight = parseFloat(this.model.get('height'));
+
+                var originAspect = slideWidth/slideHeight;
+                var currentAspect = width / height;
+                var newHeight = 0, newWidth = 0;
+
+                if(originAspect > currentAspect)
+                {
+                    newWidth = slideWidth;
+                    newHeight = slideWidth/currentAspect;
+                }
+                else
+                {
+                    newWidth = slideHeight*currentAspect;
+                    newHeight = slideHeight
+                }
+
+                var scale = width / newWidth;//parseInt($(this_.el).css('width'));
                 $(previewWorldWrap).css({
                     'padding' : '0px',
+                    'width' : newWidth,
+                    'height' : newHeight,
+                    '-webkit-transform' : 'scale('+scale+')',
                     '-webkit-transform-origin' : '0% 0%',
-
                     'background':  background
                 });
+                var matrix3d = this.model.get('matrix3d')
+
+
+                var left = parseFloat( (newWidth-slideWidth)/2);
+                var top = parseFloat( (newHeight-slideHeight)/2);
+
+                matrix3d = this.getRevisedMatrixQuery(left,top,matrix3d);
+
+
+
+                $(world).css({
+                    '-webkit-transform': 'matrix3d('+matrix3d+')'
+                });
+
+
+
 
 
                 $(world).find('.textEditBox').each(function(){
@@ -483,6 +498,23 @@ define(['jquery','underscore','backbone',
                     g: parseInt(result[2], 16),
                     b: parseInt(result[3], 16)
                 } : null;
+            },
+            getRevisedMatrixQuery : function( left, top, mq ){
+                var mqParams = mq.split(',');
+
+
+                mqParams[12]=parseFloat(mqParams[12])+left;
+                mqParams[13]=parseFloat(mqParams[13])+top;
+
+
+                var query = '';
+                for( var i = 0; i < mqParams.length; i++){
+                    query  = query + mqParams[i] + ',';
+                }
+
+                query = query.slice(0,query.length-1)
+
+                return query;
             }
 
 

@@ -73,6 +73,13 @@ define(['jquery','underscore','backbone',
                 console.log('selectedObejcts',this.selectedObjects)
                 this.broadcastSelectChange();
             },
+            broadcastModify : function( data ){
+                for(var i in this.listeners)
+                {
+                    var listener = this.listeners[i];
+                    listener.trigger('modify', data);
+                }
+            },
 
             broadcastSelectChange : function()
             {
