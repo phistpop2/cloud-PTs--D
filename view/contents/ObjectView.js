@@ -235,16 +235,13 @@ define(['jquery','underscore','backbone',
 
                         var borderWidth = parseInt(this.model.get('borderWidth'));
                         var borderStyle = this.model.get('borderStyle');
-
                         if(borderStyle && borderStyle!='none')
                         {
-
-                            this.controlBox.refresh(borderWidth*2);
+                            this.controlBox.enable( borderWidth*2 );
                         }
                         else
-
                         {
-                            this.controlBox.refresh();
+                            this.controlBox.enable();
                         }
                     }
                 }
@@ -285,6 +282,7 @@ define(['jquery','underscore','backbone',
 ControlBox = function( target ){
     var box = $("<div id='control_box'></div>");
     //var context = box[0].getContext("2d");
+    var enable = false;
 
     var width = 0;
     var height = 0;
@@ -297,7 +295,7 @@ ControlBox = function( target ){
 
     var job = 0;
     var prevX, prevY;
-    var srcX, srcY;
+    var srcX, srcY, srcZ;
     var srcTop;
     var originDistance = 0;
     var moveEnable = false;
@@ -318,12 +316,13 @@ ControlBox = function( target ){
 
 
 
-    function setJob( _job, x,y ){
+    function setJob( _job, x,y,z ){
         job = _job;
         prevX = x;
         prevY = y;
         srcX = x;
         srcY = y;
+        srcZ = z;
         moveEnable = true;
         originWidth = width;
         originHeight = height;
@@ -821,6 +820,9 @@ ControlBox = function( target ){
 
         prevX = currX;
         prevY = currY;
+        width = currW;
+        height = currH;
+        resize();
 
     }
 
@@ -842,8 +844,8 @@ ControlBox = function( target ){
             var currX = e.clientX;
             var currY = e.clientY;
 
-            var scalar1 = currX-prevX;
-            var scalar2 = currY-prevY;
+            var scalarX = currX-prevX;
+            var scalarY = currY-prevY;
 
 
             if( job > JOB['ROTATE_Z'] ){
@@ -863,18 +865,18 @@ ControlBox = function( target ){
                 case 0:   //move
                     if( e.shiftKey )
                         break;
-                    var pos3d = target.controller.getPosition(scalar1,scalar2);
+                    var pos3d = target.controller.getPosition(scalarX,scalarY);
 
                     target.set({
                             'translateX':pos3d.getX(),
                             'translateY':pos3d.getY(),
                             'translateZ':pos3d.getZ()}
                     );
-                    values.push( scalar1 );
-                    values.push( scalar2 );
+                    values.push( scalarX );
+                    values.push( scalarY );
                     break;
                 case 1: //rotateX
-                    var rot3d = target.controller.rotateX(prevY-currY);
+                    var rot3d = target.controller.rotateX(currY-prevY);
                     target.set({
                         'rotateX':rot3d.getX(),
                         'rotateY':rot3d.getY(),
@@ -883,7 +885,7 @@ ControlBox = function( target ){
                     values.push( prevY - currY );
                     break;
                 case 2: //rotateY
-                    var rot3d = target.controller.rotateY(prevX-currX);
+                    var rot3d = target.controller.rotateY(currX-prevX);
                     target.set({
                         'rotateX':rot3d.getX(),
                         'rotateY':rot3d.getY(),
@@ -892,13 +894,14 @@ ControlBox = function( target ){
                     values.push( prevX - currX );
                     break;
                 case 3: //rotateZ
-                    var rot3d = target.controller.rotateZ(-(prevX-currX+prevY-currY)/2);
+                    var dz = (scalarX+scalarY)/2;
+                    var rot3d = target.controller.rotateZ( dz );
                     target.set({
                         'rotateX':rot3d.getX(),
                         'rotateY':rot3d.getY(),
                         'rotateZ':rot3d.getZ()
                     });
-                    values.push( -(prevX-currX+prevY-currY)/2 );
+                    values.push( dz );
                     break;
                 case 4: //resize n
                     if( originHeight + srcY-currY >= 0  ){
@@ -1311,6 +1314,9 @@ ControlBox = function( target ){
                 values.push( currX );
                 values.push( currY );
                 target.notifyModify( modify );
+                width = currW;
+                height = currH;
+                resize();
             }else{
                 target.notifyModify( modify );
             }
@@ -1331,8 +1337,12 @@ ControlBox = function( target ){
                     'translateZ': target.get('translateZ')
                 });
                 if( job > 3 && moveEnable ){
+
                     target.controller.zoomOut( originQuatern, originVector );
                 }
+                zAxis.css({
+                    visibility: 'hidden'
+                })
             }
             moveEnable = false;
             job = 0;
@@ -1340,7 +1350,6 @@ ControlBox = function( target ){
 
     function reverseX( curr ){
         if( curr != xReverse ){
-        console.debug( 'reverseX')
             xReverse = curr;
             currAngle = target.controller.rotateX( 180 );
             target.set({
@@ -1352,7 +1361,6 @@ ControlBox = function( target ){
     }
     function reverseY( curr ){
         if( curr != yReverse ){
-        console.debug( 'reverseY')
             yReverse = curr;
             currAngle = target.controller.rotateY( 180 );
             target.set({
@@ -1395,16 +1403,35 @@ ControlBox = function( target ){
         top : - (line+moveButtonRange)/2+lineWidth
     });
 
+
+    //zAxis
+
+    var zAxis  = $("<div id='z_axis'></div>");
+
+    box.append( zAxis );
+    zAxis.css({
+        width : 100,
+        height : 3,
+        position : 'absolute',
+        background : 'rgba(255, 0, 0, 0.5)',
+        visibility : 'hidden',
+        webkitTransform : 'translateX(-50px) rotateY(90deg)'
+    });
+
+
+
+
+
     //scale button;
     var resizeNorth = ResizeButtonRectangle( options, buttonSize, 0 );
     var resizeSouth = ResizeButtonRectangle( options, buttonSize, 1 );
     var resizeWest = ResizeButtonRectangle( options, buttonSize, 2 );
     var resizeEast = ResizeButtonRectangle( options, buttonSize, 3 );
 
-    var resizeNW = ResizeButtonCircle( options, buttonSize2, 0 );
-    var resizeNE = ResizeButtonCircle( options, buttonSize2, 1 );
-    var resizeSW = ResizeButtonCircle( options, buttonSize2, 2 );
-    var resizeSE = ResizeButtonCircle( options, buttonSize2, 3 );
+    var resizeNW = ResizeButtonCircle( options, buttonSize2, 0, zAxis );
+    var resizeNE = ResizeButtonCircle( options, buttonSize2, 1, zAxis );
+    var resizeSW = ResizeButtonCircle( options, buttonSize2, 2, zAxis );
+    var resizeSE = ResizeButtonCircle( options, buttonSize2, 3, zAxis );
 
 
     box.append( resizeNorth.getButton() );
@@ -1458,59 +1485,40 @@ ControlBox = function( target ){
 
 
     box.css({
+        position : 'absolute',
+        left : -(line+gap+1),
+        top : -(line+gap+1),
+        margin : 0,
+        padding : 0,
         visibility : 'hidden'
     })
-
-    function refresh(bias){
-
-        if(!bias)
+    function resize(bias){
+        if(bias)
         {
-            bias = 0;
+            width = parseInt( target.get( 'width' ))+bias;
+            height = parseInt( target.get( 'height' ))+bias;
+        }else{
+            width = parseInt( target.get( 'width' ));
+            height = parseInt( target.get( 'height' ));
         }
 
-        width = parseInt( target.get( 'width' ))+bias;
-        height = parseInt( target.get( 'height' ))+bias;
 
-
-
-        /*
-         box.css({
-         position : 'absolute',
-         left : -gap,
-         top : -gap,
-         width : tw+gap*2,
-         height : th+gap*2,
-         });
-         console.debug( 'bw',box[0].width, box[0].height )
-         context.beginPath();
-         context.lineWidtdh = "2";
-         context.rect( 0,0,width,height);
-         context.strokeStyle = "#ff0000";
-         context.stroke();
-         */
-
-        box[0].width = width + gap*3;
-        box[0].height = height + gap*3;
-
-
-        box.css({
-            position : 'absolute',
-            left : -(line+gap+1),
-            top : -(line+gap+1),
-            margin : 0,
-            padding : 0,
-            visibility : 'visible'
+        zAxis.css({
+            top : height/2 +gap,
+            left : width/2+gap
         });
+        rotationX.refresh( width, height );
 
         var widthCenter = (width+gap*2)/2-buttonSize/2 - 1;
         var heightCenter = (height+gap*2)/2 - buttonSize/2;
 
+        var buttonTip = gap*2+(line-buttonSize)/2;
 
         resizeNorth.getButton().css({
             left : widthCenter
         });
         resizeSouth.getButton().css({
-            top : height+gap*2+(line-buttonSize)/2,
+            top : height+buttonTip,
             left : widthCenter
         });
         resizeWest.getButton().css({
@@ -1518,7 +1526,7 @@ ControlBox = function( target ){
         });
         resizeEast.getButton().css({
             top : heightCenter,
-            left : width+gap*2+(line-buttonSize)/2
+            left : width+buttonTip
         });
 
 
@@ -1540,8 +1548,6 @@ ControlBox = function( target ){
         moveNorthBar.getButton().css({
             width : width+gap*2
         });
-
-
         moveSouthBar.getButton().css({
             top : height+gap*2+line/2-moveButtonRange/2,
             width : width+gap*2
@@ -1554,15 +1560,21 @@ ControlBox = function( target ){
             height : height+gap*2+line/2
         });
 
-        console.log( moveEastBar.getButton().css('width'),width);
-        rotationX.refresh( width, height );
-        /*
-         context.beginPath();
-         context.lineWidtdh = "2";
-         context.rect( 0,0,width+gap,height+gap);
-         context.strokeStyle = "#ff0000";
-         context.stroke();*/
+    }
 
+    function refresh(bias){
+        if( !enable ){
+            resize();
+            enable = true;
+            box.css({
+                position : 'absolute',
+                left : -(line+gap+1),
+                top : -(line+gap+1),
+                margin : 0,
+                padding : 0,
+                visibility : 'visible'
+            });
+        }
     }
 
 
@@ -1572,13 +1584,23 @@ ControlBox = function( target ){
         getBox: function(){
             return box;
         },
-        enable : function(){
-            refresh();
+        enable : function( border ){
+            if( !enable || border ){
+                resize(border);
+                enable = true;
+                box.css({
+                    visibility : 'visible'
+                });
+            }
         },
         disable : function(){
+            enable = false;
             box.css({
                 visibility : 'hidden'
             });
+        },
+        resize : function( bias ){
+            resize( bias );
         },
         refresh : function(bias){
             refresh(bias);
@@ -1631,7 +1653,7 @@ ControlBox = function( target ){
     };
 }
 ResizeButtonRectangle = function( options, size, position ){
-    var button = $("<a href='#' class='resize_button'></a>");
+    var button = $("<div class='resize_button'></div>");
     var thick = 1;
     var resizeEvent;
     button.css({
@@ -1697,7 +1719,7 @@ ResizeButtonRectangle = function( options, size, position ){
     }
 }
 
-ResizeButtonCircle = function( options, size, position ){
+ResizeButtonCircle = function( options, size, position, axis ){
     var button = $("<a class='circle_button'></a>");
     var circle = $("<canvas id='resize_button2'></canvas>");
     var context = circle[0].getContext("2d");
@@ -1715,7 +1737,7 @@ ResizeButtonCircle = function( options, size, position ){
     circle.css({
         position : 'absolute',
         top : size*2-size/2,
-        left : size*2-size/2
+        left : size*2-size/2,
     });
     circle[0].width = size+thick*2;
     circle[0].height = size+thick*2;
@@ -1771,10 +1793,16 @@ ResizeButtonCircle = function( options, size, position ){
         cursor : 'crosshair'
     })
 
+    var shadow = true;
     button.bind('mousedown',function(e){
-        options.setJob(JOB['ROTATE_Z'], e.clientX, e.clientY );
+        options.setJob(JOB['ROTATE_Z'], e.clientX, e.clientY, position );
+        axis.css({
+            visibility: 'visible'
+        })
+        shadow = false;
         e.stopPropagation();
     });
+
 
 
     return{
@@ -1849,22 +1877,16 @@ MoveButton = function(options, horizontal){
 }
 RotationButton = function(options){
     var button = $("<div class='rotationButton'></div>");
-    var length = 20;
-    var slice = 10;
+    var length = 32;
     var gap = options.gap;
+    var right = gap*3;
+    var ynl = gap - length/2;
+    var ynt = gap + length/2;
 
-
-    button.css({
-        position : 'absolute',
-        margin : '0px',
-        padding : '0px',
-        border : '#0000ff'
-    });
-    //
-    var axisXWest = Cylinder(options, 0, slice, length);
-    var axisXEast = Cylinder(options, 0, slice, length);
-    var axisYNorth = Cylinder(options, 1, slice, length);
-    var axisYSouth = Cylinder(options, 1, slice, length);
+    var axisXWest = RotationPanel(length, 0, options);
+    var axisXEast = RotationPanel(length, 0, options);
+    var axisYNorth = RotationPanel(length, 1, options);
+    var axisYSouth = RotationPanel(length, 1, options);
 
     button.append( axisXWest.getCylinder() );
     button.append( axisXEast.getCylinder() );
@@ -1872,72 +1894,129 @@ RotationButton = function(options){
     button.append( axisYSouth.getCylinder() );
 
     axisXWest.getCylinder().css({
-        left : -(length/2+gap*5),
-        webkitTransform: 'rotateY(90deg)'
+        left : -length-gap
     });
-    axisXEast.getCylinder().css({
-        webkitTransform: 'rotateY(90deg)'
-    });
-
     axisYNorth.getCylinder().css({
-        top : -(length/2+gap*2),
-        webkitTransform: 'rotateX(90deg)'
+        top : -gap - length
     });
-    axisYSouth.getCylinder().css({
-        webkitTransform: 'rotateX(90deg)'
-    });
-
-
 
     return{
-        addRotationEvent : function( f ){
-            resizeEvent = f;
-        },
         getButton : function(){
             return button;
         },
         refresh : function(width, height){
-            var ratio = 0.3
-            axisXWest.refresh((height/2+gap)*ratio);
             axisXWest.getCylinder().css({
-                top : height/2+gap
+                top : height/2-gap
             });
-
-            axisXEast.refresh((height/2+gap)*ratio);
             axisXEast.getCylinder().css({
-                top : height/2+gap,
-                left : width+gap*5+length/2+gap*2
+                top : height/2-gap,
+                left : width+right
             });
-
-            axisYNorth.refresh((width/2+gap)*ratio);
             axisYNorth.getCylinder().css({
-                left : width/2+gap
+                left : width/2+ynl
             });
-
-            axisYSouth.refresh((width/2+gap)*ratio);
             axisYSouth.getCylinder().css({
-                top : height+gap*2+length/2+gap*2,
-                left : width/2+gap
+                top : height+ynt,
+                left : width/2+ynl
             });
         }
     }
+}
+
+RotationPanel = function(size, axis, options){
+    var color = 'rgba(255,255,255,1)';
+    var panel = new Array();
+    for( var i = 0; i < 3; i++ ){
+        panel[i] = $("<div class='rotation_panel'></div>");
+        panel[i].css({
+            width : size,
+            height : size,
+            position : 'absolute',
+            cursor : 'pointer',
+            webkitBorderRadius : size/2
+        });
+        panel[i].bind('mousedown',function(e){
+            if( axis == 0 ){
+                options.setJob(JOB['ROTATE_X'], e.clientX, e.clientY );
+            }else{
+                options.setJob(JOB['ROTATE_Y'], e.clientX, e.clientY );
+            }
+            e.stopPropagation();
+        });
+        panel[i].bind('mouseover', function(e){
+            panel[0].css({
+                background : '#ffffff'
+            });
+            panel[1].css({
+                background : '#ffffff'
+            });
+            panel[2].css({
+                background : '#ffffff'
+            });
+        });
+        panel[i].bind('mouseleave', function(e){
+            panel[0].css({
+                background : '0'
+            });
+            panel[1].css({
+                background : '0'
+            });
+            panel[2].css({
+                background : '0'
+            });
+        });
+    }
+    panel[0].append( panel[1] );
+    panel[0].append( panel[2] );
+    panel[0].css({
+        webkitTransformStyle : 'preserve-3d'
+    });
+    panel[1].css({
+        webkitTransform : 'rotateX(90deg)'
+    });
+    panel[2].css({
+        webkitTransform : 'rotateY(90deg)'
+    });
+
+
+
+    return {
+        getCylinder : function(){
+            return panel[0];
+        },
+        refresh : function( radius ){
+
+        }
+    };
 }
 
 Cylinder = function(options, axis, facets, length ){
     var cylinder = $("<div class='cylinder'></div>");
     var panel = [];
     //var color = 'linear-gradient(to bottom, #feffe8 0%,#d6dbbf 100%)';
+
     var color = 'rgba(255,255,255,1)';
 
     cylinder.css({
+        width : 10,
+        height : 10,
         position : 'absolute',
+        background : color,
         border : '1px solid #ff0000',
-        webkitTransformStyle: 'preserve-3d'
+        cursor : 'crosshair'
     })
+    cylinder.bind('mousedown',function(e){
+        if( axis == 0 ){
+            options.setJob(JOB['ROTATE_X'], e.clientX, e.clientY );
+        }else{
+            options.setJob(JOB['ROTATE_Y'], e.clientX, e.clientY );
+        }
+        e.stopPropagation();
+    });
 
     for(var i = 0 ; i < facets ; ++i) {
         panel[i] = $("<canvas id='resize_button2'></canvas>");
-        cylinder.append(panel[i]);
+        //cylinder.append(panel[i]);
         panel[i].bind('mousedown',function(e){
             if( axis == 0 ){
                 options.setJob(JOB['ROTATE_X'], e.clientX, e.clientY );
@@ -1972,10 +2051,11 @@ Cylinder = function(options, axis, facets, length ){
                 var x = epsilon( distance * Math.cos(radian * i) );
                 var y = epsilon( distance * Math.sin(radian * i) );
 
-                var context = panel[i][0].getContext("2d");
                 panel[i][0].width = w+1;
                 panel[i][0].height = h;
 
+                /*
+                var context = panel[i][0].getContext("2d");
                 context.beginPath();
                 context.moveTo(0, 0);
                 context.lineTo(w+1, 0);
@@ -1984,7 +2064,7 @@ Cylinder = function(options, axis, facets, length ){
                 context.lineWidth = thick;
                 //context.rect(0,0,w,h);
                 context.stroke();
-
+                  */
 
                 panel[i].css({
                     position : 'absolute',

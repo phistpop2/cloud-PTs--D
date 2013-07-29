@@ -74,8 +74,8 @@ define(['jquery','underscore','backbone',
                     if(e.ctrlKey){
                     }else if ((e.which && e.which == 3) || (e.button && e.button == 2)){
                         this_.contentsCollection.setSelected();
-                        zooming = true;
-                        zoomer.init(prevX, prevY);
+                        //zooming = true;
+                        //zoomer.init(prevX, prevY);
                     }else if(e.shiftKey){
                         moveEnable = true;
                     }else{
@@ -108,11 +108,10 @@ define(['jquery','underscore','backbone',
                         {
                             camera_.rotateX(scalar2);
                             camera_.rotateY(-scalar1);
-
                         }
                         else
                         {
-                            camera_.setPosition( -scalar1, scalar2, 0);
+                            camera_.setPosition( -scalar1*2, scalar2*2, 0);
                         }
                         prevX = currX;
                         prevY = currY;
@@ -135,8 +134,6 @@ define(['jquery','underscore','backbone',
                             'top': newY,
                             'left': newX-wBias
                         });
-
-
                     }
                     else if ( ( (e.which && e.which == 3) || (e.button && e.button == 2) ) && zooming )
                     {
