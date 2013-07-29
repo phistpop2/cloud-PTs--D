@@ -48,8 +48,30 @@ define(['jquery','underscore','backbone',
                         'sequenceCollection' : sequenceCollection});
 
                 }).mousedown(function(e){
+                    if(( (e.which && e.which == 3) || (e.button && e.button == 2) ) && e.shiftKey ){
+                        console.debug( 'hh', this_.cameraModule.getCamera().getMatrixQuery());
+                        this_.model.set(
+                            'matrix3d', this_.cameraModule.getCamera().getMatrixQuery()
+                        );
 
-                    if( !e.ctrlKey ){
+                        var cm = this_.cameraModule.getCamera().getQuaternion();
+                        var q = {};
+                        q.x = cm.getX();
+                        q.y = cm.getY();
+                        q.z = cm.getZ();
+                        q.w = cm.getW();
+                        var cz = this_.cameraModule.getCamera().getLocation();
+                        var z = {};
+                        z.x= cz.getX();
+                        z.y= cz.getY();
+                        z.z= cz.getZ();
+                        this_.model.set({
+                            quaternion: q,
+                            zoom: z
+                        });
+                        this_.updateView();
+                    }
+                    else if( !e.ctrlKey ){
                         var qo = this_.model.get('quaternion');
                         var zo = this_.model.get('zoom');
                         this_.cameraModule.getCamera().lookFacade( quaternion( qo.x, qo.y, qo.z, qo.w) );
@@ -87,7 +109,6 @@ define(['jquery','underscore','backbone',
 
             objectSelect : function(e)
             {
-
                 if(e.ctrlKey)
                 {
                     this.model.collection.addSelected(this.model);
@@ -319,10 +340,24 @@ define(['jquery','underscore','backbone',
 
                 var background = '-webkit-radial-gradient(center, circle cover,'+secondColor+' 0%, '+color+' 100%)'
 
+
                 $(this.el).find('.sequence_view').css({
                     'background' : background
                 });
 
+
+                // matrix3d = this.cameraModule.getCamera().getRevisedMatrixQuery(left,-top,matrix3d);
+/*
+                var matrix3d = this.model.get('matrix3d');
+*/
+/*
+
+                var world = $(this.el).find('.sequence_view').find('.sequence_view_world');
+                world.css({
+                    webkitTransform: 'matrix3d('+matrix3d+')'
+                });
+
+*/
 
                 if( this.li )
                     $(this.li).find('.number_view').text( this.model.get('slideNumber') );
