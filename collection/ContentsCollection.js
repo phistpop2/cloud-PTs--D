@@ -79,6 +79,20 @@ define(['underscore','backbone',
 
            },
 
+            fun : function(){
+
+                var ms = this.models;
+                for ( var i = 0; i < ms.length; i ++ ) {
+                    ms[i].set({
+                        translateX :   ( ( i % 5 ) * 100 ) - 50,
+                        translateY :   0,
+                        translateZ :   (Math.floor( i / 5 ))*100,
+                        rotateX : 0,
+                        rotateY : 0,
+                        rotateZ : 0
+                    })
+                }
+            },
 
             setSelectController : function(selectController)
             {

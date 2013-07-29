@@ -158,11 +158,12 @@ define(['jquery','underscore','backbone',
 
                     if(load)
                     {
-                        editbox = $("<div class='textEditBox' >");
-                        objectWrap.append(editbox);
+
+
+                        objectWrap.append((this_.model.get('content')));
+
+                        editbox = objectWrap.find('.textEditBox');
                         this.editor = $(this.el).find('.objectWrap').find('.textEditBox').enableEdit();
-                        editbox.html(this_.model.get('content'));
-                        objectWrap.html(editbox);
 
 
 
@@ -203,19 +204,32 @@ define(['jquery','underscore','backbone',
                         this.model.attributes.content = content;
 
                         this.initPosition();
-                    }
-                    if( this_.model.get('mainTitle')){
-                        $(this.el).find('.lcWord').each(function(){
-                            $(this).css({
-                                'fontSize' : '70px'
-                            })
-                        });
-                    }else if( this_.model.get('subTitle')){
-                        $(this.el).find('.lcWord').each(function(){
-                            $(this).css({
-                                'fontSize' : '50px'
-                            })
-                        });
+
+                        if( this.model.attributes.mainTitle ){
+                            console.debug( 'main!!');
+                            $(this.el).find('.lcWord').each(function(){
+                                $(this).css({
+                                    'fontSize' : '80px',
+                                    color : '#ffffff'
+                                })
+                            });
+                            $(editbox).css({
+                                'textAlign' : 'center',
+                                'fontFamily':'Arial',
+                                'fontWeight':'bold'
+                            });
+                        }else if(this.model.attributes.subTitle){
+                            console.debug( 'sub!!');
+                            $(this.el).find('.lcWord').each(function(){
+                                $(this).css({
+                                    'fontSize' : '50px',
+                                    color : '#aaaaaa'
+                                })
+                            });
+                            $(editbox).css({
+                                'textAlign' : 'center'
+                            });
+                        }
                     }
                     //editbox.focus();
 

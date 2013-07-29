@@ -44,6 +44,10 @@ define(['jquery','underscore','backbone',
                 var ctrlKey = 17;
                 var ctrlDown = false;
 
+                var wKey = 87;
+                var wDown = false;
+
+
                 var camera_ = this.camera;
                 var fov = 20;
 
@@ -60,11 +64,14 @@ define(['jquery','underscore','backbone',
                 $(document).keydown(function(e)
                 {
                     if (e.keyCode == ctrlKey) ctrlDown = true;
+                    console.debug( 'keyydown', e.keyCode );
+                    if(e.keyCode == wKey) wDown = true;
 
 
                 }).keyup(function(e)
                     {
                         if (e.keyCode == ctrlKey) ctrlDown = false;
+                        if(e.keyCode == wKey) wDown = false;
                     });
 
                 $(this.el).bind('mousedown',function(e){
@@ -73,9 +80,12 @@ define(['jquery','underscore','backbone',
 
                     if(e.ctrlKey){
                     }else if ((e.which && e.which == 3) || (e.button && e.button == 2)){
-                        this_.contentsCollection.setSelected();
+                        //this_.contentsCollection.setSelected();
                         //zooming = true;
                         //zoomer.init(prevX, prevY);
+                        if(e.shiftKey ){
+                            this_.contentsCollection.fun();
+                        }
                     }else if(e.shiftKey){
                         moveEnable = true;
                     }else{
@@ -100,12 +110,16 @@ define(['jquery','underscore','backbone',
                         {
 
                         }
-                        else if(e.altKey && e.shiftKey)
-                        {
-                            camera_.rotateZ(-(scalar2+scalar1));
+                        else if(e.altKey && e.shiftKey && wDown ){  //rotation world
+                            camera_.rotateWorldZ(-(scalar2+scalar1));
                         }
-                        else if(e.altKey)
-                        {
+                        else if(e.altKey && e.shiftKey){    //rotation camera
+                            camera_.rotateZ(-(scalar2+scalar1));
+                        }else if(e.altKey && wDown ){   //rotation world
+                            camera_.rotateWorldX(scalar2);
+                            camera_.rotateWorldY(-scalar1);
+                        }
+                        else if(e.altKey ){ //rotation camera
                             camera_.rotateX(scalar2);
                             camera_.rotateY(-scalar1);
                         }
@@ -132,7 +146,7 @@ define(['jquery','underscore','backbone',
                             'width': width,
                             'height': height,
                             'top': newY,
-                            'left': newX-wBias
+                            'left': newX-200
                         });
                     }
                     else if ( ( (e.which && e.which == 3) || (e.button && e.button == 2) ) && zooming )
@@ -248,6 +262,8 @@ define(['jquery','underscore','backbone',
 
         return workSpace;
 });
+
+
 
 Zoomer = function( _camera ){
     var selection = $('<div>').addClass('selection-box');

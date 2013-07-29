@@ -128,7 +128,8 @@ define(['jquery','underscore','backbone',
 
                 $('.fontFamilySelectOptions').find('.selectOption').click(function(){
                     $(this).parent().parent().css('display','none');
-                    var val = $(this).html();
+
+                    var val = $(this).attr('value_');
                     $('#fontFamilyButton').find('span.selected').html(val);
 
                     this_.textToolFunc(function()
@@ -235,8 +236,8 @@ define(['jquery','underscore','backbone',
                 var this_ = this;
                 $('#textInsertButton').click(function(){
                     this_.contentsCollection.add(new TextModel({
-                            width : 400,
-                            height : 200,
+                            width : 280,
+                            height : 65,
 
                             translateX:0,
                             translateY:0,
@@ -382,8 +383,8 @@ define(['jquery','underscore','backbone',
 
                 $('#fontFamilyButton').find('input.selected').bind('change',function(){
                     var val = $(this).val();
-
-                    $(this).val(val+'px');
+                    console.log('val',val);
+                    $(this).val(val);
                 });
 
 

@@ -48,7 +48,6 @@ define(['jquery','underscore','backbone',
                 $('#sequenceArrayContainer').multisortable();
 
                 $('#sequenceArrayContainer').bind('sortupdate',function(e){
-
                     var views = $('#sequenceArrayContainer').children();
                     var collection = this_.sequenceCollection;
 

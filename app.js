@@ -223,25 +223,25 @@ define(
             {
 
 
-                if (ctrlDown && shiftDown && e.keyCode == zKey){
+                if (e.ctrlKey && e.shiftKey && e.keyCode == zKey){
                     this_.contentsCollection.redo();
                     return false;
                 }
-                else if (ctrlDown && e.keyCode == zKey){
+                else if (e.ctrlKey && e.keyCode == zKey){
                     this_.contentsCollection.undo();
                     return false;
-                }else if( shiftDown ){
+                }else if(e.shiftKey ){
                     return true;
                 }
-                else if(ctrlDown && e.keyCode == vKey)    //ctrl+v
+                else if(e.ctrlKey && e.keyCode == vKey)    //ctrl+v
                 {
 
                     var clipboard = localStorage.getItem('clipboard');
 
-                    console.log("clipboard",clipboard);
+                    //console.log("clipboard",clipboard);
 
                         clipboard = JSON.parse(clipboard);
-                            console.log('clipboard',clipboard);
+                            //console.log('clipboard',clipboard);
 
                         for(var i=0 ; i < clipboard.length ; i++)
                         {
@@ -265,7 +265,7 @@ define(
                                     modelAttributes.copyData = modelAttributes.content;
 
                                     model = new TextModel(modelAttributes);
-                                    console.log('asdhono');
+                                    //console.log('asdhono');
                                 }
                                 else if(modelAttributes.type=='image')
                                 {
@@ -393,6 +393,7 @@ define(
                     }
 
                 }
+
 
             });
         },
@@ -719,7 +720,7 @@ define(
         },
         insertIntroBox : function(){
             var mainTitle = new TextModel({
-                width : 700,
+                width : 800,
                 height : 100,
 
                 translateX:0,
