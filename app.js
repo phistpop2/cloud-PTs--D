@@ -715,7 +715,6 @@ define(
             }
             if( fresh ){
                 this.insertIntroBox();
-
             }
         },
         insertIntroBox : function(){

@@ -44,8 +44,9 @@ html, body {
 
 #world {
     position: absolute;
-    height: 0;
-    width: 0;
+    height: 10;
+    width: 10;
+    background:  #ff0000;
     -webkit-transform-style: preserve-3d;
 }
 

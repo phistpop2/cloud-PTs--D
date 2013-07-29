@@ -204,7 +204,20 @@ define(['jquery','underscore','backbone',
 
                         this.initPosition();
                     }
-                    editbox.focus();
+                    if( this_.model.get('mainTitle')){
+                        $(this.el).find('.lcWord').each(function(){
+                            $(this).css({
+                                'fontSize' : '70px'
+                            })
+                        });
+                    }else if( this_.model.get('subTitle')){
+                        $(this.el).find('.lcWord').each(function(){
+                            $(this).css({
+                                'fontSize' : '50px'
+                            })
+                        });
+                    }
+                    //editbox.focus();
 
 
                     editbox.bind('allEventRefresh',function()
