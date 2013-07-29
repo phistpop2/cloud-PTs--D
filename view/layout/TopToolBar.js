@@ -289,7 +289,8 @@ define(['jquery','underscore','backbone',
 
             initImageInsertButton : function()
             {
-                $('#TopToolBar').append(ImageInsertDialogTemplate);
+//                $('#TopToolBar').append(ImageInsertDialogTemplate);
+/*
 
                 $('#TopToolBar').find('#imageInsertButton').click(function(e){
 
@@ -299,12 +300,7 @@ define(['jquery','underscore','backbone',
 
                     e.preventDefault();
                 });
-                $('#TopToolBar').find('#doImageInsert').click(this.addImage);
-
-                $('#ImageInsertDialog').find('#closeImageDlgBtn').click(this.closeDialog);
-
-
-                $('#ImageInsertDialog').find('#imageFile').bind('change', this.handleFileSelect);
+*/
             },
 
             closeDialog : function()
@@ -316,24 +312,10 @@ define(['jquery','underscore','backbone',
             {
                 var this_ = this;
 
-                if(this.enc)
-                {
-                    this.session.uploadFile(this.enc,this.fileType,function(data){
-                        var src = data.file.webContentLink;
-                        console.log("src",src);
-                        this_.contentsCollection.add(new ImageModel({'src' : src}));
-                        $('#imageUrl').val('');
-                        this_.closeDialog();
-                        this_.enc = null;
-                    });
-
-
-                }
                 var src =   $('#imageUrl').val();
                 this.contentsCollection.add(new ImageModel({'src' : src}));
                 $('#imageUrl').val('');
-
-
+                this_.hideAllToolTip();
 
             },
 
@@ -351,6 +333,20 @@ define(['jquery','underscore','backbone',
 
                     this_.fileType = file.type;
                     console.log("readed");
+
+                    if(this_.enc)
+                    {
+                        var loading = $('<div class=loading_action><div class=bubblingG><span id=bubblingG_1></span><span id=bubblingG_2></span><span id=bubblingG_3></span></div>');
+                        $('#mainLayout').append(loading);
+                        this_.session.uploadFile(this_.enc,this_.fileType,function(data){
+                            var src = data.file.webContentLink;
+                            this_.contentsCollection.add(new ImageModel({'src' : src}));
+                            this_.hideAllToolTip();
+                            this_.enc = null;
+
+                            $('.loading_action').remove();
+                        });
+                    }
                 }
 
                 reader.readAsBinaryString(file);
@@ -463,6 +459,7 @@ define(['jquery','underscore','backbone',
 ////
             },
 
+
             activeSentenceSortSelection : function()
             {
                 var this_ = this;
@@ -490,6 +487,59 @@ define(['jquery','underscore','backbone',
                     });
                 });
             },
+
+
+            activeImageInsertForm : function()
+            {
+                var this_ = this;
+
+                $('#imageInsertButton .icon').click(function()
+                {
+                    if($(this).parent().find('div.imageInsertFormToolTip').css('display') == 'none'){
+                        this_.hideAllToolTip();
+                        $(this).parent().find('div.imageInsertFormToolTip').css('display','block');
+                    }
+                    else
+                    {
+                        $(this).parent().find('div.imageInsertFormToolTip').css('display','none');
+                    }
+                });
+
+                var insertForms = $('.imageInsertForm').find('.insertForm');
+                var insertTabs = $('.imageInsertForm').find('ul:first-child li');
+                $('.imageInsertForm').find('ul:first-child').find('li').each(function(){
+                    var panelId = $(this).find('a').attr('href');
+
+                    $(panelId).hide();
+
+                    $(this).click(function(){
+
+                        insertForms.hide();
+                        insertTabs.removeClass('active');
+                        insertTabs.addClass('inactive');
+
+                        $(this).removeClass('inactive');
+                        $(this).addClass('active');
+
+                        $(panelId).show();
+                    });
+                });
+
+
+                $('#uploadImageBtn').trigger('click');
+                $('#TopToolBar').find('#doImageInsert').click(this.addImage);
+                $('.insertForm').find('#imageFile').bind('change', this.handleFileSelect);
+
+
+
+                $('#imageUrl').unbind('mouseup',function(e){
+                    $(this).focus();
+                    e.stopPropagation();
+                }).unbind('focusout',this_.restoreSelection);
+
+
+            },
+
 
             activeSentenceSortSelection : function()
             {
@@ -665,7 +715,8 @@ define(['jquery','underscore','backbone',
                                 '.selectOptions',
                                 '.colorButtonToolTip',
                                 '.objectBackgroundColorButtonToolTip',
-                                '.layoutButtonToolTip'
+                                '.layoutButtonToolTip',
+                                '.imageInsertFormToolTip'
                                 ];
 
 
@@ -884,7 +935,7 @@ define(['jquery','underscore','backbone',
                 this.activeObjectBackgroundColorSelection();
                 this.activeLayoutSelection();
                 this.activeStyleDialogSelection();
-
+                this.activeImageInsertForm();
                 this.unActiveMenuSelection();
 
                 $('#TopToolBar > *').bind('mousedown',function(){

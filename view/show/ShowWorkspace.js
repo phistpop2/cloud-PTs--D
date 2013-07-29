@@ -199,7 +199,7 @@ define(['jquery','underscore','backbone',
 
                 matrix3d = cameraModule.getCamera().getRevisedMatrixQuery(left,top,matrix3d);
 
-
+                          console.log('moveDuration',moveDuration);
 
                 if(slideChangeStyle=='default')
                 {
@@ -212,7 +212,7 @@ define(['jquery','underscore','backbone',
                         '-webkit-animation-timing-function' : 'linear'
                     });
 
-                    this.resize();
+
 
 
                 }
@@ -356,6 +356,7 @@ define(['jquery','underscore','backbone',
 
             resize : function()
             {
+
                 var showModel = this.showCollection.models[this.currentShowPage];
                 var slideWidth = parseFloat(showModel.get('width'));
                 var slideHeight = parseFloat(showModel.get('height'));

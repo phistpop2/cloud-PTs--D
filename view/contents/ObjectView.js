@@ -73,7 +73,7 @@ define(['jquery','underscore','backbone',
 
             objectSelect : function(e)
             {
-                console.debug('objectSelect')
+
                 if(e.ctrlKey)
                 {
                     this.model.addSelectedToCollection(this.model);
@@ -1324,7 +1324,7 @@ ControlBox = function( target ){
             prevY = currY;
         }
     }).bind('mouseup',function(e){
-            console.debug( 'mouse up', target.cid)
+
 
             if( target.isSelected() )
             {
@@ -1737,7 +1737,7 @@ ResizeButtonCircle = function( options, size, position, axis ){
     circle.css({
         position : 'absolute',
         top : size*2-size/2,
-        left : size*2-size/2,
+        left : size*2-size/2
     });
     circle[0].width = size+thick*2;
     circle[0].height = size+thick*2;
@@ -1877,16 +1877,20 @@ MoveButton = function(options, horizontal){
 }
 RotationButton = function(options){
     var button = $("<div class='rotationButton'></div>");
+
     var length = 32;
+
     var gap = options.gap;
     var right = gap*3;
     var ynl = gap - length/2;
     var ynt = gap + length/2;
 
+
     var axisXWest = RotationPanel(length, 0, options);
     var axisXEast = RotationPanel(length, 0, options);
     var axisYNorth = RotationPanel(length, 1, options);
     var axisYSouth = RotationPanel(length, 1, options);
+
 
     button.append( axisXWest.getCylinder() );
     button.append( axisXEast.getCylinder() );
@@ -1924,7 +1928,6 @@ RotationButton = function(options){
 }
 
 RotationPanel = function(size, axis, options){
-    var color = 'rgba(255,255,255,1)';
     var panel = new Array();
     for( var i = 0; i < 3; i++ ){
         panel[i] = $("<div class='rotation_panel'></div>");
@@ -1993,9 +1996,9 @@ RotationPanel = function(size, axis, options){
 Cylinder = function(options, axis, facets, length ){
     var cylinder = $("<div class='cylinder'></div>");
     var panel = [];
-    //var color = 'linear-gradient(to bottom, #feffe8 0%,#d6dbbf 100%)';
 
     var color = 'rgba(255,255,255,1)';
+
 
     cylinder.css({
         width : 10,
@@ -2051,6 +2054,7 @@ Cylinder = function(options, axis, facets, length ){
                 var x = epsilon( distance * Math.cos(radian * i) );
                 var y = epsilon( distance * Math.sin(radian * i) );
 
+
                 panel[i][0].width = w+1;
                 panel[i][0].height = h;
 
@@ -2065,6 +2069,7 @@ Cylinder = function(options, axis, facets, length ){
                 //context.rect(0,0,w,h);
                 context.stroke();
                   */
+
 
                 panel[i].css({
                     position : 'absolute',
