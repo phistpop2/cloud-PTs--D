@@ -152,14 +152,16 @@ define(['jquery','underscore','backbone',
                     if(model.get('type') == 'text')
                     {
                         this.views[model.cid] = new TextView({model: model,id:'sequence_'+this.model.cid+'_view_'+model.cid,'cameraModule' : this.cameraModule, 'world' : world,'viewType' : 'sequence' }).render();
-
+/*
                         this.views[model.cid].model.bind('change',function(model,key){
-                           console.log('key',key);
+
                            if(key.changes['content'])
                            {
                                this_.views[model.cid].contentRefresh();
                            }
                         });
+
+                        */
                     }
                     else if(model.get('type') == 'image')
                     {

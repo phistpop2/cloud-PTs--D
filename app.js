@@ -219,7 +219,7 @@ define(
                     if (e.keyCode == shiftKey) shiftDown = false;
             });
 
-            $(document).keydown(function(e)
+            $('#mainCanvasLayout #workSpace').keydown(function(e)
             {
 
 
@@ -439,7 +439,9 @@ define(
                         var endNode = $('#view_'+selectedObject.cid+' .textEditBox').find('.lcWord:last-child');
 
                         range.setStart(startNode[0],0);
-                        range.setEnd(endNode[0],endNode.text().length);
+
+
+                        range.setEnd(endNode[0],1);//range.setEnd(endNode[0],endNode.text().length);
 
                         window.selection = range;
 

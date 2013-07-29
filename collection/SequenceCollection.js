@@ -56,7 +56,7 @@ define(['underscore','backbone',
                     }
 
                     var selectedObjects = this_.selectorController.getSelectedObjects();
-                    console.log('selectedObjects',selectedObjects);
+
                     for(var i in selectedObjects)
                     {
                         var selectedObject = selectedObjects[i];

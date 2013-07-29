@@ -5,6 +5,16 @@
     left: 0;
     z-index: 102;
     text-align: center;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#TopToolBarWrap input{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #TopToolBar{
@@ -19,6 +29,7 @@
     box-shadow: 0px 1px 0px #111;
     box-sizing: border-box;
     right : 100px;
+
 
 }
 
@@ -191,7 +202,7 @@ li#fontSizeButton div.selectOptions{
     background:  url(/img/topToolBar/text_icon.png) no-repeat center;
 }
 
-#imageInsertButton div{
+#imageInsertButton div.icon{
     background:  url(/img/topToolBar/image_icon.png) no-repeat center;
 }
 
@@ -257,14 +268,18 @@ li#fontSizeButton div.selectOptions{
     left : 67px;
 }
 
-.colorButtonToolTip, .objectBackgroundColorButtonToolTip{
+.colorButtonToolTip,
+.objectBackgroundColorButtonToolTip,
+.imageInsertFormToolTip{
     margin : 0px;
     padding : 0px;
     background : #222;
     border-radius: 4px;
 }
 
-.colorButtonToolTip:before, .objectBackgroundColorButtonToolTip:before{
+.colorButtonToolTip:before,
+.objectBackgroundColorButtonToolTip:before,
+.imageInsertFormToolTip:before{
     content: '';
     position: absolute;
     border-width: 8px;
@@ -354,7 +369,8 @@ li#fontSizeButton div.selectOptions{
 
 .colorButtonToolTip,
 .objectBackgroundColorButtonToolTip,
-.layoutButtonToolTip{
+.layoutButtonToolTip,
+.imageInsertFormToolTip{
     display: none;
     position: absolute;
     top : 60px;
@@ -530,4 +546,78 @@ li#fontSizeButton div.selectOptions{
     width: 90%;
     height: 1px;
     background: rgba(255,255,255,0.5);
+}
+
+.imageInsertForm{
+    width : 340px;
+    left: -152px;
+    top: 36px;
+    background : #222;
+    border-radius: 2px;
+}
+
+.imageInsertForm .active{
+    background : #222;
+}
+
+.imageInsertForm .inactive{
+    background:  #111;
+}
+
+.imageInsertForm ul:first-child{
+    list-style: none;
+    padding : 0px;
+    margin : 0px;
+}
+
+.imageInsertForm ul:first-child li{
+    width : 170px;
+    height : 40px;
+    text-align: center;
+
+    float : left;
+    cursor : pointer;
+    margin : 0px;
+}
+
+.imageInsertForm ul:first-child li a{
+    color : #ccc;
+    line-height: 43px;
+    font-size : 16px;
+    text-decoration: none;
+    font-family: arial;
+}
+
+.imageInsertForm .insertForm{
+    height : 130px;
+    font-size : 16px;
+    font-family: arial;
+}
+
+.imageInsertForm  .insertForm input[type="file"] {
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    width: 220px;
+    height: 40px;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.imageInsertForm .insertForm button{
+    border-radius: 2px;
+    background : #40cb90;
+
+    text-align: center;
+    padding : 6px 10px;
+    border : 0px solid #fff;
+}
+
+.insert_input{
+    margin-top : 24px;
+
+}
+
+#imageUrl{
+    webkit-user-select: text;
 }

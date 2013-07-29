@@ -187,6 +187,35 @@
 
         <li class='topIcon' id='imageInsertButton'>
             <div class='icon'></div>
+
+            <div class='imageInsertFormToolTip'>
+                <div class="imageInsertForm">
+                    <ul>
+                        <li id='uploadImageBtn' style='margin:0px'><a href='#imageInsertForm-1'>Upload</a></li>
+                        <li id='urlImageBtn' style='margin:0px'><a href='#imageInsertForm-2'>Url</a></li>
+                    </ul>
+
+                    <div class='insertForm' id='imageInsertForm-1'>
+
+                            <input type="file" id="imageFile" name="files[]" multiple />
+
+                            <input style='margin-top: 30px; height : 25px;' type="text" readonly="readonly" disabled="disabled" placeholder="Select image file...">
+                            <button class="insert_input">Search</button>
+                            <div class="progress">
+                            </div>
+
+                    </div>
+                    <div class='insertForm' id='imageInsertForm-2'>
+                        <input id='imageUrl' style='-webkit-user-select: text; margin-top: 30px; height : 25px;' type="text" placeholder="Image">
+                        <button id='doImageInsert'>
+                            OK
+                        </button>
+
+                    </div>
+
+            </div>
+
+            </div>
         </li>
 
         <li class='topIcon' id='frameInsertButton'>

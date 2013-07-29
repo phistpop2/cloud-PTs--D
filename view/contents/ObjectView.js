@@ -73,7 +73,7 @@ define(['jquery','underscore','backbone',
 
             objectSelect : function(e)
             {
-                console.debug('objectSelect')
+
                 if(e.ctrlKey)
                 {
                     this.model.addSelectedToCollection(this.model);
@@ -1318,7 +1318,7 @@ ControlBox = function( target ){
             prevY = currY;
         }
     }).bind('mouseup',function(e){
-            console.debug( 'mouse up', target.cid)
+
 
             if( target.isSelected() )
             {
@@ -1554,7 +1554,7 @@ ControlBox = function( target ){
             height : height+gap*2+line/2
         });
 
-        console.log( moveEastBar.getButton().css('width'),width);
+
         rotationX.refresh( width, height );
         /*
          context.beginPath();
@@ -1850,7 +1850,7 @@ MoveButton = function(options, horizontal){
 RotationButton = function(options){
     var button = $("<div class='rotationButton'></div>");
     var length = 20;
-    var slice = 10;
+    var slice = 3;
     var gap = options.gap;
 
 
@@ -1859,6 +1859,7 @@ RotationButton = function(options){
         margin : '0px',
         padding : '0px',
         border : '#0000ff'
+
     });
     //
     var axisXWest = Cylinder(options, 0, slice, length);
@@ -1927,7 +1928,7 @@ Cylinder = function(options, axis, facets, length ){
     var cylinder = $("<div class='cylinder'></div>");
     var panel = [];
     //var color = 'linear-gradient(to bottom, #feffe8 0%,#d6dbbf 100%)';
-    var color = 'rgba(255,255,255,1)';
+    var color = 'rgba(255,255,255,0)';
 
     cylinder.css({
         position : 'absolute',
@@ -1972,18 +1973,11 @@ Cylinder = function(options, axis, facets, length ){
                 var x = epsilon( distance * Math.cos(radian * i) );
                 var y = epsilon( distance * Math.sin(radian * i) );
 
-                var context = panel[i][0].getContext("2d");
+
                 panel[i][0].width = w+1;
                 panel[i][0].height = h;
 
-                context.beginPath();
-                context.moveTo(0, 0);
-                context.lineTo(w+1, 0);
-                context.moveTo(0, h);
-                context.lineTo(w+1, h);
-                context.lineWidth = thick;
-                //context.rect(0,0,w,h);
-                context.stroke();
+
 
 
                 panel[i].css({

@@ -133,11 +133,7 @@ define(['jquery','underscore','backbone',
                 {
                     var content = this.model.get('content');
 
-                    console.log('content',content);
-                    console.log("$(this.el).find('.textEditBox')",$(this.el).find('.textEditBox'));
                     $(this.el).find('.textEditBox').html(content);
-
-
                 }
 
             },
@@ -151,7 +147,7 @@ define(['jquery','underscore','backbone',
                 var objectWrap = $(this.el).find('.objectWrap');
                 var editbox = null;
 
-                console.log('this.viewType',this.viewType);
+
 
 
 
