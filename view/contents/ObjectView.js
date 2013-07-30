@@ -838,6 +838,7 @@ ControlBox = function( target ){
 
     $('#workSpace').bind('mousemove',function(e){
 
+
         if( moveEnable && target.isSelected())
         {
 
@@ -1324,8 +1325,6 @@ ControlBox = function( target ){
             prevY = currY;
         }
     }).bind('mouseup',function(e){
-
-
             if( target.isSelected() )
             {
                 target.commitToCollection({
